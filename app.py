@@ -5,8 +5,8 @@ app = Flask(__name__)
 
 @app.route('/api/public/run_pacman', methods=["GET", "POST"])
 def about():
-    print("api triggered")
-    output, error = RunPACMan().run()
+    pacman_proc = RunPACMan()
+    output = pacman_proc.run()
     return output
 
 
