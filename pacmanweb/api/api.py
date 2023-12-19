@@ -1,7 +1,9 @@
 import sys
 import pathlib
 import subprocess
-
+from flask import Blueprint
+from flask_login import login_required
+bp = Blueprint('api', __name__, url_prefix='/api')
 
 class RunPACMan:
     def __init__(self):
@@ -63,3 +65,11 @@ class RunPACMan:
     def run(self):
         output = self.execute()
         return output
+
+
+@bp.route("/run_pacman", methods=["GET", "POST"])
+@login_required
+def run_pacman():
+    pacman_proc = RunPACMan()
+    output = pacman_proc.run()
+    return output

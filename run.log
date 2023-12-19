@@ -1,0 +1,44 @@
+INFO [proposal_scraper.scrape_cycles:576] /home/atharva/workspace/code/tardis-main/pacman/PACMan/./runs/input_proposal_data/231026/*txtx
+INFO [proposal_scraper.scrape_cycles:579] Found 4 proposals to scrape
+
+Scraping Proposals:   0%|          | 0/4 [00:00<?, ?it/s]
+Scraping Proposals: 100%|##########| 4/4 [00:00<00:00, 3644.05it/s]
+
+  0%|          | 0/4 [00:00<?, ?it/s]
+100%|##########| 4/4 [00:00<00:00, 1629.01it/s]Running PACMan...
+This run already exists. Previous version moved to ./runs/discard.
+Log file can be found at ./runs/logs/PACMan_testing_20231219T163630.log
+
+[                                        ] | 0% Completed |  0.0s
+[                                        ] | 0% Completed |  0.1s
+[                                        ] | 0% Completed |  0.2s
+[                                        ] | 0% Completed |  0.3s
+[########################################] | 100% Completed |  0.4s
+
+/home/atharva/miniconda3/envs/pacman_linux/lib/python3.6/site-packages/sklearn/base.py:318: UserWarning: Trying to unpickle estimator TfidfTransformer from version 0.23.1 when using version 0.22.1. This might lead to breaking code or invalid results. Use at your own risk.
+  UserWarning)
+/home/atharva/miniconda3/envs/pacman_linux/lib/python3.6/site-packages/sklearn/base.py:318: UserWarning: Trying to unpickle estimator TfidfVectorizer from version 0.23.1 when using version 0.22.1. This might lead to breaking code or invalid results. Use at your own risk.
+  UserWarning)
+/home/atharva/miniconda3/envs/pacman_linux/lib/python3.6/site-packages/sklearn/base.py:318: UserWarning: Trying to unpickle estimator MultinomialNB from version 0.23.1 when using version 0.22.1. This might lead to breaking code or invalid results. Use at your own risk.
+  UserWarning)
+/home/atharva/miniconda3/envs/pacman_linux/lib/python3.6/site-packages/sklearn/base.py:318: UserWarning: Trying to unpickle estimator Pipeline from version 0.23.1 when using version 0.22.1. This might lead to breaking code or invalid results. Use at your own risk.
+  UserWarning)
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 4 entries, 0 to 3
+Data columns (total 11 columns):
+ #   Column                                                   Non-Null Count  Dtype  
+---  ------                                                   --------------  -----  
+ 0   fname                                                    4 non-null      object 
+ 1   encoded_model_classification                             4 non-null      int64  
+ 2   model_classification                                     4 non-null      object 
+ 3   exoplanets_and_exoplanet_formation_prob                  4 non-null      float64
+ 4   galaxies_prob                                            4 non-null      float64
+ 5   intergalactic_medium_and_the_circumgalactic_medium_prob  4 non-null      float64
+ 6   large_scale_structure_of_the_universe_prob               4 non-null      float64
+ 7   solar_system_astronomy_prob                              4 non-null      float64
+ 8   stellar_physics_and_stellar_types_prob                   4 non-null      float64
+ 9   stellar_populations_and_the_interstellar_medium_prob     4 non-null      float64
+ 10  supermassive_black_holes_and_active_galaxies_prob        4 non-null      float64
+dtypes: float64(8), int64(1), object(2)
+memory usage: 480.0+ bytes
+run complete
