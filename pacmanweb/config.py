@@ -1,15 +1,15 @@
+import json
 import os
 from pathlib import Path
-import json
 
 
 class Config:
     ROOTDIR = Path(__file__).resolve().parent
-    
+
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
         CREDS = json.load(secrets)
-    
+
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DEFAULT_PASS = CREDS["default_password"]
     if not SECRET_KEY:

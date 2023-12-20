@@ -1,28 +1,30 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
 import json
+
+from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask_login import login_required, login_user, logout_user
+from werkzeug.security import check_password_hash, generate_password_hash
+
 from pacmanweb.config import Config
 
-bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", __name__)
 
 
-@bp.route("/login")
+@auth_bp.route("/login")
 def login():
     return "Login"
 
 
-@bp.route("/login", methods=["POST"])
+@auth_bp.route("/login", methods=["POST"])
 def login_post():
     pass
 
 
-@bp.route("/signup")
+@auth_bp.route("/signup")
 def signup():
     return "Signup"
 
 
-@bp.route("/logout")
+@auth_bp.route("/logout")
 def logout():
     return "Logout"
 
