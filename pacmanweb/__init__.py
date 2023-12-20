@@ -32,14 +32,15 @@ def create_app(config_class=Config):
                 return user
 
         # next, try to login using Basic Auth
-        api_key = request.headers.get("Authorization")
-        if api_key:
-            api_key = api_key.replace("Basic ", "", 1)
+        auth_header = request.headers.get("Authorization")
+        if auth_header:
+            encoded_auth = auth_header.replace("Basic ", "", 1)
             try:
-                api_key = base64.b64decode(api_key)
+                decoded_authb = base64.b64decode(encoded_auth)
+                username, password = decoded_authb.decode('utf-8').split(":")
             except TypeError:
                 pass
-            if pacman_auth.validate_key(api_key):
+            if pacman_auth.validate_key(password):
                 user = pacman_auth.User()
                 return user
 
