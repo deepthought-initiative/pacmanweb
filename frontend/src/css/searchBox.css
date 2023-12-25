@@ -1,0 +1,26 @@
+#main-container {
+    max-width: 600px;
+    position: relative;
+}
+
+label {
+    font-size: small;
+    background-color: white;
+    float: left;
+}
+
+.form-text {
+    color: #777;
+    position: relative;
+    font-size: x-small;
+}
+
+.btn {
+    color: white;
+    background-color: green;
+}
+
+.btn:hover{
+    background-color: green;
+        color: white;
+}
