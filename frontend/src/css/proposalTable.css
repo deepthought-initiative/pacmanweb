@@ -1,0 +1,52 @@
+#outer-container{
+    height: 400px;
+    display: flex;
+    justify-content: space-around;
+}
+
+h6{
+    text-align: left;
+    margin-top: 5px;
+}
+
+#left-section{
+    width: 68%;
+}
+
+#right-section {
+    width: 28%;
+}
+
+.w-11{
+    width: 11.11%;
+}
+
+.w-22 {
+    width: 22.22%;
+}
+
+.w-33 {
+    width: 33.33%;
+}
+
+.table-container{
+    overflow-y: auto;
+    max-height: 350px;
+}
+
+th{
+    height: 65px;
+}
+
+th, 
+td {
+    font-size: small;
+    text-align: left;
+    padding-top: 5px;
+    padding-top: 10px;
+    text-align: left;
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    padding-left: 15px !important;
+    padding-right: 20px !important;
+    }

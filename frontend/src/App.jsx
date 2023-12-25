@@ -1,5 +1,6 @@
 import './App.css';
 import Navbar from './components/navbar';
+import ProposalTable from './components/proposalTable';
 import SearchBox from './components/searchBox';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <div>
       <Navbar/>
       <SearchBox/>
+      <ProposalTable/>
     </div>
   )
 }
