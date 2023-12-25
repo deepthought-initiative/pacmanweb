@@ -15,66 +15,73 @@ const ProposalTable = () => {
 ]
 
   return (
-    <div id="outer-container"className="container border mt-5">
-        <div id="left-section" className='border'>
-            <h6 className=''>All Proposals</h6>
-            <div className='table-container'>
-                <table className="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">First</th>
-                            <th scope="col">Last</th>
-                            <th scope="col">Handle</th>
-                            <th scope="col">Handle</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((row) => (
-                            <tr key={row.id}>
-                                <th className="w-11" scope="row">{row.id}</th>
-                                <td className="w-22">{row.column1}</td>
-                                <td className="w-33">{row.column2}</td>
-                                <td className='w-11'>{row.column3}</td>
-                                <td className='w-22'>{row.column4}</td>
+    <>
+        <div id="outer-container"className="container border mt-5">
+            <div id="left-section" className='border'>
+                <h6 className=''>All Proposals</h6>
+                <div className='table-container'>
+                    <table className="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">First</th>
+                                <th scope="col">Last</th>
+                                <th scope="col">Handle</th>
+                                <th scope="col">Handle</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {data.map((row) => (
+                                <tr key={row.id}>
+                                    <th className="w-11" scope="row">{row.id}</th>
+                                    <td className="w-22">{row.column1}</td>
+                                    <td className="w-33">{row.column2}</td>
+                                    <td className='w-11'>{row.column3}</td>
+                                    <td className='w-22'>{row.column4}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="right-section" className='border'>
+                <h6 className=''>Alternate Categories</h6>
+                <div className='table-container'>
+                    <table className="table table-bordered right-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">PACMan Science Category</th>
+                                <th scope="col">PACMan Probability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="w-22">Stellar Physics</td>
+                                <td className='w-11'>0.68</td>
+                            </tr>
+                            <tr>
+                                <td className="w-22">Stellar Physics</td>
+                                <td className='w-11'>0.68</td>
+                            </tr>
+                            <tr>
+                                <td className="w-22">Stellar Physics</td>
+                                <td className='w-11'>0.68</td>
+                            </tr>
+                            <tr>
+                                <td className="w-22">Stellar Physics</td>
+                                <td className='w-11'>0.68</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div id="right-section" className='border'>
-            <h6 className=''>Alternate Categories</h6>
-            <div className='table-container'>
-                <table className="table table-bordered right-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">PACMan Science Category</th>
-                            <th scope="col">PACMan Probability</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td className="w-22">Stellar Physics</td>
-                            <td className='w-11'>0.68</td>
-                        </tr>
-                        <tr>
-                            <td className="w-22">Stellar Physics</td>
-                            <td className='w-11'>0.68</td>
-                        </tr>
-                        <tr>
-                            <td className="w-22">Stellar Physics</td>
-                            <td className='w-11'>0.68</td>
-                        </tr>
-                        <tr>
-                            <td className="w-22">Stellar Physics</td>
-                            <td className='w-11'>0.68</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div className='button-tray container border'>
+            <button className='btn'>Categorize Another Cycle</button>
+            <button className='btn'>Download As CSV</button>
+            <button className='btn'>View Logs</button>
         </div>
-    </div>
+    </>
   )
 }
 
