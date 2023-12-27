@@ -1,4 +1,4 @@
-import '../css/proposalTable.css'
+import '../css/proposalTable.css';
 
 const ProposalTable = () => {
     const data = [
@@ -12,32 +12,46 @@ const ProposalTable = () => {
     { id: 8, column1: 'Text8-1', column2: 'Text8-2', column3: 'Text8-3', column4: 'Text8-4' },
     { id: 9, column1: 'Text9-1', column2: 'Text9-2', column3: 'Text9-3', column4: 'Text9-4' },
     { id: 10, column1: 'Text10-1', column2: 'Text10-2', column3: 'Text10-3', column4: 'Text10-4' }
-]
+    ]
+    const downloadCSV = () => {
+    const headers = ['Proposal Number', 'Title', 'PACMan Science Category', 'PACMan Probability', 'Original Science Category'];
+    const csvContent =
+      headers.join(',') +
+      '\n' +
+      data.map((row) => Object.values(row).join(',')).join('\n');
 
+    const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'proposals.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   return (
     <>
-        <div id="outer-container"className="container border mt-5">
-            <div id="left-section" className='border'>
+        <div id="outer-container"className="container border border-1 border-black mt-5">
+            <div id="left-section" className=''>
                 <h6 className=''>All Proposals</h6>
                 <div className='table-container'>
-                    <table className="table table-bordered">
+                    <table className="table table-bordered border border-light">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
-                                <th scope="col">First</th>
-                                <th scope="col">Last</th>
-                                <th scope="col">Handle</th>
-                                <th scope="col">Handle</th>
+                                <th scope="col">Proposal Number</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">PACMan Science Category</th>
+                                <th scope="col">PACMan Probability</th>
+                                <th scope="col">Original Science Category</th>
                             </tr>
                         </thead>
                         <tbody>
                             {data.map((row) => (
                                 <tr key={row.id}>
-                                    <th className="w-11" scope="row">{row.id}</th>
-                                    <td className="w-22">{row.column1}</td>
-                                    <td className="w-33">{row.column2}</td>
-                                    <td className='w-11'>{row.column3}</td>
-                                    <td className='w-22'>{row.column4}</td>
+                                    <th className="w-11 text-break" scope="row">{row.id}</th>
+                                    <td className="w-22 text-break">{row.column1}</td>
+                                    <td className="w-33 text-break">{row.column2}</td>
+                                    <td className='w-11 text-break'>{row.column3}</td>
+                                    <td className='w-22 text-break'>{row.column4}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -47,7 +61,7 @@ const ProposalTable = () => {
             <div id="right-section" className='border'>
                 <h6 className=''>Alternate Categories</h6>
                 <div className='table-container'>
-                    <table className="table table-bordered right-table">
+                    <table className="table table-bordered border border-light">
                         <thead>
                             <tr>
                                 <th scope="col">PACMan Science Category</th>
@@ -55,22 +69,12 @@ const ProposalTable = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td className="w-22">Stellar Physics</td>
-                                <td className='w-11'>0.68</td>
-                            </tr>
-                            <tr>
-                                <td className="w-22">Stellar Physics</td>
-                                <td className='w-11'>0.68</td>
-                            </tr>
-                            <tr>
-                                <td className="w-22">Stellar Physics</td>
-                                <td className='w-11'>0.68</td>
-                            </tr>
-                            <tr>
-                                <td className="w-22">Stellar Physics</td>
-                                <td className='w-11'>0.68</td>
-                            </tr>
+                            {data.map((row) => (
+                                <tr key={row.id}>
+                                    <td className="w-33 text-break">{row.column2}</td>
+                                    <td className='w-11 text-break'>{row.column3}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -78,7 +82,7 @@ const ProposalTable = () => {
         </div>
         <div className='button-tray container border'>
             <button className='btn'>Categorize Another Cycle</button>
-            <button className='btn'>Download As CSV</button>
+            <button className='btn' onClick={downloadCSV}>Download As CSV</button>
             <button className='btn'>View Logs</button>
         </div>
     </>
