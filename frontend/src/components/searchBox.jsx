@@ -1,7 +1,16 @@
+import { useState } from "react";
 import "../css/searchBox.css";
+import ProposalTable from './proposalTable';
+
 
 const SearchBox = () => {
+  const [show, setShow] = useState(false)
+
+  const handleClick = () => {
+    setShow(true)
+  }
   return (
+    <>
     <div className="container mt-5" id="main-container">
         <label>Selected Current Cycle</label>
         <div className="input-group">
@@ -10,10 +19,14 @@ const SearchBox = () => {
         <div className='form-text text-start'>
             Proposals were categorized for this cycle
         </div>
-        <div className="row mt-5">
-            <button className="btn border">Proposals- Categorize</button>
-        </div>
     </div>
+    {show ? 
+        <ProposalTable/> :
+        <div className="row mt-5">
+            <button className="btn" onClick={handleClick}>Proposals- Categorize</button>
+        </div>}
+    </>
+    
 
   )
 }
