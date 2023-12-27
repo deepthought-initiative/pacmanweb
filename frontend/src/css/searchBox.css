@@ -17,10 +17,5 @@ label {
 
 .btn {
     color: white;
-    background-color: green;
-}
-
-.btn:hover{
-    background-color: green;
-        color: white;
+    background-color: #7A8E99;
 }

@@ -18,15 +18,15 @@ h6{
 }
 
 .w-11{
-    width: 11.11%;
+    width: 90px;
 }
 
 .w-22 {
-    width: 22.22%;
+    width: 180px;
 }
 
 .w-33 {
-    width: 33.33%;
+    width: 270px;
 }
 
 .table-container{
@@ -40,11 +40,10 @@ th{
 
 th, 
 td {
+    background-color: #E7ECEF !important;
     font-size: small;
     text-align: left;
-    padding-top: 5px;
-    padding-top: 10px;
-    text-align: left;
+    vertical-align: middle;
     padding-top: 12px !important;
     padding-bottom: 12px !important;
     padding-left: 15px !important;
