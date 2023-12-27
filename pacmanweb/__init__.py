@@ -1,25 +1,32 @@
 import base64
-
+from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
+from .config import Config
 
-import pacmanweb.auth as pacman_auth
-from pacmanweb.api import api
-from pacmanweb.config import Config
+celery_app = Celery(
+    __name__,
+    backend="redis://localhost",
+    broker="pyamqp://",
+    include=["pacmanweb.tasks"],
+)
 
 
 def create_app(config_class=Config):
     # instance_path?
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.config.from_prefixed_env()
+    celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
     login_manager.init_app(app)
+    from . import auth
 
     @login_manager.user_loader
     def load_user(user_id):
-        return pacman_auth.User.get(user_id)
+        return auth.User.get(user_id)
 
     @login_manager.request_loader
     def load_user_from_request(request):
@@ -27,8 +34,8 @@ def create_app(config_class=Config):
         api_key = request.args.get("api_key")
         if api_key:
             # check if this is the same as in the file
-            if pacman_auth.validate_key(api_key):
-                user = pacman_auth.User()
+            if auth.validate_key(api_key):
+                user = auth.User()
                 return user
 
         # next, try to login using Basic Auth
@@ -37,17 +44,19 @@ def create_app(config_class=Config):
             encoded_auth = auth_header.replace("Basic ", "", 1)
             try:
                 decoded_authb = base64.b64decode(encoded_auth)
-                username, password = decoded_authb.decode('utf-8').split(":")
+                username, password = decoded_authb.decode("utf-8").split(":")
             except TypeError:
                 pass
-            if pacman_auth.validate_key(password):
-                user = pacman_auth.User()
+            if auth.validate_key(password):
+                user = auth.User()
                 return user
 
         # finally, return None if both methods did not login the user
         return None
 
-    app.register_blueprint(pacman_auth.auth_bp)
+    from .api import api
+
+    app.register_blueprint(auth.auth_bp)
     app.register_blueprint(api.api_bp)
 
     return app

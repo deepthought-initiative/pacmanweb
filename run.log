@@ -1,6 +1,6 @@
 Running PACMan...
 This run already exists. Previous version moved to ./runs/discard.
-Log file can be found at ./runs/logs/PACMan_testing_20231220T132253.log
+Log file can be found at ./runs/logs/PACMan_testing_20231227T233416.log
 [                                        ] | 0% Completed |  0.0s[                                        ] | 0% Completed |  0.1s[########################################] | 100% Completed |  0.2s
 <class 'pandas.core.frame.DataFrame'>
 RangeIndex: 4 entries, 0 to 3

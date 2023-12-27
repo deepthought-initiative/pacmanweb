@@ -18,4 +18,5 @@ class Config:
         except KeyError:
             raise ValueError("No secret key found in secrets.json or in path")
 
-    # Do we want to code to generate the secret_key?
+    # celery config
+    CELERY = {}
