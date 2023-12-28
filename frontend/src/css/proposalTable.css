@@ -34,20 +34,32 @@ h6{
     max-height: 350px;
 }
 
-th{
-    height: 65px;
+thead{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: #E7ECEF;
+}
+
+td{
+    cursor: pointer;
+}
+table{
+    border-collapse: separate;
 }
 
 th, 
 td {
-    background-color: #E7ECEF !important;
     font-size: small;
+    height: 65px;
+    background-color: #E7ECEF;
     text-align: left;
     vertical-align: middle;
-    padding-top: 12px !important;
-    padding-bottom: 12px !important;
-    padding-left: 15px !important;
-    padding-right: 20px !important;
+    border-color: white;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 15px;
+    padding-right: 20px;
 }
 
 .button-tray{
@@ -55,4 +67,24 @@ td {
     display: flex;
     justify-content: center;
     gap: 22px;
+}
+
+/* Define the highlight animation */
+@keyframes highlight {
+    0% {
+        background-color: #E7ECEF;
+        box-shadow: none;
+        color: white;
+    }
+
+    100% {
+        background-color: #7A8E99;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        color: white;
+    }
+}
+
+/* Apply the animation to the highlighted class */
+.highlighted >td {
+    animation: highlight 0.5s ease-in-out forwards;
 }

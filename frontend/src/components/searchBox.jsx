@@ -7,24 +7,26 @@ const SearchBox = () => {
   const [show, setShow] = useState(false)
 
   const handleClick = () => {
-    setShow(true)
+    setShow(show => !show)
   }
   return (
     <>
     <div className="container mt-5" id="main-container">
         <label>Selected Current Cycle</label>
         <div className="input-group">
-          <input type="text" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"/>
+          <input id="current-cycle" type="text" className="form-control" readOnly={show}/>
         </div>
         <div className='form-text text-start'>
             Proposals were categorized for this cycle
         </div>
     </div>
     {show ? 
-        <ProposalTable/> :
-        <div className="row mt-5">
-            <button className="btn" onClick={handleClick}>Proposals- Categorize</button>
-        </div>}
+        <ProposalTable handleClick={handleClick}/> 
+        :
+          <div className="row mt-5">
+              <button className="btn" onClick={handleClick}>Proposals- Categorize</button>
+          </div>
+    }
     </>
     
 

@@ -1,6 +1,11 @@
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
 import '../css/proposalTable.css';
 
-const ProposalTable = () => {
+// eslint-disable-next-line react/prop-types
+const ProposalTable = ({handleClick}) => {
+    const [highlighted, setHighlighted] = useState()
+    
     const data = [
     { id: 1, column1: 'Text1-1', column2: 'Text1-2', column3: 'Text1-3', column4: 'Text1-4' },
     { id: 2, column1: 'Text2-1', column2: 'Text2-2', column3: 'Text2-3', column4: 'Text2-4' },
@@ -13,29 +18,26 @@ const ProposalTable = () => {
     { id: 9, column1: 'Text9-1', column2: 'Text9-2', column3: 'Text9-3', column4: 'Text9-4' },
     { id: 10, column1: 'Text10-1', column2: 'Text10-2', column3: 'Text10-3', column4: 'Text10-4' }
     ]
-    const downloadCSV = () => {
     const headers = ['Proposal Number', 'Title', 'PACMan Science Category', 'PACMan Probability', 'Original Science Category'];
     const csvContent =
-      headers.join(',') +
-      '\n' +
-      data.map((row) => Object.values(row).join(',')).join('\n');
+    headers.join(',') +
+    '\n' +
+    data.map((row) => Object.values(row).join(',')).join('\n');
 
     const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'proposals.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+
+    const handleHighlight = (current_id) => {
+        setHighlighted((prevId) => (prevId === current_id ? prevId : current_id));
+    }
+
   return (
     <>
         <div id="outer-container"className="container border border-1 border-black mt-5">
             <div id="left-section" className=''>
                 <h6 className=''>All Proposals</h6>
                 <div className='table-container'>
-                    <table className="table table-bordered border border-light">
-                        <thead>
+                    <table id="primary-table" className="">
+                        <thead className=''>
                             <tr>
                                 <th scope="col">Proposal Number</th>
                                 <th scope="col">Title</th>
@@ -46,8 +48,8 @@ const ProposalTable = () => {
                         </thead>
                         <tbody>
                             {data.map((row) => (
-                                <tr key={row.id}>
-                                    <th className="w-11 text-break" scope="row">{row.id}</th>
+                                <tr onClick={() => handleHighlight(row.id)} className={highlighted === row.id ? "highlighted" : ""} key={row.id}>
+                                    <td className="w-11 text-break" scope="row">{row.id}</td>
                                     <td className="w-22 text-break">{row.column1}</td>
                                     <td className="w-33 text-break">{row.column2}</td>
                                     <td className='w-11 text-break'>{row.column3}</td>
@@ -58,10 +60,10 @@ const ProposalTable = () => {
                     </table>
                 </div>
             </div>
-            <div id="right-section" className='border'>
+            <div id="right-section" className=''>
                 <h6 className=''>Alternate Categories</h6>
                 <div className='table-container'>
-                    <table className="table table-bordered border border-light">
+                    <table className="">
                         <thead>
                             <tr>
                                 <th scope="col">PACMan Science Category</th>
@@ -81,12 +83,14 @@ const ProposalTable = () => {
             </div>
         </div>
         <div className='button-tray container border'>
-            <button className='btn'>Categorize Another Cycle</button>
-            <button className='btn' onClick={downloadCSV}>Download As CSV</button>
+            <button className='btn' onClick={handleClick}>Categorize Another Cycle</button>
+            <a href={encodedUri} download='proposals.csv'>
+                <button className='btn'>Download As CSV</button>
+            </a>
             <button className='btn'>View Logs</button>
         </div>
     </>
   )
 }
 
-export default ProposalTable
+export default ProposalTable;
