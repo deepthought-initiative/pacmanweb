@@ -5,9 +5,11 @@ import redis
 
 redis_instance = redis.Redis()
 
+
 class RunPACMan:
     def __init__(
         self,
+        run_name=None,
         celery_task_id=None,
         main_test_cycle="",
         past_cycles=[],
@@ -22,8 +24,16 @@ class RunPACMan:
         )
         self.celery_task_id = celery_task_id
         self.outfile = open(f"run-{self.celery_task_id}.log", "wb")
+        if run_name is None:
+            run_name = self.celery_task_id
+            reuse_run = "false"
         
+        else:
+            reuse_run="true"
+
         self.options = dict(
+            run_name=run_name,
+            reuse_run=reuse_run,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
             categorize_one_cycle=categorize_one_cycle,
@@ -49,7 +59,9 @@ class RunPACMan:
             raise FileNotFoundError(f"PACMan directory not found at {pacman_path}")
 
         if not self.run_pacman_path.is_file():
-            raise FileNotFoundError(f"run_pacman.py not found at {self.run_pacman_path}.")
+            raise FileNotFoundError(
+                f"run_pacman.py not found at {self.run_pacman_path}."
+            )
 
     def verify_outputs(self):
         pass
@@ -66,7 +78,6 @@ class RunPACMan:
             data[key] = value
         with open(config_fpath, "w") as pacman_config:
             json.dump(data, pacman_config)
-        
 
     def run(self):
         self.modify_config()
@@ -88,10 +99,14 @@ class RunPACMan:
                 print(line.decode(), end="")
                 self.outfile.write(line)
                 self.outfile.flush()
-                redis_instance.xadd(f'process {self.celery_task_id} output', {"line": line})
+                redis_instance.xadd(
+                    f"process {self.celery_task_id} output", {"line": line}
+                )
                 # redis_instance.publish(f'process {self.celery_task_id} output', line)
                 # yield line
-        redis_instance.xadd(f'process {self.celery_task_id} output', {"line": "PROCESS COMPLETE"})
+        redis_instance.xadd(
+            f"process {self.celery_task_id} output", {"line": "PROCESS COMPLETE"}
+        )
         self.proc.stdout.close()
         self.proc.stdin.close()
         self.proc_return_code = self.proc.wait()

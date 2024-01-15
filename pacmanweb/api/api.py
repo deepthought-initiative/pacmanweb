@@ -57,3 +57,10 @@ def stream_task(result_id):
             if "PROCESS COMPLETE" in data or "run complete" in data:
                 break
     return stream_with_context(generate())
+
+@api_bp.route("/terminate/<result_id>", methods=["GET"])
+@login_required
+def stop_task(result_id):
+    task = AsyncResult(result_id, app=celery_app)
+    task.revoke(terminate=True)
+    return f"Task {result_id} terminated"
