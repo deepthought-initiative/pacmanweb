@@ -1,0 +1,35 @@
+name: Download, Commit, and Open PR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  download-commit-open-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Download Submodule
+      run: |
+        git submodule add https://github.com/example/repo.git path/to/submodule
+        git submodule update --init --recursive
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+
+    - name: Commit Changes
+      run: |
+        git add .
+        git commit -m "Add submodule"
+
+    - name: Open Pull Request
+      run: |
+        gh pr create --base main --head your-branch-name --title "Add submodule" --body "This pull request adds a submodule."
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
