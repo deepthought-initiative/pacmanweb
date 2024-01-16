@@ -1,12 +1,11 @@
 import pathlib
 import subprocess
 
+import redis
 from celery import shared_task
 from celery.result import AsyncResult
-from flask import Blueprint, request, stream_with_context, g
+from flask import Blueprint, g, request, stream_with_context
 from flask_login import login_required
-import redis
-
 
 from .. import celery_app
 from ..tasks import pacman_task
@@ -19,7 +18,7 @@ redis_instance = redis.Redis()
 @login_required
 def run_pacman():
     options = request.args.to_dict(flat=True)
-    options["past_cycles"] = options["past_cycles"].split(",")
+    # options["past_cycles"] = options["past_cycles"].split(",")
     result = pacman_task.delay(options=options)
     return f"PACMan running with task id {result.id}"
 
@@ -43,20 +42,24 @@ def pacman_run_result(result_id):
 def stream_task(result_id):
     def generate():
         while True:
-            stream_content = redis_instance.xread(streams={f"process {result_id} output": 0})
+            stream_content = redis_instance.xread(
+                streams={f"process {result_id} output": 0}
+            )
             if not stream_content:
                 continue
             for streams in stream_content:
                 stream_name, messages = streams
-                [ redis_instance.xdel( stream_name, i[0] ) for i in messages ]
+                [redis_instance.xdel(stream_name, i[0]) for i in messages]
             data = ""
             for item in stream_content[0][1]:
-                line = item[1].get(b'line')
-                data += line.decode('utf-8')
+                line = item[1].get(b"line")
+                data += line.decode("utf-8")
             yield data
             if "PROCESS COMPLETE" in data or "run complete" in data:
                 break
+
     return stream_with_context(generate())
+
 
 @api_bp.route("/terminate/<result_id>", methods=["GET"])
 @login_required

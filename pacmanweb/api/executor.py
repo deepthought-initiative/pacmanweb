@@ -1,12 +1,15 @@
 import json
 import pathlib
 import subprocess
+
 import redis
 
 redis_instance = redis.Redis()
 
 
 class RunPACMan:
+    """Run PACMan."""
+
     def __init__(
         self,
         run_name=None,
@@ -19,6 +22,29 @@ class RunPACMan:
         duplication_checker="false",
         categorize_ads_reviewers="false",
     ):
+        """Initialise RunPACMan Class.
+
+        Parameters
+        ----------
+        run_name : str, optional
+            by default None
+        celery_task_id : str, optional
+            by default None
+        main_test_cycle : str, optional
+            by default ""
+        past_cycles : list, optional
+            by default []
+        categorize_one_cycle : str, optional
+            by default "false"
+        get_science_categories : str, optional
+            by default "false"
+        compare_results_real : str, optional
+            by default "false"
+        duplication_checker : str, optional
+            by default "false"
+        categorize_ads_reviewers : str, optional
+            by default "false"
+        """
         self.commands = (
             "conda run -n pacman_linux --no-capture-output python run_pacman.py"
         )
@@ -27,9 +53,9 @@ class RunPACMan:
         if run_name is None:
             run_name = self.celery_task_id
             reuse_run = "false"
-        
+
         else:
-            reuse_run="true"
+            reuse_run = "true"
 
         self.options = dict(
             run_name=run_name,
@@ -102,8 +128,6 @@ class RunPACMan:
                 redis_instance.xadd(
                     f"process {self.celery_task_id} output", {"line": line}
                 )
-                # redis_instance.publish(f'process {self.celery_task_id} output', line)
-                # yield line
         redis_instance.xadd(
             f"process {self.celery_task_id} output", {"line": "PROCESS COMPLETE"}
         )
