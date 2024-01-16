@@ -1,23 +1,0 @@
-Running PACMan...
-This run already exists. Previous version moved to ./runs/discard.
-Log file can be found at ./runs/logs/PACMan_testing_20231227T233416.log
-[                                        ] | 0% Completed |  0.0s[                                        ] | 0% Completed |  0.1s[########################################] | 100% Completed |  0.2s
-<class 'pandas.core.frame.DataFrame'>
-RangeIndex: 4 entries, 0 to 3
-Data columns (total 11 columns):
- #   Column                                                   Non-Null Count  Dtype  
----  ------                                                   --------------  -----  
- 0   fname                                                    4 non-null      object 
- 1   encoded_model_classification                             4 non-null      int64  
- 2   model_classification                                     4 non-null      object 
- 3   exoplanets_and_exoplanet_formation_prob                  4 non-null      float64
- 4   galaxies_prob                                            4 non-null      float64
- 5   intergalactic_medium_and_the_circumgalactic_medium_prob  4 non-null      float64
- 6   large_scale_structure_of_the_universe_prob               4 non-null      float64
- 7   solar_system_astronomy_prob                              4 non-null      float64
- 8   stellar_physics_and_stellar_types_prob                   4 non-null      float64
- 9   stellar_populations_and_the_interstellar_medium_prob     4 non-null      float64
- 10  supermassive_black_holes_and_active_galaxies_prob        4 non-null      float64
-dtypes: float64(8), int64(1), object(2)
-memory usage: 480.0+ bytes
-run complete
