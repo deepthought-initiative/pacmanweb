@@ -1,0 +1,17 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        environment-file: env.yml
