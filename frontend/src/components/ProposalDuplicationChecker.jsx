@@ -1,11 +1,11 @@
 import React from 'react';
 import "../css/searchBox.css";
 import DropdownConfigOption from "./DropdownConfigOption";
-import OtherConfigOptions from "./OtherConfigOptions";
+import TableForDuplicationChecker from './TableForDuplicationChecker';
 
 const ProposalDuplicationChecker = () => {
   const numbers = [123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012, 172345];
-
+  
   return (
     <div className="mt-5" id="main-container">
       <form>
@@ -17,7 +17,8 @@ const ProposalDuplicationChecker = () => {
             <DropdownConfigOption data={numbers} label="Selected Past Cycle" desc="Cycle prefixes of past cycles"/>
           </div>
         </div>
-        <OtherConfigOptions button_label="Find Duplicates"/>  
+        {/* <OtherConfigOptions button_label="Find Duplicates"/> */}
+        <TableForDuplicationChecker/>
       </form>
     </div>
   )
