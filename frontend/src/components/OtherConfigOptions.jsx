@@ -22,7 +22,9 @@ const OtherConfigOptions = ({button_label}) => {
         </div>
       </div>
       <div className="row mt-5">
-        <button className="btn">{button_label}</button>
+        <div className="col-md-6 text-start">
+          <button className="btn rounded-0">{button_label}</button>
+        </div>
       </div>
     </>
   )
