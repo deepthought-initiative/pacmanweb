@@ -1,7 +1,7 @@
 import React from 'react';
 import "../css/searchBox.css";
-import DropdownConfigOption from "./dropdownConfigOption";
-import OtherConfigOptions from "./otherConfigOptions";
+import DropdownConfigOption from "./DropdownConfigOption";
+import OtherConfigOptions from "./OtherConfigOptions";
 
 const ProposalDuplicationChecker = () => {
   const numbers = [123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012, 172345];

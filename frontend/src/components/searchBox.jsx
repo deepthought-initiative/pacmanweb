@@ -1,6 +1,6 @@
 import "../css/searchBox.css";
-import DropdownConfigOption from "./dropdownConfigOption";
-import OtherConfigOptions from "./otherConfigOptions";
+import DropdownConfigOption from "./DropdownConfigOption";
+import OtherConfigOptions from "./OtherConfigOptions";
 
 
 const SearchBox = () => {

@@ -1,11 +1,10 @@
 import React from 'react';
-import "../css/dropdownConfigOption.css";
 
 const DropdownConfigOption = ({ data, label, desc }) => {
   return (
-    <div className="dropdown-container">
+    <div>
       <label className="form-label" htmlFor="CurrentCycle">{label}</label>
-      <div className="select-wrapper">
+      <div>
         <select id="CurrentCycle" className="form-select" aria-label="Select Current Cycle">
           {data.map((number) => (
             <option key={number} value={number}>

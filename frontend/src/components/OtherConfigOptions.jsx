@@ -1,6 +1,6 @@
 import "../css/otherConfigOptions.css";
-import DropdownConfigOption from "./dropdownConfigOption";
-import InputConfigOption from "./inputConfigOption";
+import DropdownConfigOption from "./DropdownConfigOption";
+import InputConfigOption from "./InputConfigOption";
 
 const OtherConfigOptions = () => {
   const numbers = [123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012, 172345];
