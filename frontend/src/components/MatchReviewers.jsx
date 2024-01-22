@@ -14,7 +14,7 @@ const MatchReviewers = () => {
             <DropdownConfigOption data={numbers} label="Selected Current Cycle" desc="Prefix used throughout script to match with cycle description"/>
           </div>
         </div>
-        <OtherConfigOptions />  
+        <OtherConfigOptions button_label="Calculate Reviewers"/>  
       </form>
     </div>
   )

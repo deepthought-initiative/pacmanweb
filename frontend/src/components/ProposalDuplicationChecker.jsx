@@ -17,7 +17,7 @@ const ProposalDuplicationChecker = () => {
             <DropdownConfigOption data={numbers} label="Selected Past Cycle" desc="Cycle prefixes of past cycles"/>
           </div>
         </div>
-        <OtherConfigOptions />  
+        <OtherConfigOptions button_label="Find Duplicates"/>  
       </form>
     </div>
   )
