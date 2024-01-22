@@ -5,7 +5,7 @@ const DropdownConfigOption = ({ data, label, desc }) => {
     <div>
       <label className="form-label" htmlFor="CurrentCycle">{label}</label>
       <div>
-        <select id="CurrentCycle" className="form-select" aria-label="Select Current Cycle">
+        <select id="CurrentCycle" className="form-select rounded-0 border-2" aria-label="Select Current Cycle">
           {data.map((number) => (
             <option key={number} value={number}>
               {number}

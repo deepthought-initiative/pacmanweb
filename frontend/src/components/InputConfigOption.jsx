@@ -3,7 +3,7 @@ const InputConfigOption = ({label, desc}) => {
     <>
       <label className="form-label" htmlFor="CurrentCycle">{label}</label>
       <div className="input-group">
-          <input type="text" className="form-control"/>
+          <input type="text" className="form-control rounded-0 border-2"/>
       </div>
       <div className='form-text text-start'>{desc}</div>  
     </>
