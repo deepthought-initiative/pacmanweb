@@ -9,28 +9,16 @@ const OtherConfigOptions = () => {
       <div className="separator">Other Options(optional)</div>
       <div className="all-options">
         <div className="single-option">
-          <InputConfigOption />
-          <div className='form-text text-start'>
-            Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)
-          </div>  
+          <InputConfigOption label="Enter Run name" desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"/>
         </div>
         <div className="single-option">
-          <DropdownConfigOption data={numbers} />
-          <div className='form-text text-start'>
-            Name of modal file to use
-          </div> 
+          <DropdownConfigOption data={numbers} label="Select modal file to use" desc="Name of modal file to use"/>
         </div>
         <div className="single-option">
-          <InputConfigOption />
-          <div className='form-text text-start'>
-            Number of top recommended reviewers
-          </div> 
+          <InputConfigOption label="Assignment number top reviewers" desc="Number of top recommended reviewers"/>
         </div>
         <div className="single-option">
-          <InputConfigOption />
-          <div className='form-text text-start'>
-            Number of years over which to check close collaborators
-          </div> 
+          <InputConfigOption label="Close Collaborator Time Frame" desc="Number of years over which to check close collaborators"/>
         </div>
       </div>
       <div className="row mt-5">
