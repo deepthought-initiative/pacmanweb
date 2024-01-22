@@ -1,4 +1,5 @@
 import { GearFill, QuestionCircle } from 'react-bootstrap-icons';
+import { Link } from 'react-router-dom';
 import sample from "../assets/react.svg";
 import "../css/navbar.css";
 
@@ -13,18 +14,13 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="nav">
                 <li className="nav-item border ms-5 px-5">
-                    <a className="nav-link text-dark" href="#">
-                        <div>
-                            Proposals- Categorize
-                        </div>
-                    </a>
+                    <Link className="nav-link text-dark" to="/categorize">Proposals- Categorize</Link>
                 </li>
                 <li className="nav-item border ms-5 px-5">
-                    <a className="nav-link text-dark" href="#">
-                        <div>
-                            Sample #2
-                        </div>
-                    </a>
+                    <Link className="nav-link text-dark" to="/duplication">Proposals- Duplication Check</Link>
+                </li>
+                <li className="nav-item border ms-5 px-5">
+                    <Link className="nav-link text-dark" to="/review">Match Reviewers</Link>
                 </li>
             </ul>
         </div>
