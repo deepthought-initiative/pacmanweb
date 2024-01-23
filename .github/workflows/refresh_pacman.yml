@@ -19,7 +19,7 @@ jobs:
 
     - name: Download Submodule
       run: |
-        git submodule add https://github.com/spacetelescope/PACMan.git ./
+        git submodule add https://github.com/spacetelescope/PACMan.git 
         git submodule update --init --recursive
 
     - name: Configure Git
