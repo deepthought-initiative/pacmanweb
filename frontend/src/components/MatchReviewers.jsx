@@ -1,4 +1,3 @@
-import React from 'react';
 import "../css/searchBox.css";
 import DropdownConfigOption from "./DropdownConfigOption";
 import TableMatchReviewers from "./TableMatchReviewers";
