@@ -23,7 +23,7 @@ const ProposalCategorize = () => {
         {showTable ?
         <ProposalTable />
         :
-        <OtherConfigOptions button_label="Calculate Reviewers" handleClick={handleClick}/>
+        <OtherConfigOptions button_label="Categorize Proposal" handleClick={handleClick}/>
         }
       </form>
     </div>
