@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useState } from 'react';
-import '../css/proposalTable.css';
+import '../../css/proposalTable.css';
 
 // eslint-disable-next-line react/prop-types
 const ProposalTable = ({handleClick}) => {

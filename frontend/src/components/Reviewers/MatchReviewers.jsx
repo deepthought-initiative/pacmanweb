@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../css/searchBox.css";
+import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableMatchReviewers from "./TableMatchReviewers";

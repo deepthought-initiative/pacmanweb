@@ -1,7 +1,7 @@
 import { GearFill, QuestionCircle } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
-import sample from "../assets/react.svg";
-import "../css/navbar.css";
+import sample from "../../assets/react.svg";
+import "../../css/navbar.css";
 
 const Navbar = () => {
   return (

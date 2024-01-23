@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import '../css/TableForDuplicationChecker.css';
+import '../../css/TableForDuplicationChecker.css';
 
 const TableForDuplicationChecker = () => {
     const [highlighted, setHighlighted] = useState()

@@ -1,9 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import './App.css';
-import MatchReviewers from "./components/MatchReviewers";
-import Navbar from './components/Navbar';
-import ProposalCategorize from './components/ProposalCategorize';
-import ProposalDuplicationChecker from "./components/ProposalDuplicationChecker";
+import ProposalDuplicationChecker from "./components/DuplicationCheck/ProposalDuplicationChecker";
+import ProposalCategorize from './components/ProposalCategorization/ProposalCategorize';
+import MatchReviewers from "./components/Reviewers/MatchReviewers";
+import Navbar from './components/util/Navbar';
 
 function App() {
 
