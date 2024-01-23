@@ -1,9 +1,10 @@
 name: Download, Commit, and Open PR
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   download-commit-open-pr:
@@ -11,25 +12,27 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Download Submodule
       run: |
-        git submodule add https://github.com/example/repo.git path/to/submodule
+        git submodule add https://github.com/spacetelescope/PACMan.git ./
         git submodule update --init --recursive
 
     - name: Configure Git
       run: |
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
+        git config user.name github-actions
+        git config user.email github-actions@github.com
 
     - name: Commit Changes
       run: |
+        submodule_hash=$(git submodule status | awk '{print substr($1, 1, 7)}') 
         git add .
-        git commit -m "Add submodule"
+        git commit -m "Add PACMAN $submodule_hash"
+        git push
 
-    - name: Open Pull Request
-      run: |
-        gh pr create --base main --head your-branch-name --title "Add submodule" --body "This pull request adds a submodule."
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Open Pull Request
+    #   run: |
+    #     gh pr create --base main --head add-pacman --title "Add PACMan" --body ""
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
