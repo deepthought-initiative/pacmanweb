@@ -3,7 +3,7 @@ import "../css/otherConfigOptions.css";
 import DropdownConfigOption from "./DropdownConfigOption";
 import InputConfigOption from "./InputConfigOption";
 
-const OtherConfigOptions = ({button_label}) => {
+const OtherConfigOptions = ({button_label, handleClick}) => {
   const numbers = [123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012, 172345];
   return (
     <>
@@ -24,7 +24,7 @@ const OtherConfigOptions = ({button_label}) => {
       </div>
       <div className="row mt-5">
         <div className="col-md-6 text-start">
-          <button className="btn rounded-0">{button_label}</button>
+          <button className="btn rounded-0" onClick={handleClick}>{button_label}</button>
         </div>
       </div>
     </>
