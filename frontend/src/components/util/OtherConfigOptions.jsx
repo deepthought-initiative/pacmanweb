@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import "../css/otherConfigOptions.css";
+import "../../css/otherConfigOptions.css";
 import DropdownConfigOption from "./DropdownConfigOption";
 import InputConfigOption from "./InputConfigOption";
 

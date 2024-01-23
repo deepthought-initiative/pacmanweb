@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import "../css/TableMatchReviewers.css";
+import "../../css/TableMatchReviewers.css";
 
 const TableMatchReviewers = () => {
  const [highlighted, setHighlighted] = useState()
