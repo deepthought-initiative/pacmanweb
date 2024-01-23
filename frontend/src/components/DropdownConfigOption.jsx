@@ -1,5 +1,4 @@
-import React from 'react';
-
+/* eslint-disable react/prop-types */
 const DropdownConfigOption = ({ data, label, desc }) => {
   return (
     <div>
