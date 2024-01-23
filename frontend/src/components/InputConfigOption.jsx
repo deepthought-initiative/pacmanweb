@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const InputConfigOption = ({label, desc}) => {
   return (
     <>
