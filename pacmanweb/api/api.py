@@ -21,7 +21,8 @@ def run_pacman():
     options["past_cycles"] = options["past_cycles"].split(",")
     result = pacman_task.delay(options=options)
     return {
-        "output": f"PACMan running with task id {result.id}"
+        "output": f"PACMan running with task id {result.id}",
+        "result_id": f"{result.id}"
     }
 
 
