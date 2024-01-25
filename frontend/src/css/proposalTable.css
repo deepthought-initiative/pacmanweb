@@ -1,7 +1,18 @@
 #outer-container{
-    height: 400px;
+    height: 500px;
     display: flex;
     justify-content: space-around;
+}
+
+#log-container{
+    height: 500px;
+    background-color: black;
+    overflow-y: auto;
+    text-align: left;
+}
+
+#log-container>* {
+    color: white;
 }
 
 h6{

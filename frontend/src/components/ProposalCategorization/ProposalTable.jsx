@@ -32,7 +32,7 @@ const ProposalTable = ({handleClick}) => {
 
   return (
     <>
-        <div id="outer-container"className="container border border-1 border-black mt-5">
+        <div id="outer-container"className="container-fluid border border-1 border-black mt-5">
             <div id="left-section" className=''>
                 <h6 className=''>All Proposals</h6>
                 <div className='table-container'>
