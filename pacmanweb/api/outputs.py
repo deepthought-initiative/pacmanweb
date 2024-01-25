@@ -3,13 +3,13 @@ import pathlib
 import re
 from collections import defaultdict
 from io import StringIO
+import json
 
 import pandas as pd
 from flask import Blueprint, request
 from flask_login import login_required
 
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
-
 
 class DataHandler:
     def __init__(
@@ -50,6 +50,11 @@ class DataHandler:
         [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
         [setattr(self, item, {}) for item in self.txt_files]
 
+    def make_records(self,dataframe):
+        data = {index:list(item) for index, item in enumerate(dataframe.to_numpy())}
+        data["columns"] = list(dataframe.columns)
+        return data
+
     def proposal_model_results(self):
         model_results_dir = self.output_dir / "model_results"
         files = list(model_results_dir.iterdir())
@@ -64,7 +69,8 @@ class DataHandler:
         model_results["fname"] = model_results["fname"].str.extract(
             pattern, expand=False
         )
-        return model_results.to_dict()
+        result = self.make_records(model_results)
+        return result
 
     def parse_assigments(self, filepath):
         if not filepath.is_file():
@@ -182,7 +188,8 @@ def proposal_cat_output(result_id):
     out = DataHandler(celery_task_id=result_id, process_data=True)
     out.store_files()
     options = {k: ast.literal_eval(v) for k, v in options.items()}
-    return out.proposal_cat_output(**options)
+    result = out.proposal_cat_output(**options)
+    return json.dumps(result)
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
