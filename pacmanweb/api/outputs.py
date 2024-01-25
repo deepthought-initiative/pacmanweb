@@ -153,14 +153,26 @@ class DataHandler:
     def duplicate_proposals_output(self):
         return {"duplications": self.duplications}
 
-    def reviewer_match_output(self):
-        return {
-            "panelists": self.panelists_pkl,
-            "panelists_conflicts": self.panelists_conflicts_pkl,
-            "assignments": self.assignments,
-            "panelists_match_check": self.panelists_match_check_pkl,
-            "panelists_query": self.panelists_query_pkl,
-        }
+    def reviewer_match_output(
+        self,
+        panelists=False,
+        conflicts=False,
+        assignments=True,
+        match_check=False,
+        query=False,
+    ):
+        res = {}
+        if panelists:
+            res["panelists"] = self.panelists_pkl
+        if conflicts:
+            res["panelists_conflicts"] = self.panelists_conflicts_pkl
+        if assignments:
+            res["assignments"] = self.assignments
+        if match_check:
+            res["panelists_match_check"] = self.panelists_match_check_pkl
+        if query:
+            res["panelists_query"] = self.panelists_query_pkl
+        return res
 
 
 @outputs_bp.route("/proposal_cat_output/<result_id>", methods=["GET"])
@@ -171,3 +183,21 @@ def proposal_cat_output(result_id):
     out.store_files()
     options = {k: ast.literal_eval(v) for k, v in options.items()}
     return out.proposal_cat_output(**options)
+
+
+@outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
+@login_required
+def duplicates_output(result_id):
+    out = DataHandler(celery_task_id=result_id, process_data=True)
+    out.store_files()
+    return out.duplicate_proposals_output()
+
+
+@outputs_bp.route("/match_reviewers_output/<result_id>", methods=["GET"])
+@login_required
+def match_reviewers_output(result_id):
+    options = request.args.to_dict(flat=True)
+    out = DataHandler(celery_task_id=result_id, process_data=True)
+    out.store_files()
+    options = {k: ast.literal_eval(v) for k, v in options.items()}
+    return out.reviewer_match_output(**options)
