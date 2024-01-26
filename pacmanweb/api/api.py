@@ -18,9 +18,12 @@ redis_instance = redis.Redis()
 @login_required
 def run_pacman():
     options = request.args.to_dict(flat=True)
-    # options["past_cycles"] = options["past_cycles"].split(",")
+    options["past_cycles"] = options["past_cycles"].split(",")
     result = pacman_task.delay(options=options)
-    return f"PACMan running with task id {result.id}"
+    return {
+        "output": f"PACMan running with task id {result.id}",
+        "result_id": f"{result.id}"
+    }
 
 
 @api_bp.route("/prev_runs/<result_id>", methods=["GET"])

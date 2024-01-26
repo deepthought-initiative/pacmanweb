@@ -5,3 +5,8 @@
     gap: 10px;
     justify-content: space-evenly;
 }
+
+img{
+    width: 40px;
+    border-radius: 50%;
+}

@@ -1,65 +1,38 @@
-#outer-container{
-    height: 500px;
+#outer-container {
+    height: 400px;
     display: flex;
-    justify-content: space-around;
 }
 
-#log-container{
-    height: 500px;
-    background-color: black;
-    overflow-y: auto;
-    text-align: left;
-}
-
-#log-container>* {
-    color: white;
-}
-
-h6{
+h6 {
     text-align: left;
     margin-top: 5px;
 }
 
-#left-section{
-    width: 68%;
+#table-section{
+    width: 50%;
 }
 
-#right-section {
-    width: 28%;
-}
-
-.w-11{
-    width: 90px;
-}
-
-.w-22 {
-    width: 180px;
-}
-
-.w-33 {
-    width: 270px;
-}
-
-.table-container{
+.table-container {
     overflow-y: auto;
     max-height: 350px;
 }
 
-thead{
+thead {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: #E7ECEF;
 }
 
-td{
+td {
     cursor: pointer;
 }
-table{
+
+table {
     border-collapse: separate;
 }
 
-th, 
+th,
 td {
     font-size: small;
     height: 65px;
@@ -73,10 +46,9 @@ td {
     padding-right: 20px;
 }
 
-.button-tray{
+.button-tray {
     margin-top: 40px;
     display: flex;
-    justify-content: center;
     gap: 22px;
 }
 
@@ -96,6 +68,6 @@ td {
 }
 
 /* Apply the animation to the highlighted class */
-.highlighted >td {
+.highlighted>td {
     animation: highlight 0.5s ease-in-out forwards;
 }
