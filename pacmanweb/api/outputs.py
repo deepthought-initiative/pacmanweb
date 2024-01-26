@@ -11,6 +11,7 @@ from flask_login import login_required
 
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
+
 class DataHandler:
     def __init__(
         self,
@@ -50,8 +51,8 @@ class DataHandler:
         [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
         [setattr(self, item, {}) for item in self.txt_files]
 
-    def make_records(self,dataframe):
-        data = {index:list(item) for index, item in enumerate(dataframe.to_numpy())}
+    def make_records(self, dataframe):
+        data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
         data["columns"] = list(dataframe.columns)
         return data
 

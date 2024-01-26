@@ -5,6 +5,7 @@ from pathlib import Path
 
 class Config:
     ROOTDIR = Path(__file__).resolve().parent
+    ENV_NAME = os.environ.get("ENV_NAME", "pacman_linux")
 
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:

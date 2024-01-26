@@ -3,6 +3,7 @@ import pathlib
 import subprocess
 
 import redis
+from pacmanweb import Config
 
 redis_instance = redis.Redis()
 
@@ -16,11 +17,7 @@ class RunPACMan:
         celery_task_id=None,
         main_test_cycle="",
         past_cycles=[],
-        categorize_one_cycle="false",
-        get_science_categories="false",
-        compare_results_real="false",
-        duplication_checker="false",
-        categorize_ads_reviewers="false",
+        mode=None,
     ):
         """Initialise RunPACMan Class.
 
@@ -34,40 +31,57 @@ class RunPACMan:
             by default ""
         past_cycles : list, optional
             by default []
-        categorize_one_cycle : str, optional
-            by default "false"
-        get_science_categories : str, optional
-            by default "false"
-        compare_results_real : str, optional
-            by default "false"
-        duplication_checker : str, optional
-            by default "false"
-        categorize_ads_reviewers : str, optional
-            by default "false"
+        mode : str, optional
+            by default None
         """
-        self.commands = (
-            "conda run -n pacman_linux --no-capture-output python run_pacman.py"
-        )
         self.celery_task_id = celery_task_id
-        self.outfile = open(f"run-{self.celery_task_id}.log", "wb")
+        self.outfile = open(f"logs/run-{self.celery_task_id}.log", "wb")
         if run_name is None:
             run_name = self.celery_task_id
             reuse_run = "false"
-
         else:
             reuse_run = "true"
 
-        self.options = dict(
+        self.env_name = Config.ENV_NAME
+
+        options = [
+            "categorize_one_cycle",
+            "get_science_categories",
+            "compare_results_real",
+            "duplication_checker",
+            "categorize_ads_reviewers",
+            "cross_validate",
+        ]
+        options = {item: "false" for item in options}
+        options = options | dict(
             run_name=run_name,
             reuse_run=reuse_run,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
-            categorize_one_cycle=categorize_one_cycle,
-            get_science_categories=get_science_categories,
-            compare_results_real=compare_results_real,
-            duplication_checker=duplication_checker,
-            categorize_ads_reviewers=categorize_ads_reviewers,
         )
+
+        if mode == "PROP":
+            mode_options = {
+                "categorize_one_cycle": "true",
+                "get_science_categories": "true",
+                "compare_results_real": "true",
+            }
+
+        if mode == "DUP":
+            mode_options = {"duplication_checker": "true"}
+
+        if mode == "MATCH":
+            mode_options = {
+                "categorize_ads_reviewers": "true",
+            }
+
+        options = options | mode_options
+
+        self.commands = (
+            f"conda run -n {self.env_name} --no-capture-output  python run_pacman.py"
+        )
+
+        self.options = options
         self.verify_pacman_directory()
 
     def verify_pacman_directory(self, alternate_pacman_path=None):
@@ -107,9 +121,6 @@ class RunPACMan:
 
     def run(self):
         self.modify_config()
-        self.commands = (
-            "conda run -n pacman_linux --no-capture-output  python run_pacman.py"
-        )
         # ! `shell=True` is only safe when the command being run is not tampered with
         # ! TODO: Get rid of shell=True
         self.proc = subprocess.Popen(
