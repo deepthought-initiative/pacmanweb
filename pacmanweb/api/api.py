@@ -37,7 +37,9 @@ def pacman_run_result(result_id):
     task_status = AsyncResult(result_id, app=celery_app)
     result = task_status.result if task_status.ready() else None
     if task_status.ready():
-        with open(f"run-{result_id}.log", "rb") as f:
+        logs_dirpath = pathlib.Path.cwd().resolve().parents[1] / "logs"
+        log_fpath = logs_dirpath / f"run-{result_id}.log"
+        with open(log_fpath, "rb") as f:
             result = f.read().decode("utf-8")
     return {
         "ready": task_status.ready(),

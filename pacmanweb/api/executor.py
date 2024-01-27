@@ -1,16 +1,15 @@
+import os
 import json
-import pathlib
 import subprocess
+import pathlib
 
 import redis
-from pacmanweb import Config
+from pacmanweb import config
 
 redis_instance = redis.Redis()
 
-
 class RunPACMan:
     """Run PACMan."""
-
     def __init__(
         self,
         run_name=None,
@@ -18,6 +17,7 @@ class RunPACMan:
         main_test_cycle="",
         past_cycles=[],
         mode=None,
+        runs_dir=""
     ):
         """Initialise RunPACMan Class.
 
@@ -33,6 +33,8 @@ class RunPACMan:
             by default []
         mode : str, optional
             by default None
+        runs_dir : str, optional
+            by default ""
         """
         self.celery_task_id = celery_task_id
         self.outfile = open(f"logs/run-{self.celery_task_id}.log", "wb")
@@ -42,7 +44,11 @@ class RunPACMan:
         else:
             reuse_run = "true"
 
-        self.env_name = Config.ENV_NAME
+        self.ENV_NAME = config.ENV_NAME
+        self.TEST_ADS_API_KEY = config.TEST_ADS_API_KEY
+        
+        if runs_dir == "":
+            runs_dir = "./runs"
 
         options = [
             "categorize_one_cycle",
@@ -58,6 +64,7 @@ class RunPACMan:
             reuse_run=reuse_run,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
+            runs_dir=runs_dir
         )
 
         if mode == "PROP":
@@ -78,30 +85,27 @@ class RunPACMan:
         options = options | mode_options
 
         self.commands = (
-            f"conda run -n {self.env_name} --no-capture-output  python run_pacman.py"
+            f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
         )
 
         self.options = options
+        self.pacman_path = config.PACMAN_PATH
         self.verify_pacman_directory()
 
     def verify_pacman_directory(self, alternate_pacman_path=None):
-        file_path = pathlib.Path.cwd().resolve()
-        pacman_path = file_path.parents[0]
-        pacman_path = pacman_path / "PACMan"
-
-        self.pacman_path = pacman_path
         if alternate_pacman_path is not None:
             self.pacman_path = alternate_pacman_path
 
-        self.run_pacman_path = pacman_path / "run_pacman.py"
+        self.run_pacman_path = self.pacman_path / "run_pacman.py"
 
         if not self.pacman_path.is_dir():
-            raise FileNotFoundError(f"PACMan directory not found at {pacman_path}")
+            raise FileNotFoundError(f"PACMan directory not found at {self.pacman_path}")
 
         if not self.run_pacman_path.is_file():
             raise FileNotFoundError(
                 f"run_pacman.py not found at {self.run_pacman_path}."
             )
+        
 
     def verify_outputs(self):
         pass
@@ -110,7 +114,6 @@ class RunPACMan:
         pass
 
     def modify_config(self):
-        print(self.pacman_path)
         config_fpath = self.pacman_path / "config.json"
         with open(config_fpath, "r") as pacman_config:
             data = json.load(pacman_config)
@@ -123,6 +126,9 @@ class RunPACMan:
         self.modify_config()
         # ! `shell=True` is only safe when the command being run is not tampered with
         # ! TODO: Get rid of shell=True
+        env = os.environ.copy()
+        env["ADS_DEV_KEY"] = self.TEST_ADS_API_KEY
+        
         self.proc = subprocess.Popen(
             self.commands,
             stdin=subprocess.PIPE,
@@ -130,6 +136,7 @@ class RunPACMan:
             stderr=subprocess.STDOUT,
             cwd=self.pacman_path,
             shell=True,
+            env=env
         )
         if self.proc.poll() is None:
             for line in iter(self.proc.stdout.readline, b""):

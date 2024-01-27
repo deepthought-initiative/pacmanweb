@@ -4,7 +4,7 @@ from flask import Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from pacmanweb.config import Config
+from pacmanweb import config
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -30,7 +30,7 @@ def logout():
 
 
 def validate_key(api_key):
-    password = Config.DEFAULT_PASS
+    password = config.DEFAULT_PASS
     password_hash = generate_password_hash(password)
     if check_password_hash(password_hash, api_key):
         return True

@@ -4,7 +4,7 @@ from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
 
-from .config import Config
+from . import config
 
 celery_app = Celery(
     __name__,
@@ -14,7 +14,7 @@ celery_app = Celery(
 )
 
 
-def create_app(config_class=Config):
+def create_app(config_class=config):
     # instance_path?
     app = Flask(__name__)
     app.config.from_object(config_class)
