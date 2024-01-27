@@ -1,0 +1,20 @@
+Proposal Category: GO
+Exoplanets and Exoplanet Formation
+ID: 01549
+The deepest search for rare molecules and isotopologues in planet-forming disks
+Klaus Pontoppidan
+Space Telescope Science Institute
+We propose to obtain deep 4.9-28.4 micron MIRI spectroscopy of three molecule-rich protoplanetary disks, known to show very bright water line emission in their Spitzer
+spectra. Infrared molecular emission from protoplanetary disks traces material near 1 AU - the terrestrial planet forming region. The deep spectra will be used to search
+for the rarest molecular species that JWST can detect, including heavy isotopologues of water, as well as important carriers of nitrogen and carbon. We will in particular
+search for H2_18O to measure the H2_16O/H2_18O ratio in disks and determine whether the oxygen is enriched in the heavier isotopologue as is seen in primitive
+solar system material. We will also search for warm NH3 and CH4 as signposts of a vigorous primordial chemistry in the terrestrial planet-forming region. As the volatility
+of the molecular carriers of carbon, nitrogen and oxygen determine the amount of each are available for accretion onto planets, these observations will provide a critical
+comparison to exoplanet atmospheric chemistry.
+As a critical and necessary part of this proposal, we will obtain deep spectra of two bright asteroids for the construction of very high signal-to-noise ratio spectral
+response curves (SRFs). Such empirical SRFs are needed to robustly remove the strong, high-frequency fringes present in MIRI-MRS at the ~20% level, and were similarly
+critical for calibrating the Spitzer-IRS mid-infrared spectra of protoplanetary disks. Recognizing the importance of conservative fringe removal for other MIRI-MRS
+programs, we waive the exclusive access period so that other MRS spectra of bright point sources can realize their full scientific potential.
+Colette Salyk Vassar College, Andrea Banzatti Texas State University, Edwin Bergin University of Michigan, Geoffrey Blake California Institute of Technology, Karl Gordon Space Telescope
+Science Institute, Joel Green Space Telescope Science Institute, Dean Hines Space Telescope Science Institute, Tyler Pauly Space Telescope Science Institute, Greg Sloan Space Telescope
+Science Institute, John Stansberry Space Telescope Science Institute, Ke Zhang University of Wisconsin - Madison

@@ -1,0 +1,16 @@
+Proposal Category: GO
+Exoplanets and Exoplanet Formation
+ID: 01556
+A Time Series Calibration of Medium Resolution Spectroscopy with MIRI
+Drake Deming
+University of Maryland
+We propose to test the stability of MIRI Medium Resolution Spectroscopy for time series observations, such as for transiting exoplanets. Being a calibration proposal, we
+observe a control-type source that exhibits a small variation whose charateristics are known. We will observe the bright Algol-type eclipsing binary R Canis Majoris over
+an 9.5-hour period spanning secondary eclipse, using one grating position. The primary technical goals of our observations are: 1) to define the limiting instrumental
+noise (“noise floor”) in time-series observations over small wavelegth scales (pixel-to-pixel) that are the most relevant for spectroscopy, 2) to determine how to
+decorrelate and remove the instrumental noise, 3) to define the temporal stability of the instrumental fringing, and 4) to explore the implications of our results for
+exoplanet spectroscopy. The secondary star in R CMa is a K-dwarf, that will exhibit weak (0.4-percent) rotational lines of OH in its emergent spectrum. In addition to
+our primary technical goals, a secondary goal is a technical demonstration: we will use the secondary eclipse technique to measure the OH line spectrum of the K-dwarf
+in this binary system, just as exoplanet observers will seek to measure the emergent spectra of exoplanets in the thermal infrared. By demonstrating that we can derive
+an astrophysically credible spectrum of the K-dwarf to high signal-to-noise ratio, we will further validate the process of observing exoplanetary spectra with MRS. We will
+produce specific deliverables, including a python code to extract spectra from the focal plane images, with instrumental noise removed.
