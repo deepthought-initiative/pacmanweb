@@ -1,9 +1,9 @@
 import ast
+import json
 import pathlib
 import re
 from collections import defaultdict
 from io import StringIO
-import json
 
 import pandas as pd
 from flask import Blueprint, request

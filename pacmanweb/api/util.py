@@ -1,5 +1,7 @@
 import shutil
+
 from pacmanweb import Config
+
 
 def clean_previous_runs():
     pacman_path = Config.PACMAN_PATH

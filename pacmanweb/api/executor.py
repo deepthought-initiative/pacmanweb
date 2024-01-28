@@ -1,15 +1,17 @@
-import os
 import json
+import os
 import subprocess
-import pathlib
 
 import redis
+
 from pacmanweb import Config
 
 redis_instance = redis.Redis()
 
+
 class RunPACMan:
     """Run PACMan."""
+
     def __init__(
         self,
         run_name=None,
@@ -17,7 +19,7 @@ class RunPACMan:
         main_test_cycle="",
         past_cycles=[],
         mode=None,
-        runs_dir=""
+        runs_dir="",
     ):
         """Initialise RunPACMan Class.
 
@@ -42,7 +44,7 @@ class RunPACMan:
             reuse_run = "false"
         else:
             reuse_run = "true"
-        
+
         if runs_dir == "":
             runs_dir = "./runs"
 
@@ -60,7 +62,7 @@ class RunPACMan:
             reuse_run=reuse_run,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
-            runs_dir=runs_dir
+            runs_dir=runs_dir,
         )
 
         if mode == "PROP":
@@ -83,9 +85,10 @@ class RunPACMan:
 
         self.flask_config = Config()
         self.pacman_path = self.flask_config.PACMAN_PATH
-        outfile_fpath = self.flask_config.ROOTDIR / f"logs/run-{self.celery_task_id}.log"
+        outfile_fpath = (
+            self.flask_config.ROOTDIR / f"logs/run-{self.celery_task_id}.log"
+        )
         self.outfile = open(outfile_fpath, "wb")
-
 
         self.TEST_ADS_API_KEY = self.flask_config.TEST_ADS_API_KEY
         self.ENV_NAME = self.flask_config.ENV_NAME
@@ -107,7 +110,6 @@ class RunPACMan:
             raise FileNotFoundError(
                 f"run_pacman.py not found at {self.run_pacman_path}."
             )
-        
 
     def verify_outputs(self):
         pass
@@ -130,7 +132,7 @@ class RunPACMan:
         # ! TODO: Get rid of shell=True
         env = os.environ.copy()
         env["ADS_DEV_KEY"] = self.TEST_ADS_API_KEY
-        
+
         self.proc = subprocess.Popen(
             self.commands,
             stdin=subprocess.PIPE,
@@ -138,7 +140,7 @@ class RunPACMan:
             stderr=subprocess.STDOUT,
             cwd=self.pacman_path,
             shell=True,
-            env=env
+            env=env,
         )
         if self.proc.poll() is None:
             for line in iter(self.proc.stdout.readline, b""):

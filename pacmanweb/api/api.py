@@ -6,7 +6,9 @@ from celery import shared_task
 from celery.result import AsyncResult
 from flask import Blueprint, g, request, stream_with_context
 from flask_login import login_required
+
 from pacmanweb import Config
+
 from .. import celery_app
 from ..tasks import pacman_task
 

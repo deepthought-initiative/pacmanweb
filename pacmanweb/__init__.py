@@ -3,6 +3,7 @@ import base64
 from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
+
 from .config import Config
 
 celery_app = Celery(
