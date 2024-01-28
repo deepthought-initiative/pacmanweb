@@ -4,7 +4,7 @@ import subprocess
 import pathlib
 
 import redis
-from pacmanweb import config
+from pacmanweb import Config
 
 redis_instance = redis.Redis()
 
@@ -37,15 +37,11 @@ class RunPACMan:
             by default ""
         """
         self.celery_task_id = celery_task_id
-        self.outfile = open(f"logs/run-{self.celery_task_id}.log", "wb")
         if run_name is None:
             run_name = self.celery_task_id
             reuse_run = "false"
         else:
             reuse_run = "true"
-
-        self.ENV_NAME = config.ENV_NAME
-        self.TEST_ADS_API_KEY = config.TEST_ADS_API_KEY
         
         if runs_dir == "":
             runs_dir = "./runs"
@@ -83,13 +79,19 @@ class RunPACMan:
             }
 
         options = options | mode_options
+        self.options = options
 
+        self.flask_config = Config()
+        self.pacman_path = self.flask_config.PACMAN_PATH
+        outfile_fpath = self.flask_config.ROOTDIR / f"logs/run-{self.celery_task_id}.log"
+        self.outfile = open(outfile_fpath, "wb")
+
+
+        self.TEST_ADS_API_KEY = self.flask_config.TEST_ADS_API_KEY
+        self.ENV_NAME = self.flask_config.ENV_NAME
         self.commands = (
             f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
         )
-
-        self.options = options
-        self.pacman_path = config.PACMAN_PATH
         self.verify_pacman_directory()
 
     def verify_pacman_directory(self, alternate_pacman_path=None):

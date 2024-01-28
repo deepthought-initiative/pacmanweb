@@ -6,7 +6,7 @@ from celery import shared_task
 from celery.result import AsyncResult
 from flask import Blueprint, g, request, stream_with_context
 from flask_login import login_required
-
+from pacmanweb import Config
 from .. import celery_app
 from ..tasks import pacman_task
 
@@ -22,7 +22,6 @@ def run_pacman():
         pass
     else:
         return {"output": "Mode is required."}
-
     if options.get("past_cycles", None):
         options["past_cycles"] = options["past_cycles"].split(",")
     result = pacman_task.delay(options=options)
@@ -37,7 +36,7 @@ def pacman_run_result(result_id):
     task_status = AsyncResult(result_id, app=celery_app)
     result = task_status.result if task_status.ready() else None
     if task_status.ready():
-        logs_dirpath = pathlib.Path.cwd().resolve().parents[1] / "logs"
+        logs_dirpath = Config.ROOTDIR / "logs"
         log_fpath = logs_dirpath / f"run-{result_id}.log"
         with open(log_fpath, "rb") as f:
             result = f.read().decode("utf-8")

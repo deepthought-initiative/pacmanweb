@@ -5,7 +5,7 @@ import pathlib
 from flask_login import FlaskLoginClient
 from pacmanweb import create_app
 from pacmanweb.auth import User
-from pacmanweb import config
+from pacmanweb import Config
 from base64 import b64encode
 
 test_data = [
@@ -23,7 +23,7 @@ def app():
         }
     )
     app.test_client_class = FlaskLoginClient
-    os.environ["ADS_DEV_KEY"] = config.TEST_ADS_API_KEY
+    os.environ["ADS_DEV_KEY"] = Config.TEST_ADS_API_KEY
     yield app
 
 @pytest.fixture()
@@ -32,13 +32,14 @@ def client(app):
 
 @pytest.fixture()
 def auth_header():
-    credentials = b64encode(f"default:{config.DEFAULT_PASS}".encode()).decode("utf-8")
+    credentials = b64encode(f"default:{Config.DEFAULT_PASS}".encode()).decode("utf-8")
     return {"Authorization": f"Basic {credentials}"}
 
 class TestAPI:
     @pytest.mark.parametrize("args", test_data)
     def test_spawn(self, client, auth_header, args):
-        runs_dir = pathlib.Path.cwd().resolve() / "data"
+        runs_dir = pathlib.Path(__file__).resolve().parent / "data"
+        print(runs_dir)
         args["runs_dir"] = runs_dir
         response = client.get("/api/run_pacman", headers=auth_header, query_string=args)
         assert response.status_code == 200

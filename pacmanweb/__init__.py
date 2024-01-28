@@ -3,8 +3,7 @@ import base64
 from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
-
-from . import config
+from .config import Config
 
 celery_app = Celery(
     __name__,
@@ -14,10 +13,10 @@ celery_app = Celery(
 )
 
 
-def create_app(config_class=config):
+def create_app(config_class=Config):
     # instance_path?
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_class())
     app.config.from_prefixed_env()
     celery_app.config_from_object(app.config["CELERY"])
 
