@@ -48,7 +48,7 @@ class RunPACMan:
         if runs_dir == "":
             runs_dir = "./runs"
 
-        options = [
+        proc_options = [
             "categorize_one_cycle",
             "get_science_categories",
             "compare_results_real",
@@ -56,7 +56,7 @@ class RunPACMan:
             "categorize_ads_reviewers",
             "cross_validate",
         ]
-        options = {item: "false" for item in options}
+        options = {item: "false" for item in proc_options}
         options = options | dict(
             run_name=run_name,
             reuse_run=reuse_run,
@@ -79,6 +79,9 @@ class RunPACMan:
             mode_options = {
                 "categorize_ads_reviewers": "true",
             }
+
+        if mode == "ALL":
+            mode_options = {item: "true" for item in proc_options}
 
         options = options | mode_options
         self.options = options

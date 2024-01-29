@@ -13,6 +13,108 @@ from pacmanweb import Config
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
 
+def make_records(dataframe):
+    data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
+    data["columns"] = list(dataframe.columns)
+    return data
+
+class PropCat:
+    def __init__(self, output_dir, cycle_number=None) -> None:
+        model_file_fpath = next((output_dir / "model_results").iterdir())
+        self.parse_model_results(model_file_fpath)
+        recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
+        self.parse_recategorization(recat_fpath)
+        self.calculate_alternate_categories()
+
+    def parse_model_results(self, model_file_fpath):
+        with open(model_file_fpath) as f:
+            model_results = f.read()
+        model_results = pd.read_csv(StringIO(model_results))
+
+        # clean fname
+        pattern = re.compile(r"/(\d+)_training\.txt$")
+        model_results["fname"] = model_results["fname"].str.extract(
+            pattern, expand=False
+        )
+        model_results = model_results.sort_values("fname").set_index("fname")
+        model_results.index = model_results.index.astype(int)
+        model_results.columns = (
+            model_results.columns.str.strip("_prob").str.replace("_", " ").str.title()
+        )
+
+        self.model_results = model_results
+
+    def parse_recategorization(self, filepath):
+        data = pd.read_csv(filepath)
+        # data is simple string_io parsed dataframe
+        columns_to_clean = ["pacman_cat", "orig_cat"]
+        data[columns_to_clean] = data[columns_to_clean].apply(
+            lambda x: x.str.replace('"', ""), axis=0
+        )
+        data["orig_cat"] = data["orig_cat"].apply(lambda x: None if "[]" in x else x)
+        data[["#propid", "certainty"]] = data[["#propid", "certainty"]].apply(
+            pd.to_numeric
+        )
+        data = data.rename(
+            columns={
+                "#propid": "Proposal Number",
+                "pacman_cat": "PACMan Science Category",
+                "orig_cat": "Original Science Category",
+                "certainty": "PACMan Probability",
+            }
+        )
+        prop_table = data.sort_values("Proposal Number").set_index("Proposal Number")
+        self.prop_table = prop_table
+
+    def parse_hand_class(self):
+        return
+
+    def calculate_alternate_categories(self):
+        basic_table = self.prop_table
+        model_table = self.model_results.T
+        alternate_cat_dict = {}
+        for index, row in basic_table.iterrows():
+            alt_cat_row = model_table[index]
+            alternate_cat_dict[index] = (
+                alt_cat_row[
+                    alt_cat_row.index.difference(
+                        ["Encoded Model Classification", "Model Classification"]
+                    )
+                ]
+                .sort_values(ascending=False)
+                .to_dict()
+            )
+        self.alternate_cat_dict = alternate_cat_dict
+
+    def get_prop_table(self, start_row=None, end_row=None):
+        prop_response = self.prop_table[start_row:end_row].T.to_dict()
+        for key in prop_response.keys():
+            prop_response[key]["Alternate Categories"] = self.alternate_cat_dict[key]
+        return prop_response
+
+class DupCat:
+    def __init__(self, output_dir, cycle_number=None) -> None:
+        dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
+        self.parse_duplicates(dup_fpath)
+
+    def parse_duplicates(self, dup_fpath):
+        dup_fpath = None
+        data = pd.read_csv(
+                    dup_fpath,
+                    header=None,
+                    names=["Proposal 1", "Proposal 2", "Similarity"],
+                    delimiter=" ",
+                )
+        self.data = data
+    
+    def get_data(self):
+        return self.data
+    
+
+
+
+
+
 class DataHandler:
     def __init__(
         self,
@@ -53,27 +155,6 @@ class DataHandler:
         [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
         [setattr(self, item, {}) for item in self.txt_files]
 
-    def make_records(self, dataframe):
-        data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
-        data["columns"] = list(dataframe.columns)
-        return data
-
-    def proposal_model_results(self):
-        model_results_dir = self.output_dir / "model_results"
-        files = list(model_results_dir.iterdir())
-        if not files:
-            return {}
-        # assumes there would be only one file
-        model_result_file = files[0]
-        with open(model_result_file) as f:
-            model_results = f.read()
-        model_results = pd.read_csv(StringIO(model_results))
-        pattern = re.compile(r"/(\d+)_training\.txt$")
-        model_results["fname"] = model_results["fname"].str.extract(
-            pattern, expand=False
-        )
-        result = self.make_records(model_results)
-        return result
 
     def parse_assigments(self, filepath):
         if not filepath.is_file():
@@ -113,6 +194,8 @@ class DataHandler:
                     )
                 else:
                     data = pd.read_csv(StringIO(data))
+                    if filename == "recategorization":
+                        self.parse_recategorization(data)
         return data
 
     def store_files(self):
@@ -146,49 +229,6 @@ class DataHandler:
                     print(f"Could not parse {filepath}")
                 setattr(self, filename + "_pkl", data)
 
-    def proposal_cat_table(self, start_row=None, end_row=None):
-        self.store_files()
-
-        if not hasattr(self, "prop_table"):
-            df = self.recategorization
-            columns_to_clean = ["pacman_cat", "orig_cat"]
-            df[columns_to_clean] = df[columns_to_clean].apply(
-                lambda x: x.str.replace('"', ""), axis=0
-            )
-            df["orig_cat"] = df["orig_cat"].apply(lambda x: None if "[]" in x else x)
-            df[["#propid", "certainty"]] = df[["#propid", "certainty"]].apply(
-                pd.to_numeric
-            )
-            df = df.rename(
-                columns={
-                    "#propid": "Proposal Number",
-                    "pacman_cat": "PACMan Science Category",
-                    "orig_cat": "Original Science Category",
-                    "certainty": "PACMan Probability",
-                }
-            )
-            prop_table = (
-                df.sort_values("Proposal Number").set_index("Proposal Number").T
-            )
-            table_dict = prop_table.to_dict()
-            self.prop_table = prop_table
-            return table_dict
-        return self.prop_table[start_row:end_row].to_dict()
-
-    def proposal_cat_output(
-        self, model_results=False, recategorization=False, hand_classifications=False, prop_table=True
-    ):
-        res = {}
-        if model_results:
-            model_results = self.proposal_model_results()
-            res["model_results"] = model_results
-        if recategorization:
-            res["recategorization"] = self.recategorization
-        if hand_classifications:
-            res["hand_classifications"] = self.hand_classifications
-        if prop_table:
-            res["proposal_table"] = self.proposal_cat_table()
-        return res
 
     def duplicate_proposals_output(self):
         return {"duplications": self.duplications}
