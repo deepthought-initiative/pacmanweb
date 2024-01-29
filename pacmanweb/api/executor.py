@@ -1,8 +1,10 @@
 import json
-import pathlib
+import os
 import subprocess
 
 import redis
+
+from pacmanweb import Config
 
 redis_instance = redis.Redis()
 
@@ -16,11 +18,8 @@ class RunPACMan:
         celery_task_id=None,
         main_test_cycle="",
         past_cycles=[],
-        categorize_one_cycle="false",
-        get_science_categories="false",
-        compare_results_real="false",
-        duplication_checker="false",
-        categorize_ads_reviewers="false",
+        mode=None,
+        runs_dir="",
     ):
         """Initialise RunPACMan Class.
 
@@ -34,55 +33,78 @@ class RunPACMan:
             by default ""
         past_cycles : list, optional
             by default []
-        categorize_one_cycle : str, optional
-            by default "false"
-        get_science_categories : str, optional
-            by default "false"
-        compare_results_real : str, optional
-            by default "false"
-        duplication_checker : str, optional
-            by default "false"
-        categorize_ads_reviewers : str, optional
-            by default "false"
+        mode : str, optional
+            by default None
+        runs_dir : str, optional
+            by default ""
         """
-        self.commands = (
-            "conda run -n pacman_linux --no-capture-output python run_pacman.py"
-        )
         self.celery_task_id = celery_task_id
-        self.outfile = open(f"run-{self.celery_task_id}.log", "wb")
         if run_name is None:
             run_name = self.celery_task_id
             reuse_run = "false"
-
         else:
             reuse_run = "true"
 
-        self.options = dict(
+        if runs_dir == "":
+            runs_dir = "./runs"
+
+        options = [
+            "categorize_one_cycle",
+            "get_science_categories",
+            "compare_results_real",
+            "duplication_checker",
+            "categorize_ads_reviewers",
+            "cross_validate",
+        ]
+        options = {item: "false" for item in options}
+        options = options | dict(
             run_name=run_name,
             reuse_run=reuse_run,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
-            categorize_one_cycle=categorize_one_cycle,
-            get_science_categories=get_science_categories,
-            compare_results_real=compare_results_real,
-            duplication_checker=duplication_checker,
-            categorize_ads_reviewers=categorize_ads_reviewers,
+            runs_dir=runs_dir,
+        )
+
+        if mode == "PROP":
+            mode_options = {
+                "categorize_one_cycle": "true",
+                "get_science_categories": "true",
+                "compare_results_real": "true",
+            }
+
+        if mode == "DUP":
+            mode_options = {"duplication_checker": "true"}
+
+        if mode == "MATCH":
+            mode_options = {
+                "categorize_ads_reviewers": "true",
+            }
+
+        options = options | mode_options
+        self.options = options
+
+        self.flask_config = Config()
+        self.pacman_path = self.flask_config.PACMAN_PATH
+        outfile_fpath = (
+            self.flask_config.ROOTDIR / f"logs/run-{self.celery_task_id}.log"
+        )
+        self.outfile = open(outfile_fpath, "wb")
+
+        self.TEST_ADS_API_KEY = self.flask_config.TEST_ADS_API_KEY
+        self.ENV_NAME = self.flask_config.ENV_NAME
+        self.commands = (
+            f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
         )
         self.verify_pacman_directory()
 
     def verify_pacman_directory(self, alternate_pacman_path=None):
-        file_path = pathlib.Path.cwd().resolve()
-        pacman_path = file_path.parents[0]
-        pacman_path = pacman_path / "PACMan"
-
-        self.pacman_path = pacman_path
         if alternate_pacman_path is not None:
             self.pacman_path = alternate_pacman_path
 
-        self.run_pacman_path = pacman_path / "run_pacman.py"
+        self.run_pacman_path = self.pacman_path / "run_pacman.py"
 
         if not self.pacman_path.is_dir():
-            raise FileNotFoundError(f"PACMan directory not found at {pacman_path}")
+            raise FileNotFoundError(f"PACMan directory not found at {self.pacman_path}")
 
         if not self.run_pacman_path.is_file():
             raise FileNotFoundError(
@@ -96,7 +118,6 @@ class RunPACMan:
         pass
 
     def modify_config(self):
-        print(self.pacman_path)
         config_fpath = self.pacman_path / "config.json"
         with open(config_fpath, "r") as pacman_config:
             data = json.load(pacman_config)
@@ -107,11 +128,11 @@ class RunPACMan:
 
     def run(self):
         self.modify_config()
-        self.commands = (
-            "conda run -n pacman_linux --no-capture-output  python run_pacman.py"
-        )
         # ! `shell=True` is only safe when the command being run is not tampered with
         # ! TODO: Get rid of shell=True
+        env = os.environ.copy()
+        env["ADS_DEV_KEY"] = self.TEST_ADS_API_KEY
+
         self.proc = subprocess.Popen(
             self.commands,
             stdin=subprocess.PIPE,
@@ -119,6 +140,7 @@ class RunPACMan:
             stderr=subprocess.STDOUT,
             cwd=self.pacman_path,
             shell=True,
+            env=env,
         )
         if self.proc.poll() is None:
             for line in iter(self.proc.stdout.readline, b""):

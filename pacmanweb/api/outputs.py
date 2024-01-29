@@ -1,4 +1,5 @@
 import ast
+import json
 import pathlib
 import re
 from collections import defaultdict
@@ -7,6 +8,7 @@ from io import StringIO
 import pandas as pd
 from flask import Blueprint, request
 from flask_login import login_required
+from pacmanweb import Config
 
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
@@ -18,16 +20,17 @@ class DataHandler:
         process_data=True,
         run_name=None,
         alternate_pacman_path=None,
+        runs_dir=None,
     ):
         self.celery_task_id = celery_task_id
-        file_path = pathlib.Path.cwd().resolve()
-        pacman_path = file_path.parents[0]
-        pacman_path = pacman_path / "PACMan"
-        self.pacman_path = pacman_path
+
+        self.pacman_path = Config.PACMAN_PATH
         if alternate_pacman_path is not None:
             self.pacman_path = alternate_pacman_path
 
-        runs_dir = self.pacman_path / "runs"
+        if not runs_dir:
+            runs_dir = self.pacman_path / "runs"
+
         if run_name:
             self.output_dir = runs_dir / run_name
         else:
@@ -50,6 +53,11 @@ class DataHandler:
         [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
         [setattr(self, item, {}) for item in self.txt_files]
 
+    def make_records(self, dataframe):
+        data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
+        data["columns"] = list(dataframe.columns)
+        return data
+
     def proposal_model_results(self):
         model_results_dir = self.output_dir / "model_results"
         files = list(model_results_dir.iterdir())
@@ -64,7 +72,8 @@ class DataHandler:
         model_results["fname"] = model_results["fname"].str.extract(
             pattern, expand=False
         )
-        return model_results.to_dict()
+        result = self.make_records(model_results)
+        return result
 
     def parse_assigments(self, filepath):
         if not filepath.is_file():
@@ -101,9 +110,9 @@ class DataHandler:
                         header=None,
                         names=["Proposal 1", "Proposal 2", "Similarity"],
                         delimiter=" ",
-                    ).to_dict()
+                    )
                 else:
-                    data = pd.read_csv(StringIO(data)).to_dict()
+                    data = pd.read_csv(StringIO(data))
         return data
 
     def store_files(self):
@@ -137,8 +146,37 @@ class DataHandler:
                     print(f"Could not parse {filepath}")
                 setattr(self, filename + "_pkl", data)
 
+    def proposal_cat_table(self, start_row=None, end_row=None):
+        self.store_files()
+
+        if not hasattr(self, "prop_table"):
+            df = self.recategorization
+            columns_to_clean = ["pacman_cat", "orig_cat"]
+            df[columns_to_clean] = df[columns_to_clean].apply(
+                lambda x: x.str.replace('"', ""), axis=0
+            )
+            df["orig_cat"] = df["orig_cat"].apply(lambda x: None if "[]" in x else x)
+            df[["#propid", "certainty"]] = df[["#propid", "certainty"]].apply(
+                pd.to_numeric
+            )
+            df = df.rename(
+                columns={
+                    "#propid": "Proposal Number",
+                    "pacman_cat": "PACMan Science Category",
+                    "orig_cat": "Original Science Category",
+                    "certainty": "PACMan Probability",
+                }
+            )
+            prop_table = (
+                df.sort_values("Proposal Number").set_index("Proposal Number").T
+            )
+            table_dict = prop_table.to_dict()
+            self.prop_table = prop_table
+            return table_dict
+        return self.prop_table[start_row:end_row].to_dict()
+
     def proposal_cat_output(
-        self, model_results=True, recategorization=True, hand_classifications=True
+        self, model_results=False, recategorization=False, hand_classifications=False, prop_table=True
     ):
         res = {}
         if model_results:
@@ -148,19 +186,33 @@ class DataHandler:
             res["recategorization"] = self.recategorization
         if hand_classifications:
             res["hand_classifications"] = self.hand_classifications
+        if prop_table:
+            res["proposal_table"] = self.proposal_cat_table()
         return res
 
     def duplicate_proposals_output(self):
         return {"duplications": self.duplications}
 
-    def reviewer_match_output(self):
-        return {
-            "panelists": self.panelists_pkl,
-            "panelists_conflicts": self.panelists_conflicts_pkl,
-            "assignments": self.assignments,
-            "panelists_match_check": self.panelists_match_check_pkl,
-            "panelists_query": self.panelists_query_pkl,
-        }
+    def reviewer_match_output(
+        self,
+        panelists=False,
+        conflicts=False,
+        assignments=True,
+        match_check=False,
+        query=False,
+    ):
+        res = {}
+        if panelists:
+            res["panelists"] = self.panelists_pkl
+        if conflicts:
+            res["panelists_conflicts"] = self.panelists_conflicts_pkl
+        if assignments:
+            res["assignments"] = self.assignments
+        if match_check:
+            res["panelists_match_check"] = self.panelists_match_check_pkl
+        if query:
+            res["panelists_query"] = self.panelists_query_pkl
+        return res
 
 
 @outputs_bp.route("/proposal_cat_output/<result_id>", methods=["GET"])
@@ -170,4 +222,23 @@ def proposal_cat_output(result_id):
     out = DataHandler(celery_task_id=result_id, process_data=True)
     out.store_files()
     options = {k: ast.literal_eval(v) for k, v in options.items()}
-    return out.proposal_cat_output(**options)
+    result = out.proposal_cat_output(**options)
+    return json.dumps(result)
+
+
+@outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
+@login_required
+def duplicates_output(result_id):
+    out = DataHandler(celery_task_id=result_id, process_data=True)
+    out.store_files()
+    return out.duplicate_proposals_output()
+
+
+@outputs_bp.route("/match_reviewers_output/<result_id>", methods=["GET"])
+@login_required
+def match_reviewers_output(result_id):
+    options = request.args.to_dict(flat=True)
+    out = DataHandler(celery_task_id=result_id, process_data=True)
+    out.store_files()
+    options = {k: ast.literal_eval(v) for k, v in options.items()}
+    return out.reviewer_match_output(**options)

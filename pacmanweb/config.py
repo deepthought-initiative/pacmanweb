@@ -1,10 +1,11 @@
 import json
 import os
-from pathlib import Path
+import pathlib
 
 
 class Config:
-    ROOTDIR = Path(__file__).resolve().parent
+    ROOTDIR = pathlib.Path(__file__).resolve().parent
+    ENV_NAME = os.environ.get("ENV_NAME", "pacman_linux")
 
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
@@ -12,6 +13,7 @@ class Config:
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DEFAULT_PASS = CREDS["default_password"]
+    TEST_ADS_API_KEY = CREDS["TEST_ADS_DEV_KEY"]
     if not SECRET_KEY:
         try:
             SECRET_KEY = CREDS.get("secret_key")
@@ -20,3 +22,6 @@ class Config:
 
     # celery config
     CELERY = {}
+
+    file_path = pathlib.Path(__file__).resolve()
+    PACMAN_PATH = file_path.parents[2] / "PACMan"

@@ -17,7 +17,7 @@ celery_app = Celery(
 def create_app(config_class=Config):
     # instance_path?
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(config_class())
     app.config.from_prefixed_env()
     celery_app.config_from_object(app.config["CELERY"])
 
@@ -61,12 +61,16 @@ def create_app(config_class=Config):
     api.api_bp.register_blueprint(outputs.outputs_bp)
     app.register_blueprint(auth.auth_bp)
     app.register_blueprint(api.api_bp)
-    
+
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add(
+            "Access-Control-Allow-Headers", "Content-Type,Authorization"
+        )
+        response.headers.add(
+            "Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS"
+        )
         return response
 
     return app

@@ -7,6 +7,8 @@ from celery.result import AsyncResult
 from flask import Blueprint, g, request, stream_with_context
 from flask_login import login_required
 
+from pacmanweb import Config
+
 from .. import celery_app
 from ..tasks import pacman_task
 
@@ -18,11 +20,16 @@ redis_instance = redis.Redis()
 @login_required
 def run_pacman():
     options = request.args.to_dict(flat=True)
-    options["past_cycles"] = options["past_cycles"].split(",")
+    if options.get("mode", None):
+        pass
+    else:
+        return {"output": "Mode is required."}
+    if options.get("past_cycles", None):
+        options["past_cycles"] = options["past_cycles"].split(",")
     result = pacman_task.delay(options=options)
     return {
         "output": f"PACMan running with task id {result.id}",
-        "result_id": f"{result.id}"
+        "result_id": f"{result.id}",
     }
 
 
@@ -31,7 +38,9 @@ def pacman_run_result(result_id):
     task_status = AsyncResult(result_id, app=celery_app)
     result = task_status.result if task_status.ready() else None
     if task_status.ready():
-        with open(f"run-{result_id}.log", "rb") as f:
+        logs_dirpath = Config.ROOTDIR / "logs"
+        log_fpath = logs_dirpath / f"run-{result_id}.log"
+        with open(log_fpath, "rb") as f:
             result = f.read().decode("utf-8")
     return {
         "ready": task_status.ready(),

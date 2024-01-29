@@ -7,6 +7,13 @@ __pycache__
 
 # Application specific
 secrets.json
+pacmanweb/tests/data/*
+!pacmanweb/tests/data/input_panelist_data/
+!pacmanweb/tests/data/input_proposal_data/
+
+!pacmanweb/tests/data/models/
+pacmanweb/tests/data/models/*
+!pacmanweb/tests/data/models/README.md
 
 # Logs
 logs/
