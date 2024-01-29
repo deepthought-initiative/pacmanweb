@@ -11,12 +11,7 @@ const Logs = ({data, setShowTable}) => {
     const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`);
     const handleTable = async(event) => {
         event.preventDefault();
-    //     const tableResponse = await fetch(`http://127.0.0.1:5000/api/outputs/proposal_cat_output/${currentId}?model_results=True&recategorization=True&hand_classifications=False`, {
-    //     method: "GET",
-    //     headers: { Authorization: "Basic " + btoa("default:barebones") },
-    //     });
-    // const tableData = await tableResponse.json()
-        setShowTable(true)
+        setShowTable(true);
     }
 
   return (
