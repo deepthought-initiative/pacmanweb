@@ -8,6 +8,7 @@ from io import StringIO
 import pandas as pd
 from flask import Blueprint, request
 from flask_login import login_required
+from pacmanweb import Config
 
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
@@ -19,16 +20,17 @@ class DataHandler:
         process_data=True,
         run_name=None,
         alternate_pacman_path=None,
+        runs_dir=None,
     ):
         self.celery_task_id = celery_task_id
-        file_path = pathlib.Path.cwd().resolve()
-        pacman_path = file_path.parents[0]
-        pacman_path = pacman_path / "PACMan"
-        self.pacman_path = pacman_path
+
+        self.pacman_path = Config.PACMAN_PATH
         if alternate_pacman_path is not None:
             self.pacman_path = alternate_pacman_path
 
-        runs_dir = self.pacman_path / "runs"
+        if not runs_dir:
+            runs_dir = self.pacman_path / "runs"
+
         if run_name:
             self.output_dir = runs_dir / run_name
         else:
@@ -108,9 +110,9 @@ class DataHandler:
                         header=None,
                         names=["Proposal 1", "Proposal 2", "Similarity"],
                         delimiter=" ",
-                    ).to_dict()
+                    )
                 else:
-                    data = pd.read_csv(StringIO(data)).to_dict()
+                    data = pd.read_csv(StringIO(data))
         return data
 
     def store_files(self):
@@ -144,8 +146,37 @@ class DataHandler:
                     print(f"Could not parse {filepath}")
                 setattr(self, filename + "_pkl", data)
 
+    def proposal_cat_table(self, start_row=None, end_row=None):
+        self.store_files()
+
+        if not hasattr(self, "prop_table"):
+            df = self.recategorization
+            columns_to_clean = ["pacman_cat", "orig_cat"]
+            df[columns_to_clean] = df[columns_to_clean].apply(
+                lambda x: x.str.replace('"', ""), axis=0
+            )
+            df["orig_cat"] = df["orig_cat"].apply(lambda x: None if "[]" in x else x)
+            df[["#propid", "certainty"]] = df[["#propid", "certainty"]].apply(
+                pd.to_numeric
+            )
+            df = df.rename(
+                columns={
+                    "#propid": "Proposal Number",
+                    "pacman_cat": "PACMan Science Category",
+                    "orig_cat": "Original Science Category",
+                    "certainty": "PACMan Probability",
+                }
+            )
+            prop_table = (
+                df.sort_values("Proposal Number").set_index("Proposal Number").T
+            )
+            table_dict = prop_table.to_dict()
+            self.prop_table = prop_table
+            return table_dict
+        return self.prop_table[start_row:end_row].to_dict()
+
     def proposal_cat_output(
-        self, model_results=True, recategorization=True, hand_classifications=True
+        self, model_results=False, recategorization=False, hand_classifications=False, prop_table=True
     ):
         res = {}
         if model_results:
@@ -155,6 +186,8 @@ class DataHandler:
             res["recategorization"] = self.recategorization
         if hand_classifications:
             res["hand_classifications"] = self.hand_classifications
+        if prop_table:
+            res["proposal_table"] = self.proposal_cat_table()
         return res
 
     def duplicate_proposals_output(self):
