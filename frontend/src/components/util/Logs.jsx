@@ -16,19 +16,19 @@ const Logs = ({data, setShowTable}) => {
 
   return (
         <>
-        <div id="log-container"className="container-fluid border border-1 border-black mt-5">
+        <div id="log-container" className="container-fluid mt-5">
             {data.map((log, index) => (
                 <div key={index}>
                     {log}
                 </div>
             ))}
         </div>
-        <div className='button-tray container border'>
-            <button className='btn' onClick={handleTable}>See Results</button>
+        <div className='button-tray p-0 container-fluid'>
+            <button className='btn rounded-0' onClick={handleTable}>See Results</button>
             <a href={encodedUri} download='proposals.csv'>
-                <button className='btn'>Download As CSV</button>
+                <button className='btn rounded-0'>Download As CSV</button>
             </a>
-            <button className='btn'>View Logs</button>
+            <button className='btn rounded-0'>View Logs</button>
         </div>
     </>
   )
