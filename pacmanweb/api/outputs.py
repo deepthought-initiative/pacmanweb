@@ -18,6 +18,7 @@ def make_records(dataframe):
     data["columns"] = list(dataframe.columns)
     return data
 
+
 class PropCat:
     def __init__(self, output_dir, cycle_number=None) -> None:
         model_file_fpath = next((output_dir / "model_results").iterdir())
@@ -92,27 +93,51 @@ class PropCat:
             prop_response[key]["Alternate Categories"] = self.alternate_cat_dict[key]
         return prop_response
 
+
 class DupCat:
     def __init__(self, output_dir, cycle_number=None) -> None:
         dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
-        self.parse_duplicates(dup_fpath)
+        self.data = self.parse_duplicates(dup_fpath)
 
     def parse_duplicates(self, dup_fpath):
-        dup_fpath = None
         data = pd.read_csv(
-                    dup_fpath,
-                    header=None,
-                    names=["Proposal 1", "Proposal 2", "Similarity"],
-                    delimiter=" ",
-                )
+            dup_fpath,
+            header=None,
+            names=["Proposal 1", "Proposal 2", "Similarity"],
+            delimiter=" ",
+        )
+        data["Proposal Set"] = data.apply(
+            lambda row: frozenset([row["Proposal 1"], row["Proposal 2"]]), axis=1
+        )
+        data["Sorted Set"] = data["Proposal Set"].apply(lambda s: tuple(sorted(s)))
+        data = data.drop_duplicates(subset="Sorted Set")
+        data = data.drop(columns=["Proposal Set", "Sorted Set"])
+        data[["Proposal 1", "Proposal 2"]] = data[["Proposal 1", "Proposal 2"]].astype(
+            str
+        )
+        data["Cycle 1"] = data["Proposal 1"].str[:6]
+        data["Proposal 1 Number"] = data["Proposal 1"].str[6:].astype(int)
+        data["Cycle 2"] = data["Proposal 2"].str[:6]
+        data["Proposal 2 Number"] = data["Proposal 2"].str[6:].astype(int)
+        data = data.drop(columns=["Proposal 1", "Proposal 2"])
+        data = data.set_index(["Cycle 1", "Proposal 1 Number", "Proposal 2 Number"])
         self.data = data
-    
-    def get_data(self):
-        return self.data
-    
+        return data
 
+    def get_for_cycle(self, cycle=None):
+        cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
+        return cycle_data
 
-
+    def get_counts_for_cycle(self, cycle=None):
+        cycle_data = self.get_for_cycle(cycle)
+        counts = (
+            cycle_data.droplevel(0)
+            .reset_index()
+            .groupby("Proposal 1 Number")["Proposal 2 Number"]
+            .nunique()
+            .to_dict()
+        )
+        return counts
 
 
 class DataHandler:
@@ -154,7 +179,6 @@ class DataHandler:
         ]
         [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
         [setattr(self, item, {}) for item in self.txt_files]
-
 
     def parse_assigments(self, filepath):
         if not filepath.is_file():
@@ -228,7 +252,6 @@ class DataHandler:
                 except ModuleNotFoundError:
                     print(f"Could not parse {filepath}")
                 setattr(self, filename + "_pkl", data)
-
 
     def duplicate_proposals_output(self):
         return {"duplications": self.duplications}
