@@ -20,7 +20,7 @@ def make_records(dataframe):
 
 
 class PropCat:
-    def __init__(self, output_dir, cycle_number=None) -> None:
+    def __init__(self, output_dir, cycle_number) -> None:
         model_file_fpath = next((output_dir / "model_results").iterdir())
         self.parse_model_results(model_file_fpath)
         recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
@@ -121,187 +121,111 @@ class DupCat:
         data["Proposal 2 Number"] = data["Proposal 2"].str[6:].astype(int)
         data = data.drop(columns=["Proposal 1", "Proposal 2"])
         data = data.set_index(["Cycle 1", "Proposal 1 Number", "Proposal 2 Number"])
-        self.data = data
         return data
 
     def get_for_cycle(self, cycle=None):
         cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
+        cycle_data = cycle_data.droplevel(0).T.to_dict()
+        cycle_data = {str(key): value for key, value in cycle_data.items()}
         return cycle_data
 
-    def get_counts_for_cycle(self, cycle=None):
-        cycle_data = self.get_for_cycle(cycle)
-        counts = (
-            cycle_data.droplevel(0)
-            .reset_index()
-            .groupby("Proposal 1 Number")["Proposal 2 Number"]
-            .nunique()
-            .to_dict()
+
+class MatchRev:
+    def __init__(self, output_dir, cycle_number) -> None:
+        self.output_dir = output_dir / "store"
+        self.cycle_number = cycle_number
+
+    def read_nrecords(self):
+        fname_suffix = "panelists.pkl"
+        data = pd.read_pickle(
+            self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
         )
-        return counts
+        nrecords_dict = dict(zip(data.fname, data.nrecords))
+        return nrecords_dict
 
-
-class DataHandler:
-    def __init__(
-        self,
-        celery_task_id,
-        process_data=True,
-        run_name=None,
-        alternate_pacman_path=None,
-        runs_dir=None,
-    ):
-        self.celery_task_id = celery_task_id
-
-        self.pacman_path = Config.PACMAN_PATH
-        if alternate_pacman_path is not None:
-            self.pacman_path = alternate_pacman_path
-
-        if not runs_dir:
-            runs_dir = self.pacman_path / "runs"
-
-        if run_name:
-            self.output_dir = runs_dir / run_name
-        else:
-            self.output_dir = runs_dir / celery_task_id
-
-        self.process_data = process_data
-        self.pkl_files = [
-            "panelists",
-            "panelists_query",
-            "panelists_match_check",
-            "panelists_conflicts",
-        ]
-        self.txt_files = [
-            "recategorization",
-            "hand_classifications",
-            "panelists",
-            "duplications",
-            "assignments",
-        ]
-        [setattr(self, f"{item}_pkl", {}) for item in self.pkl_files]
-        [setattr(self, item, {}) for item in self.txt_files]
-
-    def parse_assigments(self, filepath):
-        if not filepath.is_file():
-            return {}
-        with open(filepath, "r") as f:
-            if not self.process_data:
-                data = f.read()
-            else:
-                raw_data = f.readlines()
-                data = defaultdict(list)
-                for row in raw_data[1:]:
-                    row = row.split("\n")[:-1][0].split('"')[:-1]
-                    if not row:
-                        continue
-                    proposal_number, recommended_reviewer, cs_score, conflicts = row
-                    pattern = re.compile(r"(\D+,\s\d+), ")
-                    matches = pattern.findall(conflicts)
-                    data[proposal_number].append(
-                        {
-                            "recommended_reviewer": recommended_reviewer,
-                            "cs_score": cs_score,
-                            "conflicts": matches,
-                        }
-                    )
+    def read_matches(self):
+        fname_suffix = "panelists_match_check.pkl"
+        data = pd.read_pickle(
+            self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
+        )
+        for key, value in data.items():
+            data[key] = {k: v for k, v in value}
         return data
 
-    def parse_txt_files(self, filename, filepath):
-        with open(filepath, "r") as f:
-            data = f.read()
-            if self.process_data:
-                if filename == "duplications":
-                    data = pd.read_csv(
-                        StringIO(data),
-                        header=None,
-                        names=["Proposal 1", "Proposal 2", "Similarity"],
-                        delimiter=" ",
-                    )
-                else:
-                    data = pd.read_csv(StringIO(data))
-                    if filename == "recategorization":
-                        self.parse_recategorization(data)
+    def read_conflicts(self):
+        fname_suffix = "panelists_conflicts.pkl"
+        data = pd.read_pickle(
+            self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
+        )
         return data
 
-    def store_files(self):
-        store = self.output_dir / "store"
-        files = store.iterdir()
+    def read_panelists(self):
+        fname_suffix = "panelists.txt"
+        data = pd.read_csv(self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}")
+        data["prob"] = data.apply(
+            lambda row: row[row["model_classification"].replace(" ", "_") + "_prob"],
+            axis=1,
+        )
+        self.main_table_raw = data
 
-        for filepath in files:
-            filename = re.sub(r"\d+_", "", filepath.stem)
-            data = None
+    def make_main_table(self):
+        self.read_panelists()
+        data = self.main_table_raw
+        data = data.drop(
+            columns=[item for item in data.columns if item.endswith("_prob")]
+            + ["encoded_model_classification"]
+        )
+        data["nrecords"] = data["fname"].map(self.read_nrecords())
+        return data.T.to_dict()
 
-            if filepath.suffix == ".txt":
-                if filename == "panelists_conflicts":
-                    continue
-                if filename in [
-                    "recategorization",
-                    "hand_classifications",
-                    "duplications",
-                ]:
-                    data = self.parse_txt_files(filename, filepath)
-                if filename == "assignments":
-                    data = self.parse_assigments(filepath)
+    def complete_response(self):
+        return {
+            "Main Table": self.make_main_table(),
+            "Proposal Assignments": self.read_matches(),
+            "Conflicts": self.read_conflicts(),
+        }
 
-                setattr(self, filename, data)
 
-            elif filepath.suffix == ".pkl":
-                try:
-                    data = pd.read_pickle(filepath)
-                    if isinstance(data, pd.DataFrame):
-                        data = data.to_dict()
-                except ModuleNotFoundError:
-                    print(f"Could not parse {filepath}")
-                setattr(self, filename + "_pkl", data)
-
-    def duplicate_proposals_output(self):
-        return {"duplications": self.duplications}
-
-    def reviewer_match_output(
-        self,
-        panelists=False,
-        conflicts=False,
-        assignments=True,
-        match_check=False,
-        query=False,
-    ):
-        res = {}
-        if panelists:
-            res["panelists"] = self.panelists_pkl
-        if conflicts:
-            res["panelists_conflicts"] = self.panelists_conflicts_pkl
-        if assignments:
-            res["assignments"] = self.assignments
-        if match_check:
-            res["panelists_match_check"] = self.panelists_match_check_pkl
-        if query:
-            res["panelists_query"] = self.panelists_query_pkl
-        return res
+def data_handler(celery_task_id, cycle_number, mode):
+    output_dir = Config.PACMAN_PATH / "runs" / celery_task_id
+    if mode == "PROP":
+        prop_cat = PropCat(output_dir=output_dir, cycle_number=cycle_number)
+        return prop_cat.get_prop_table()
+    if mode == "DUP":
+        dup_cat = DupCat(output_dir=output_dir, cycle_number=cycle_number)
+        return dup_cat.get_for_cycle(cycle=cycle_number)
+    if mode == "MATCH":
+        match = MatchRev(output_dir=output_dir, cycle_number=cycle_number)
+        return match.complete_response()
 
 
 @outputs_bp.route("/proposal_cat_output/<result_id>", methods=["GET"])
 @login_required
 def proposal_cat_output(result_id):
     options = request.args.to_dict(flat=True)
-    out = DataHandler(celery_task_id=result_id, process_data=True)
-    out.store_files()
-    options = {k: ast.literal_eval(v) for k, v in options.items()}
-    result = out.proposal_cat_output(**options)
-    return json.dumps(result)
+    response = data_handler(
+        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="PROP"
+    )
+
+    return json.dumps(response)
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
 @login_required
 def duplicates_output(result_id):
-    out = DataHandler(celery_task_id=result_id, process_data=True)
-    out.store_files()
-    return out.duplicate_proposals_output()
+    options = request.args.to_dict(flat=True)
+    response = data_handler(
+        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="DUP"
+    )
+
+    return json.dumps(response)
 
 
 @outputs_bp.route("/match_reviewers_output/<result_id>", methods=["GET"])
 @login_required
 def match_reviewers_output(result_id):
     options = request.args.to_dict(flat=True)
-    out = DataHandler(celery_task_id=result_id, process_data=True)
-    out.store_files()
-    options = {k: ast.literal_eval(v) for k, v in options.items()}
-    return out.reviewer_match_output(**options)
+    response = data_handler(
+        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="MATCH"
+    )
+    return json.dumps(response)
