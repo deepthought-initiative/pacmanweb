@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
@@ -6,11 +7,10 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import ProposalTable from "./ProposalTable";
 
-const ProposalCategorize = () => {
+const ProposalCategorize = ({ currentId, setCurrentId }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [currentId, setCurrentId] = useState();
 
   useEffect(() => {
     async function fetchLogs() {
