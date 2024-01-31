@@ -6,10 +6,11 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableForDuplicationChecker from "./TableForDuplicationChecker";
 
-const ProposalDuplicationChecker = ({ currentId, setCurrentId }) => {
+const ProposalDuplicationChecker = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [currentId, setCurrentId] = useState();
 
   const numbers = [
     123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,

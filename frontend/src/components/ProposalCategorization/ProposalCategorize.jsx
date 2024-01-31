@@ -6,10 +6,11 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import ProposalTable from "./ProposalTable";
 
-const ProposalCategorize = ({ currentId, setCurrentId }) => {
+const ProposalCategorize = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [currentId, setCurrentId] = useState();
 
   useEffect(() => {
     async function fetchLogs() {
