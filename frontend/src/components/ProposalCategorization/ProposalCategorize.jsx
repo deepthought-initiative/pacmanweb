@@ -17,18 +17,16 @@ const ProposalCategorize = () => {
       if (!currentId) {
         return;
       }
-      const sse = new EventSource(
-        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
+      const streamResponse = await fetch(
+        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`,
+        {
+          method: "GET",
+          headers: { Authorization: "Basic " + btoa("default:barebones") },
+        }
       );
-      sse.onmessage = (e) => setLogs((prevLogs) => prevLogs.concat(e.data));
-      sse.onerror = () => {
-        // error log here
-        sse.close();
-      };
       setShowLogs(true);
-      return () => {
-        sse.close();
-      };
+      const allLogs = await streamResponse.text();
+      setLogs(allLogs.split("\n"));
     }
     fetchLogs();
   }, [currentId, setLogs, setShowLogs]);
