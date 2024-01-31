@@ -5,12 +5,7 @@ import { useEffect, useState } from "react";
 import "../../css/proposalTable.css";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
-const ProposalTable = ({
-  handleClick,
-  currentId,
-  setShowTable,
-  setShowLogs,
-}) => {
+const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();

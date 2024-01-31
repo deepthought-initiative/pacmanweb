@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
@@ -37,10 +36,6 @@ const ProposalCategorize = ({ currentId, setCurrentId }) => {
   ];
   const handleClick = async (event) => {
     event.preventDefault();
-
-    let headers = new Headers();
-
-    headers.append("Content-Type", "application/json");
 
     // Call the first API to get the task ID
     const spawnResponse = await fetch(
