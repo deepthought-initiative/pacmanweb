@@ -1,0 +1,35 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - uses: mamba-org/setup-micromamba@v1
+      with:
+        environment-name: pacmanweb
+        create-args: >-
+          python
+          jupyter-book
+    
+    - run: jupyter-book build --all docs
+      shell: micromamba-shell {0}
+    
+    - name: Configure Git
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+    
+    - name: Commit Changes
+      run: |
+        git checkout docs
+        git add docs/_build
+        git commit -m "Update docs"
+        git push
