@@ -2,6 +2,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import "../../css/TableForDuplicationChecker.css";
+import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
 const TableForDuplicationChecker = ({
   currentId,
@@ -25,11 +26,42 @@ const TableForDuplicationChecker = ({
         }
       );
       const tableData = await tableResponse.json();
-      setDataToDisplay(tableData);
-      console.log(tableData);
+      setDataToDisplay(reformatData(tableData));
+      console.log(reformatData(tableData));
     }
     fetchTable();
   }, [currentId, setShowTable]);
+
+  const reformatData = (originalData) => {
+    const reformattedData = {};
+
+    for (const key in originalData) {
+      const [firstNo, secondNo] = key
+        .replace(/[()]/g, "")
+        .split(", ")
+        .map(Number);
+
+      if (!reformattedData[firstNo]) {
+        reformattedData[firstNo] = [];
+      }
+
+      if (!reformattedData[secondNo]) {
+        reformattedData[secondNo] = [];
+      }
+
+      reformattedData[firstNo].push({
+        duplicateProposalNumber: secondNo.toString(),
+        ...originalData[key],
+      });
+
+      reformattedData[secondNo].push({
+        duplicateProposalNumber: firstNo.toString(),
+        ...originalData[key],
+      });
+    }
+
+    return reformattedData;
+  };
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
@@ -139,30 +171,16 @@ const TableForDuplicationChecker = ({
         className="container-fluid border border-1 border-black mt-5 rounded-3"
       >
         <div className="col-6 px-3">
-          <h6>Duplicate Proposals in cycle</h6>
+          <h6 className="mx-3 my-4 fw-bolder">Duplicate Proposals in cycle</h6>
           <div className="table-container">
             <table className="container-fluid p-0">
               <thead>
                 <tr>
-                  <th className="col-md-2 col-sm-1">Proposal Number</th>
-                  <th className="col-md-8 col-sm-10">Title</th>
-                  <th className="col-md-2 col-sm-1">Number of Duplicates</th>
+                  <th className="col-md-2 col-sm-6">Proposal Number</th>
+                  <th className="col-md-2 col-sm-6">Number of Duplicates</th>
                 </tr>
               </thead>
               <tbody>
-                {/* {data.map((row) => (
-                  <tr
-                    onClick={() => handleHighlight(row.id)}
-                    className={highlighted === row.id ? "highlighted" : ""}
-                    key={row.id}
-                  >
-                    <td className="text-break" scope="row">
-                      {row.id}
-                    </td>
-                    <td className="text-break">{row.column2}</td>
-                    <td className="text-break">{row.column3}</td>
-                  </tr>
-                ))}
                 {dataToDisplay &&
                   Object.entries(dataToDisplay).map(([key, value]) => (
                     <tr
@@ -170,45 +188,46 @@ const TableForDuplicationChecker = ({
                       className={highlighted === key ? "highlighted" : ""}
                       key={key}
                     >
-                      <td className="col-2 text-break" scope="row">
-                        {key}
-                      </td>
-                      <td className="col-6 text-break">
-                        {value["title"]}
-                      </td>
-                      <td className="col-4 text-break">
-                        {value["Original Science Category"]}
-                      </td>
+                      <td>{key}</td>
+                      <td>{value.length}</td>
                     </tr>
-                  ))} */}
+                  ))}
               </tbody>
             </table>
           </div>
         </div>
         <div className="col-6 px-3">
-          <h6>Duplicates found for proposal</h6>
-          <div className="table-container">
-            <table className="container-fluid p-0">
-              <thead>
-                <tr>
-                  <th className="col-md-2 col-sm-1">Cycle Number</th>
-                  <th className="col-md-8 col-sm-10">Proposal Title</th>
-                  <th className="col-md-2 col-sm-1">CS Score</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((row) => (
-                  <tr key={row.id}>
-                    <td className="text-break" scope="row">
-                      {row.id}
-                    </td>
-                    <td className="text-break">{row.column2}</td>
-                    <td className="text-break">{row.column3}</td>
+          <h6 className="mx-3 my-4 fw-bolder">Duplicates found for proposal</h6>
+          {highlighted ? (
+            <div className="table-container">
+              <table className="container-fluid p-0">
+                <thead>
+                  <tr>
+                    <th className="col-md-4 col-sm-4">Cycle Number</th>
+                    <th className="col-md-4 col-sm-4">Proposal Number</th>
+                    <th className="col-md-4 col-sm-4">CS Score</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {dataToDisplay &&
+                    dataToDisplay[currentRow] &&
+                    dataToDisplay[currentRow].map((row) => (
+                      <tr key={row["no"]}>
+                        <td className="text-break">{row["Cycle 2"]}</td>
+                        <td className="text-break">
+                          {row["duplicateProposalNumber"]}
+                        </td>
+                        <td className="text-break">{row["Similarity"]}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div>
+              <AlternateCategoriesTest />
+            </div>
+          )}
         </div>
       </div>
       <div className="button-tray container-fluid p-0">

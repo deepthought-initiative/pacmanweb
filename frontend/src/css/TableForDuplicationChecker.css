@@ -1,5 +1,5 @@
 #outer-container {
-    height: 400px;
+    height: 500px;
     display: flex;
 }
 
@@ -14,7 +14,7 @@ h6 {
 
 .table-container {
     overflow-y: auto;
-    max-height: 350px;
+    max-height: 400px;
 }
 
 thead {
