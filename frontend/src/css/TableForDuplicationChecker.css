@@ -8,10 +8,6 @@ h6 {
     margin-top: 5px;
 }
 
-#table-section{
-    width: 50%;
-}
-
 .table-container {
     overflow-y: auto;
     max-height: 400px;
@@ -21,7 +17,6 @@ thead {
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: #E7ECEF;
 }
 
 td {
@@ -36,10 +31,8 @@ th,
 td {
     font-size: small;
     height: 65px;
-    background-color: #E7ECEF;
     text-align: left;
     vertical-align: middle;
-    border-color: white;
     padding-top: 12px;
     padding-bottom: 12px;
     padding-left: 15px;
