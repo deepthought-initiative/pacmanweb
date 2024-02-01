@@ -1,19 +1,59 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
+import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableMatchReviewers from "./TableMatchReviewers";
 
-const MatchReviewers = ({ currentId, setCurrentId }) => {
+const MatchReviewers = () => {
   const [showTable, setShowTable] = useState(false);
+  const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState([]);
+  const [currentId, setCurrentId] = useState();
 
   const numbers = [
     123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
     172345,
   ];
-  const handleClick = () => {
-    setShowTable(!showTable);
+
+  useEffect(() => {
+    async function fetchLogs() {
+      if (!currentId) {
+        return;
+      }
+      const streamResponse = await fetch(
+        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`,
+        {
+          method: "GET",
+          headers: { Authorization: "Basic " + btoa("default:barebones") },
+        }
+      );
+      setShowLogs(true);
+      const allLogs = await streamResponse.text();
+      setLogs(allLogs.split("\n"));
+    }
+    fetchLogs();
+  }, [currentId, setLogs, setShowLogs]);
+
+  const handleClick = async (event) => {
+    event.preventDefault();
+
+    // Call the first API to get the task ID
+    const spawnResponse = await fetch(
+      "http://127.0.0.1:5000/api/run_pacman?mode=MATCH&main_test_cycle=221026",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Basic " + btoa("default:barebones"),
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await spawnResponse.json();
+    console.log(data["result_id"]);
+    setCurrentId(data["result_id"]);
   };
 
   return (
@@ -29,7 +69,13 @@ const MatchReviewers = ({ currentId, setCurrentId }) => {
           </div>
         </div>
         {showTable ? (
-          <TableMatchReviewers />
+          <TableMatchReviewers
+            currentId={currentId}
+            setShowTable={setShowTable}
+            setShowLogs={setShowLogs}
+          />
+        ) : showLogs ? (
+          <Logs data={logs} setShowTable={setShowTable} currentId={currentId} />
         ) : (
           <OtherConfigOptions
             button_label="Match Reviewers"
