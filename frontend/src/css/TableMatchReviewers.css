@@ -10,14 +10,13 @@ h6 {
 
 .scroll-table-container {
     overflow-y: auto;
-    max-height: 450px;
+    max-height: 400px;
 }
 
 thead {
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: #E7ECEF;
 }
 
 td {
@@ -35,7 +34,6 @@ td {
     background-color: #E7ECEF;
     text-align: left;
     vertical-align: middle;
-    border-color: white;
     padding-top: 12px;
     padding-bottom: 12px;
     padding-left: 15px;
