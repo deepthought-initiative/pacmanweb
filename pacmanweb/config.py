@@ -9,6 +9,10 @@ class Config:
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
         CREDS = json.load(secrets)
+    
+    # will surpass the environment variable
+    if CREDS.get("ENV_NAME", None):
+        ENV_NAME = CREDS["ENV_NAME"]
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DEFAULT_PASS = CREDS["default_password"]
