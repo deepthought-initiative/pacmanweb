@@ -20,53 +20,27 @@ h6{
     margin-top: 5px;
 }
 
-#left-section{
-    width: 68%;
-}
-
-#right-section {
-    width: 28%;
-}
-
-.w-11{
-    width: 90px;
-}
-
-.w-22 {
-    width: 180px;
-}
-
-.w-33 {
-    width: 270px;
-}
-
 .table-container{
     overflow-y: auto;
-    max-height: 350px;
+    max-height: 400px;
 }
 
 thead{
     position: sticky;
     top: 0;
     z-index: 1;
-    background-color: #E7ECEF;
 }
 
 td{
     cursor: pointer;
-}
-table{
-    border-collapse: separate;
 }
 
 th, 
 td {
     font-size: small;
     height: 65px;
-    background-color: #E7ECEF;
     text-align: left;
     vertical-align: middle;
-    border-color: white;
     padding-top: 12px;
     padding-bottom: 12px;
     padding-left: 15px;
@@ -76,7 +50,6 @@ td {
 .button-tray{
     margin-top: 40px;
     display: flex;
-    justify-content: center;
     gap: 22px;
 }
 

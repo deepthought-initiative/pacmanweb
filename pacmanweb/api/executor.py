@@ -78,6 +78,9 @@ class RunPACMan:
         if mode == "MATCH":
             mode_options = {
                 "categorize_ads_reviewers": "true",
+                "categorize_one_cycle": "true",
+                "get_science_categories": "true",
+                "compare_results_real": "true",
             }
 
         if mode == "ALL":
