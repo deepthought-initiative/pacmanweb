@@ -8,17 +8,17 @@ CELERYD_NODES="worker1"
 #CELERYD_NODES=10
 
 # Absolute or relative path to the 'celery' command:
-CELERY_BIN="/usr/local/bin/celery"
+CELERY_BIN="/root/miniforge3/envs/pacmanweb/bin/celery"
 #CELERY_BIN="/virtualenvs/def/bin/celery"
 
 # App instance to use
 # comment out this line if you don't use an app
-CELERY_APP="pacmanweb"
+CELERY_APP="pacmanweb.celery_app"
 # or fully qualified:
 #CELERY_APP="proj.tasks:app"
 
 # Where to chdir at start.
-CELERYD_CHDIR="/home/atharva/workspace/code/tardis-main/pacman/pacmanweb"
+CELERYD_CHDIR="/root/pacmanweb"
 
 # Extra command-line arguments to the worker
 CELERYD_OPTS="--time-limit=300 --concurrency=8"
