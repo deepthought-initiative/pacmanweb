@@ -22,20 +22,32 @@ const MatchReviewers = () => {
       if (!currentId) {
         return;
       }
-      const streamResponse = await fetch(
-        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`,
-        {
-          method: "GET",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        }
+
+      const eventSource = new EventSource(
+        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
       );
-      setShowLogs(true);
-      const allLogs = await streamResponse.text();
-      setLogs(allLogs.split("\n"));
+
+      eventSource.onopen = () => {
+        setShowLogs(true);
+      };
+
+      eventSource.onmessage = (event) => {
+        const newLog = event.data;
+        setLogs((prevLogs) => [...prevLogs, newLog]);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+        eventSource.close();
+      };
+
+      return () => {
+        eventSource.close();
+      };
     }
+
     fetchLogs();
   }, [currentId, setLogs, setShowLogs]);
-
   const handleClick = async (event) => {
     event.preventDefault();
 

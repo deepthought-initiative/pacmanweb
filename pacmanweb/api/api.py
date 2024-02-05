@@ -4,7 +4,7 @@ import subprocess
 import redis
 from celery import shared_task
 from celery.result import AsyncResult
-from flask import Blueprint, g, request, stream_with_context
+from flask import Blueprint, Response, g, json, request, stream_with_context
 from flask_login import login_required
 
 from pacmanweb import Config
@@ -66,11 +66,14 @@ def stream_task(result_id):
             for item in stream_content[0][1]:
                 line = item[1].get(b"line")
                 data += line.decode("utf-8")
-            yield data
+
+            for line in data.split("\n"):
+                yield f"data: {line}\n"
+            yield "\n\n"
             if "PROCESS COMPLETE" in data or "run complete" in data:
                 break
 
-    return stream_with_context(generate())
+    return Response(stream_with_context(generate()), mimetype="text/event-stream")
 
 
 @api_bp.route("/terminate/<result_id>", methods=["GET"])

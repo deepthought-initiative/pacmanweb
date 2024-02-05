@@ -9,6 +9,7 @@
     background-color: black;
     overflow-y: auto;
     text-align: left;
+    white-space: pre-wrap;
 }
 
 #log-container>* {
