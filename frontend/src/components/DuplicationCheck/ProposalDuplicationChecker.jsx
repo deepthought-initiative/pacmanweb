@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
@@ -11,6 +12,15 @@ const ProposalDuplicationChecker = () => {
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [currentCycle, setCurrentCycle] = useState();
+  const [pastCycle, setPastCycle] = useState([]);
+
+  // state variables for other config options
+  const [runName, setRunName] = useState();
+  const [modalFile, setModalFile] = useState();
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
+  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
+    useState();
 
   const numbers = [
     123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
@@ -77,6 +87,7 @@ const ProposalDuplicationChecker = () => {
               data={numbers}
               label="Selected Current Cycle"
               desc="Prefix used throughout script to match with cycle description"
+              setCycle={setCurrentCycle}
             />
           </div>
           <div className="col-md-6">
@@ -84,6 +95,7 @@ const ProposalDuplicationChecker = () => {
               data={numbers}
               label="Selected Past Cycle"
               desc="Cycle prefixes of past cycles"
+              setCycle={setPastCycle}
             />
           </div>
         </div>
@@ -99,6 +111,10 @@ const ProposalDuplicationChecker = () => {
           <OtherConfigOptions
             button_label="Find Duplicates"
             handleClick={handleClick}
+            setModalFile={setModalFile}
+            setRunName={setRunName}
+            setNumberOfTopReviewers={setNumberOfTopReviewers}
+            setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
           />
         )}
       </form>

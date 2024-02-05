@@ -11,6 +11,14 @@ const ProposalCategorize = () => {
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [currentCycle, setCurrentCycle] = useState();
+
+  // state variables for other config options
+  const [runName, setRunName] = useState();
+  const [modalFile, setModalFile] = useState();
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
+  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
+    useState();
 
   useEffect(() => {
     async function fetchLogs() {
@@ -75,6 +83,7 @@ const ProposalCategorize = () => {
             data={numbers}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
+            setCycle={setCurrentCycle}
           />
         </div>
       </div>
@@ -90,6 +99,10 @@ const ProposalCategorize = () => {
         <OtherConfigOptions
           button_label="Categorize Proposal"
           handleClick={handleClick}
+          setModalFile={setModalFile}
+          setRunName={setRunName}
+          setNumberOfTopReviewers={setNumberOfTopReviewers}
+          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
         />
       )}
     </div>

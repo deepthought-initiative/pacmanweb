@@ -11,6 +11,14 @@ const MatchReviewers = () => {
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [currentCycle, setCurrentCycle] = useState();
+
+  // state variables for other config options
+  const [runName, setRunName] = useState();
+  const [modalFile, setModalFile] = useState();
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
+  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
+    useState();
 
   const numbers = [
     123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
@@ -77,6 +85,7 @@ const MatchReviewers = () => {
               data={numbers}
               label="Selected Current Cycle"
               desc="Prefix used throughout script to match with cycle description"
+              setCycle={setCurrentCycle}
             />
           </div>
         </div>
@@ -92,6 +101,10 @@ const MatchReviewers = () => {
           <OtherConfigOptions
             button_label="Match Reviewers"
             handleClick={handleClick}
+            setModalFile={setModalFile}
+            setRunName={setRunName}
+            setNumberOfTopReviewers={setNumberOfTopReviewers}
+            setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
           />
         )}
       </form>
