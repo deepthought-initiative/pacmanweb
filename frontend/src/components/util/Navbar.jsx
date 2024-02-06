@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { GearFill, QuestionCircle } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import sample from "../../assets/react.svg";
 import "../../css/navbar.css";
 
 const Navbar = () => {
+  const location = useLocation();
   const [highlightedItem, setHighlightedItem] = useState(null);
 
   // Function to handle click on a navbar item
   const handleItemClick = (itemId) => {
     setHighlightedItem(itemId === highlightedItem ? null : itemId);
+  };
+
+  // Function to determine if a navbar item should be highlighted
+  const isItemActive = (path) => {
+    return location.pathname === path;
   };
 
   return (
@@ -29,7 +35,7 @@ const Navbar = () => {
         <ul className="nav">
           <li
             className={`nav-item border ms-5${
-              highlightedItem === 1 ? " active" : ""
+              isItemActive("/categorize") && " active"
             }`}
           >
             <Link
@@ -42,7 +48,7 @@ const Navbar = () => {
           </li>
           <li
             className={`nav-item border ms-5${
-              highlightedItem === 2 ? " active" : ""
+              isItemActive("/duplication") && " active"
             }`}
           >
             <Link
@@ -55,7 +61,7 @@ const Navbar = () => {
           </li>
           <li
             className={`nav-item border ms-5${
-              highlightedItem === 3 ? " active" : ""
+              isItemActive("/review") && " active"
             }`}
           >
             <Link
@@ -68,7 +74,7 @@ const Navbar = () => {
           </li>
           <li
             className={`nav-item border ms-5${
-              highlightedItem === 4 ? " active" : ""
+              isItemActive("/upload") && " active"
             }`}
           >
             <Link
