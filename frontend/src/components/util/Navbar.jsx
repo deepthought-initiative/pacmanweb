@@ -1,17 +1,11 @@
-import { useState } from "react";
-import { GearFill, QuestionCircle } from "react-bootstrap-icons";
 import { Link, useLocation } from "react-router-dom";
-import sample from "../../assets/react.svg";
+import DefaultPfp from "../../assets/DefaultPfp.png";
+import QuestionMark from "../../assets/QuestionMark.jpeg";
+import Settings from "../../assets/Settings.png";
 import "../../css/navbar.css";
 
 const Navbar = () => {
   const location = useLocation();
-  const [highlightedItem, setHighlightedItem] = useState(null);
-
-  // Function to handle click on a navbar item
-  const handleItemClick = (itemId) => {
-    setHighlightedItem(itemId === highlightedItem ? null : itemId);
-  };
 
   // Function to determine if a navbar item should be highlighted
   const isItemActive = (path) => {
@@ -35,53 +29,37 @@ const Navbar = () => {
         <ul className="nav">
           <li
             className={`nav-item border ms-5${
-              isItemActive("/categorize") && " active"
+              isItemActive("/categorize") ? " active" : ""
             }`}
           >
-            <Link
-              className="nav-link text-dark"
-              to="/categorize"
-              onClick={() => handleItemClick(1)}
-            >
+            <Link className="nav-link text-dark" to="/categorize">
               Proposals- Categorize
             </Link>
           </li>
           <li
             className={`nav-item border ms-5${
-              isItemActive("/duplication") && " active"
+              isItemActive("/duplication") ? " active" : ""
             }`}
           >
-            <Link
-              className="nav-link text-dark"
-              to="/duplication"
-              onClick={() => handleItemClick(2)}
-            >
+            <Link className="nav-link text-dark" to="/duplication">
               Proposals- Duplication Check
             </Link>
           </li>
           <li
             className={`nav-item border ms-5${
-              isItemActive("/review") && " active"
+              isItemActive("/review") ? " active" : ""
             }`}
           >
-            <Link
-              className="nav-link text-dark"
-              to="/review"
-              onClick={() => handleItemClick(3)}
-            >
+            <Link className="nav-link text-dark" to="/review">
               Match Reviewers
             </Link>
           </li>
           <li
             className={`nav-item border ms-5${
-              isItemActive("/upload") && " active"
+              isItemActive("/upload") ? " active" : ""
             }`}
           >
-            <Link
-              className="nav-link text-dark"
-              to="/upload"
-              onClick={() => handleItemClick(4)}
-            >
+            <Link className="nav-link text-dark" to="/upload">
               Upload a Zip
             </Link>
           </li>
@@ -90,17 +68,17 @@ const Navbar = () => {
       <div id="right-corner">
         <div className="">
           <a href="#">
-            <QuestionCircle size={20} color="black" />
+            <img className="icon" src={Settings} />
           </a>
         </div>
         <div className="">
           <a href="#">
-            <GearFill size={20} color="black" />
+            <img className="icon" src={QuestionMark} />
           </a>
         </div>
         <div>
           <a href="#">
-            <img src={sample} />
+            <img src={DefaultPfp} />
           </a>
         </div>
       </div>
