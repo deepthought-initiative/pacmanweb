@@ -4,7 +4,16 @@ import subprocess
 import redis
 from celery import shared_task
 from celery.result import AsyncResult
-from flask import Blueprint, Response, g, json, request, stream_with_context, flash, redirect
+from flask import (
+    Blueprint,
+    Response,
+    g,
+    json,
+    request,
+    stream_with_context,
+    flash,
+    redirect,
+)
 from flask_login import login_required
 from werkzeug.utils import secure_filename
 
@@ -12,9 +21,9 @@ from pacmanweb import Config
 
 from .. import celery_app
 from ..tasks import pacman_task
-from .util import VerifyPACManDir
+from .util import VerifyPACManDir, MoveUploadedFiles
 
-ALLOWED_EXTENSIONS={"zip"}
+ALLOWED_EXTENSIONS = {"zip"}
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 redis_instance = redis.Redis()
@@ -95,26 +104,28 @@ def stop_task(result_id):
 
 
 def allowed_file(filename):
-    result = '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    result = (
+        "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
     print(result)
     return result
+
 
 @api_bp.route("/upload", methods=["POST"])
 @login_required
 def upload_zip():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    file = request.files['file']
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
+    if "file" not in request.files:
+        flash("No file part")
+        return {"response": "no file part"}
+    file = request.files["file"]
+    print(file)
+    if file.filename == "":
+        flash("No selected file")
+        return {"response": "no selected file"}
     if file and allowed_file(file.filename):
         # do not remove this
         filename = secure_filename(file.filename)
-        file.save(pathlib.Path(Config.UPLOAD_FOLDER) /  filename)
-        return {
-            "response": "file saved sucessfully"
-        }
-
+        file.save(pathlib.Path(Config.UPLOAD_FOLDER) / filename)
+        print(file, filename)
+        MoveUploadedFiles(str(filename)).move_items()
+        return {"response": "file saved sucessfully"}
