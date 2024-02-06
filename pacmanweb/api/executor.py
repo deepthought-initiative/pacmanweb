@@ -22,7 +22,7 @@ class RunPACMan:
         runs_dir="",
         modelfile="strolger_pacman_model_7cycles.joblib",
         assignment_number_top_reviewers="5",
-        close_collaborator_time_frame="3"
+        close_collaborator_time_frame="3",
     ):
         """Initialise RunPACMan Class.
 

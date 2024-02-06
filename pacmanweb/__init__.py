@@ -19,6 +19,9 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class())
     app.config.from_prefixed_env()
+    # the max limit to uploaded files is 1600 MBs
+    # change the below length to allow sending bigger files
+    app.config["MAX_CONTENT_LENGTH"] = 1600 * 1000 * 1000
     celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()

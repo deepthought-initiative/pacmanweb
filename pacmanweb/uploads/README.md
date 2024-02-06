@@ -1,0 +1,1 @@
+This is where uploaded files will be stored. Change this location in the config file.
