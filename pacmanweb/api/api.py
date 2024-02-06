@@ -11,9 +11,16 @@ from pacmanweb import Config
 
 from .. import celery_app
 from ..tasks import pacman_task
+from .util import VerifyPACManDir
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 redis_instance = redis.Redis()
+
+
+@api_bp.route("/get_cycles", methods=["GET"])
+@login_required
+def get_available_cycles():
+    return VerifyPACManDir().generate_response()
 
 
 @api_bp.route("/run_pacman", methods=["GET", "POST"])
