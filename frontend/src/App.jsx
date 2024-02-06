@@ -4,6 +4,7 @@ import ProposalDuplicationChecker from "./components/DuplicationCheck/ProposalDu
 import ProposalCategorize from "./components/ProposalCategorization/ProposalCategorize";
 import MatchReviewers from "./components/Reviewers/MatchReviewers";
 import Navbar from "./components/util/Navbar";
+import UploadZipForm from "./components/util/UploadZip";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/categorize" element={<ProposalCategorize />} />
           <Route path="/duplication" element={<ProposalDuplicationChecker />} />
           <Route path="/review" element={<MatchReviewers />} />
+          <Route path="/upload" element={<UploadZipForm />} />
         </Routes>
       </BrowserRouter>
     </>
