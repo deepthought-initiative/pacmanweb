@@ -43,6 +43,7 @@ const MatchReviewers = () => {
     const data = await spawnResponse.json();
     console.log(data["result_id"]);
     setCurrentId(data["result_id"]);
+    setShowLogs(true);
   };
 
   const onTerminate = () => {
