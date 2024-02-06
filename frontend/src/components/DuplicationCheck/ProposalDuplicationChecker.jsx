@@ -10,11 +10,9 @@ import TableForDuplicationChecker from "./TableForDuplicationChecker";
 const ProposalDuplicationChecker = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
-  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [currentCycle, setCurrentCycle] = useState();
   const [pastCycle, setPastCycle] = useState([]);
-  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
 
   // state variables for other config options
   const [runName, setRunName] = useState();
