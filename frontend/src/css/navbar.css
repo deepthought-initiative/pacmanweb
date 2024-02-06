@@ -10,3 +10,7 @@ img{
     width: 40px;
     border-radius: 50%;
 }
+
+.active{
+    background-color: #E7ECEF;
+}
