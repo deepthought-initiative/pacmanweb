@@ -3,8 +3,8 @@ import "./App.css";
 import ProposalDuplicationChecker from "./components/DuplicationCheck/ProposalDuplicationChecker";
 import ProposalCategorize from "./components/ProposalCategorization/ProposalCategorize";
 import MatchReviewers from "./components/Reviewers/MatchReviewers";
+import UploadZipForm from "./components/Upload/UploadZip";
 import Navbar from "./components/util/Navbar";
-import UploadZipForm from "./components/util/UploadZip";
 
 function App() {
   return (
