@@ -7,7 +7,7 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableMatchReviewers from "./TableMatchReviewers";
 
-const MatchReviewers = ({ allCycles }) => {
+const MatchReviewers = ({ allCycles, modalFile, setModalFile }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -16,11 +16,10 @@ const MatchReviewers = ({ allCycles }) => {
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
-  const [runName, setRunName] = useState();
-  const [modalFile, setModalFile] = useState();
-  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
+  const [runName, setRunName] = useState("Sample Run Name");
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
-    useState();
+    useState(3);
 
   const handleClick = async (event) => {
     event.preventDefault();
@@ -81,6 +80,10 @@ const MatchReviewers = ({ allCycles }) => {
           <OtherConfigOptions
             button_label="Match Reviewers"
             handleClick={handleClick}
+            runName={runName}
+            modalFile={modalFile}
+            numberOfTopReviewers={numberOfTopReviewers}
+            closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
             setModalFile={setModalFile}
             setRunName={setRunName}
             setNumberOfTopReviewers={setNumberOfTopReviewers}

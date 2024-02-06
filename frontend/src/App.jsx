@@ -9,6 +9,8 @@ import Navbar from "./components/util/Navbar";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
+  const [modalFile, setModalFile] = useState();
+
   useEffect(() => {
     async function fetchCycles() {
       const cycles = await fetch(
@@ -23,6 +25,7 @@ function App() {
       );
       const cycleList = await cycles.json();
       setAllCycles(cycleList["proposal_cycles"]);
+      setModalFile(cycleList["models"]);
     }
     fetchCycles();
   }, []);
@@ -33,15 +36,33 @@ function App() {
         <Routes>
           <Route
             path="/categorize"
-            element={<ProposalCategorize allCycles={allCycles} />}
+            element={
+              <ProposalCategorize
+                allCycles={allCycles}
+                modalFile={modalFile}
+                setModalFile={setModalFile}
+              />
+            }
           />
           <Route
             path="/duplication"
-            element={<ProposalDuplicationChecker allCycles={allCycles} />}
+            element={
+              <ProposalDuplicationChecker
+                allCycles={allCycles}
+                modalFile={modalFile}
+                setModalFile={setModalFile}
+              />
+            }
           />
           <Route
             path="/review"
-            element={<MatchReviewers allCycles={allCycles} />}
+            element={
+              <MatchReviewers
+                allCycles={allCycles}
+                modalFile={modalFile}
+                setModalFile={setModalFile}
+              />
+            }
           />
           <Route path="/upload" element={<UploadZipForm />} />
         </Routes>

@@ -7,7 +7,7 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableForDuplicationChecker from "./TableForDuplicationChecker";
 
-const ProposalDuplicationChecker = ({ allCycles }) => {
+const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -17,12 +17,10 @@ const ProposalDuplicationChecker = ({ allCycles }) => {
   const [pastCycle, setPastCycle] = useState([]);
 
   // state variables for other config options
-  const [runName, setRunName] = useState();
-  const [modalFile, setModalFile] = useState();
-  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
+  const [runName, setRunName] = useState("Sample Run Name");
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
-    useState();
-
+    useState(3);
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
@@ -47,6 +45,10 @@ const ProposalDuplicationChecker = ({ allCycles }) => {
     setShowTable(false);
   };
 
+  const filteredCycles = allCycles.filter((cycle) => {
+    return cycle !== currentCycle;
+  });
+
   return (
     <div className="mt-5" id="main-container">
       <div className="row">
@@ -60,7 +62,7 @@ const ProposalDuplicationChecker = ({ allCycles }) => {
         </div>
         <div className="col-md-6">
           <DropdownConfigOption
-            data={allCycles}
+            data={filteredCycles}
             label="Selected Past Cycle"
             desc="Cycle prefixes of past cycles"
             setCycle={setPastCycle}
@@ -88,6 +90,10 @@ const ProposalDuplicationChecker = ({ allCycles }) => {
         <OtherConfigOptions
           button_label="Find Duplicates"
           handleClick={handleClick}
+          runName={runName}
+          modalFile={modalFile}
+          numberOfTopReviewers={numberOfTopReviewers}
+          closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
           setModalFile={setModalFile}
           setRunName={setRunName}
           setNumberOfTopReviewers={setNumberOfTopReviewers}

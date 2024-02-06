@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import "../../css/otherConfigOptions.css";
 import DropdownConfigOption from "./DropdownConfigOption";
@@ -6,15 +7,15 @@ import InputConfigOption from "./InputConfigOption";
 const OtherConfigOptions = ({
   button_label,
   handleClick,
+  runName,
+  modalFile,
+  numberOfTopReviewers,
+  closeCollaboratorTimeFrame,
   setNumberOfTopReviewers,
   setModalFile,
   setRunName,
   setCloseCollaboratorTimeFrame,
 }) => {
-  const numbers = [
-    123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
-    172345,
-  ];
   return (
     <>
       <div className="separator">Other Options(optional)</div>
@@ -22,30 +23,33 @@ const OtherConfigOptions = ({
         <div className="single-option">
           <InputConfigOption
             label="Enter Run name"
+            value={runName}
             desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
-            onChange={setRunName}
+            setValue={setRunName}
           />
         </div>
         <div className="single-option">
           <DropdownConfigOption
-            data={numbers}
+            data={modalFile}
             label="Select modal file to use"
             desc="Name of modal file to use"
-            onChange={setModalFile}
+            setValue={setModalFile}
           />
         </div>
         <div className="single-option">
           <InputConfigOption
             label="Assignment number top reviewers"
+            value={numberOfTopReviewers}
             desc="Number of top recommended reviewers"
-            onChange={setNumberOfTopReviewers}
+            setValue={setNumberOfTopReviewers}
           />
         </div>
         <div className="single-option">
           <InputConfigOption
             label="Close Collaborator Time Frame"
+            value={closeCollaboratorTimeFrame}
             desc="Number of years over which to check close collaborators"
-            onChange={setCloseCollaboratorTimeFrame}
+            setValue={setCloseCollaboratorTimeFrame}
           />
         </div>
       </div>
