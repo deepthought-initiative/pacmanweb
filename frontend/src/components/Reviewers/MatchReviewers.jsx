@@ -10,10 +10,8 @@ import TableMatchReviewers from "./TableMatchReviewers";
 const MatchReviewers = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
-  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [currentCycle, setCurrentCycle] = useState();
-  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
 
   // state variables for other config options
   const [runName, setRunName] = useState();
