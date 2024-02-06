@@ -11,7 +11,7 @@ from pacmanweb import Config
 
 from .. import celery_app
 from ..tasks import pacman_task
-from .util import cal_available_cycles
+from .util import VerifyPACManDir
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 redis_instance = redis.Redis()
@@ -21,7 +21,7 @@ redis_instance = redis.Redis()
 @login_required
 def get_available_cycles():
     options = request.args.to_dict(flat=True)
-    return cal_available_cycles(**options)
+    return VerifyPACManDir().generate_response()
 
 
 @api_bp.route("/run_pacman", methods=["GET", "POST"])

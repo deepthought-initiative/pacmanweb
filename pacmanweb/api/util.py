@@ -13,31 +13,46 @@ def clean_previous_runs():
             shutil.rmtree(child)
 
 
-def cal_available_cycles(proposal_check=True, panelist_check=True):
-    pacman_path = Config.PACMAN_PATH
-    runs_dir = pacman_path / "runs"
-    proposal_directory = runs_dir / "input_proposal_data"
-    panelist_directory = runs_dir / "input_panelist_data"
-    result = {}
+class VerifyPACManDir:
+    def __init__(self, alt_pacman_path=None):
+        self.pacman_path = alt_pacman_path if alt_pacman_path is not None else Config.PACMAN_PATH
+        self.runs_dir = self.pacman_path / "runs"
+        self.proposal_directory = self.runs_dir / "input_proposal_data"
+        self.panelist_directory = self.runs_dir / "input_panelist_data"
+        self.models_dir = self.pacman_path / "models"
+        self.result = defaultdict(list)
 
-    if proposal_directory.is_dir():
-        proposal_cycles = [item.stem for item in proposal_directory.iterdir() if item.is_dir()]
-        result["proposal_cycles"] = proposal_cycles
-    else:
-        result["proposal_cycles"] = f"No proposal directory found in f{str(proposal_directory)}"
+    def verify_directory(self, directory, key, file_extension=None):
+        if directory.is_dir():
+            for item in directory.iterdir():
+                if key=="proposal_cycles":
+                    if item.is_dir():
+                        self.result[key].append(item.stem)
+                    else:
+                        self.result[f"{key}_extra_files"].append(item.name)
+                    continue
 
-    if panelist_directory.is_dir():
-        panelist_cycles = [item.stem.split("_")[0] for item in panelist_directory.iterdir()]
-        result["panelist_cycles"] = panelist_cycles
-    else:
-        result["panelist_cycles"] = f"No panelist directory found in f{str(panelist_directory)}"
-        
-    models_dir = pacman_path / "models"
-    if models_dir.is_dir():
-        models = [item.name for item in models_dir.iterdir() if item.name.endswith(".joblib")]
-        result["models"] = models
-    else:
-        result["models"] = f"No models directory found in f{str(models_dir)}"
+                if not item.name.endswith(file_extension):
+                    self.result[f"{key}_extra_files"].append(item.name)
+                else:
+                    fname = item.name if key=="models" else item.stem.split("_")[0]
+                    self.result[key].append(fname)
+        else:
+            self.result[key] = f"No {key} directory found in {str(directory)}"
+            self.result[f"{key}_extra_files"] = []
 
-    return result
+    def verify_proposals_dir(self):
+        self.verify_directory(self.proposal_directory, "proposal_cycles", file_extension=None)
 
+    def verify_panelist_dir(self):
+        self.verify_directory(self.panelist_directory, "panelist_cycles", file_extension="panelists.csv")
+
+    def verify_model_dir(self):
+        self.verify_directory(self.models_dir, "models", file_extension=".joblib")
+    
+    def generate_response(self):
+        self.verify_model_dir()
+        self.verify_panelist_dir()
+        self.verify_proposals_dir()
+        return self.result
+    
