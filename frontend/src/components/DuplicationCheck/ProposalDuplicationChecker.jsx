@@ -10,7 +10,9 @@ import TableForDuplicationChecker from "./TableForDuplicationChecker";
 const ProposalDuplicationChecker = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
   const [pastCycle, setPastCycle] = useState([]);
 
@@ -51,49 +53,51 @@ const ProposalDuplicationChecker = () => {
   };
   return (
     <div className="mt-5" id="main-container">
-      <form>
-        <div className="row">
-          <div className="col-md-6">
-            <DropdownConfigOption
-              data={numbers}
-              label="Selected Current Cycle"
-              desc="Prefix used throughout script to match with cycle description"
-              setCycle={setCurrentCycle}
-            />
-          </div>
-          <div className="col-md-6">
-            <DropdownConfigOption
-              data={numbers}
-              label="Selected Past Cycle"
-              desc="Cycle prefixes of past cycles"
-              setCycle={setPastCycle}
-            />
-          </div>
+      <div className="row">
+        <div className="col-md-6">
+          <DropdownConfigOption
+            data={numbers}
+            label="Selected Current Cycle"
+            desc="Prefix used throughout script to match with cycle description"
+            setCycle={setCurrentCycle}
+          />
         </div>
-        {showTable ? (
-          <TableForDuplicationChecker
-            currentId={currentId}
-            setShowTable={setShowTable}
-            setShowLogs={setShowLogs}
+        <div className="col-md-6">
+          <DropdownConfigOption
+            data={numbers}
+            label="Selected Past Cycle"
+            desc="Cycle prefixes of past cycles"
+            setCycle={setPastCycle}
           />
-        ) : showLogs ? (
-          <Logs
-            key={currentId}
-            setShowTable={setShowTable}
-            currentId={currentId}
-            onTerminate={onTerminate}
-          />
-        ) : (
-          <OtherConfigOptions
-            button_label="Find Duplicates"
-            handleClick={handleClick}
-            setModalFile={setModalFile}
-            setRunName={setRunName}
-            setNumberOfTopReviewers={setNumberOfTopReviewers}
-            setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
-          />
-        )}
-      </form>
+        </div>
+      </div>
+      {showTable ? (
+        <TableForDuplicationChecker
+          currentId={currentId}
+          setShowTable={setShowTable}
+          setShowLogs={setShowLogs}
+          onCategorizeAnotherCycle={onTerminate}
+        />
+      ) : showLogs ? (
+        <Logs
+          setShowTable={setShowTable}
+          currentId={currentId}
+          onTerminate={onTerminate}
+          logs={logs}
+          setLogs={setLogs}
+          showTerminateProcess={showTerminateProcess}
+          setShowTerminateProcess={setShowTerminateProcess}
+        />
+      ) : (
+        <OtherConfigOptions
+          button_label="Find Duplicates"
+          handleClick={handleClick}
+          setModalFile={setModalFile}
+          setRunName={setRunName}
+          setNumberOfTopReviewers={setNumberOfTopReviewers}
+          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
+        />
+      )}
     </div>
   );
 };

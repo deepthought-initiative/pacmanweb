@@ -10,7 +10,9 @@ import ProposalTable from "./ProposalTable";
 const ProposalCategorize = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
@@ -46,6 +48,7 @@ const ProposalCategorize = () => {
     setCurrentId(undefined);
     setShowLogs(false);
     setShowTable(false);
+    setLogs([]);
   };
 
   return (
@@ -65,13 +68,17 @@ const ProposalCategorize = () => {
           currentId={currentId}
           setShowTable={setShowTable}
           setShowLogs={setShowLogs}
+          onCategorizeAnotherCycle={onTerminate}
         />
       ) : showLogs ? (
         <Logs
-          key={currentId}
           setShowTable={setShowTable}
           currentId={currentId}
           onTerminate={onTerminate}
+          logs={logs}
+          setLogs={setLogs}
+          showTerminateProcess={showTerminateProcess}
+          setShowTerminateProcess={setShowTerminateProcess}
         />
       ) : (
         <OtherConfigOptions

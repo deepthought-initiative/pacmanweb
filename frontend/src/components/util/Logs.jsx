@@ -1,11 +1,16 @@
 /* eslint-disable react/prop-types */
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-const Logs = ({ currentId, setShowTable, onTerminate }) => {
-  const [logs, setLogs] = useState([]);
-  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
-
+const Logs = ({
+  currentId,
+  setShowTable,
+  onTerminate,
+  logs,
+  setLogs,
+  showTerminateProcess,
+  setShowTerminateProcess,
+}) => {
   const headers = [
     "Proposal Number",
     "Title",
@@ -19,7 +24,7 @@ const Logs = ({ currentId, setShowTable, onTerminate }) => {
     logs.map((row) => Object.values(row).join(",")).join("\n");
 
   const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`);
-  const handleTable = async (event) => {
+  const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
   };
@@ -42,7 +47,6 @@ const Logs = ({ currentId, setShowTable, onTerminate }) => {
   };
 
   useEffect(() => {
-    console.log("here 3");
     if (!currentId) {
       return;
     }

@@ -10,7 +10,9 @@ import TableMatchReviewers from "./TableMatchReviewers";
 const MatchReviewers = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
+  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
@@ -68,13 +70,17 @@ const MatchReviewers = () => {
             currentId={currentId}
             setShowTable={setShowTable}
             setShowLogs={setShowLogs}
+            onCategorizeAnotherCycle={onTerminate}
           />
         ) : showLogs ? (
           <Logs
-            key={currentId}
             setShowTable={setShowTable}
             currentId={currentId}
             onTerminate={onTerminate}
+            logs={logs}
+            setLogs={setLogs}
+            showTerminateProcess={showTerminateProcess}
+            setShowTerminateProcess={setShowTerminateProcess}
           />
         ) : (
           <OtherConfigOptions
