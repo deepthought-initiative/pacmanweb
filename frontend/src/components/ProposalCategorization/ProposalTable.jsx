@@ -2,7 +2,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import "../../css/proposalTable.css";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
 const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
