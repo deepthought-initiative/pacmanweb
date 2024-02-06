@@ -25,3 +25,4 @@ class Config:
 
     file_path = pathlib.Path(__file__).resolve()
     PACMAN_PATH = file_path.parents[2] / "PACMan"
+    UPLOAD_FOLDER = ROOTDIR / "uploads"

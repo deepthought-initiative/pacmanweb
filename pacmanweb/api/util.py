@@ -55,4 +55,8 @@ class VerifyPACManDir:
         self.verify_panelist_dir()
         self.verify_proposals_dir()
         return self.result
+
+class MoveUploadedFiles:
+    def __init__(self) -> None:
+        pass
     
