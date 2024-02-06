@@ -2,6 +2,7 @@
 const DropdownConfigOption = ({ data, label, desc, setCycle }) => {
   const handleOnChange = (event) => {
     setCycle(event.target.value);
+    console.log(event.target.value);
   };
   return (
     <div>
