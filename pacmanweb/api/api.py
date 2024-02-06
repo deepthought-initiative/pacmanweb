@@ -1,5 +1,6 @@
 import pathlib
 import subprocess
+import time
 
 import redis
 from celery import shared_task
@@ -90,6 +91,8 @@ def stream_task(result_id):
                 yield f"data: {line}\n"
             yield "\n\n"
             if "PROCESS COMPLETE" in data or "run complete" in data:
+                # give the frontend a few seconds to disconnect cleanly
+                time.sleep(3)
                 break
 
     return Response(stream_with_context(generate()), mimetype="text/event-stream")

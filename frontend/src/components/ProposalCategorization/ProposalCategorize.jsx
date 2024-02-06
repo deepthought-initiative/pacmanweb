@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
@@ -11,6 +12,7 @@ const ProposalCategorize = () => {
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
@@ -32,10 +34,18 @@ const ProposalCategorize = () => {
 
       eventSource.onopen = () => {
         setShowLogs(true);
+        setTerminateProcessBtn(true);
       };
 
       eventSource.onmessage = (event) => {
         const newLog = event.data;
+        if (
+          newLog.includes("PROCESS COMPLETE") ||
+          newLog.includes("run complete")
+        ) {
+          eventSource.close();
+          setTerminateProcessBtn(false);
+        }
         setLogs((prevLogs) => [...prevLogs, newLog]);
       };
 
@@ -46,6 +56,7 @@ const ProposalCategorize = () => {
 
       return () => {
         eventSource.close();
+        setTerminateProcessBtn(false);
       };
     }
 
@@ -94,7 +105,12 @@ const ProposalCategorize = () => {
           setShowLogs={setShowLogs}
         />
       ) : showLogs ? (
-        <Logs data={logs} setShowTable={setShowTable} currentId={currentId} />
+        <Logs
+          data={logs}
+          setShowTable={setShowTable}
+          currentId={currentId}
+          terminateProcessBtn={terminateProcessBtn}
+        />
       ) : (
         <OtherConfigOptions
           button_label="Categorize Proposal"
