@@ -14,6 +14,7 @@ const ProposalDuplicationChecker = () => {
   const [currentId, setCurrentId] = useState();
   const [currentCycle, setCurrentCycle] = useState();
   const [pastCycle, setPastCycle] = useState([]);
+  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
 
   // state variables for other config options
   const [runName, setRunName] = useState();
@@ -39,10 +40,18 @@ const ProposalDuplicationChecker = () => {
 
       eventSource.onopen = () => {
         setShowLogs(true);
+        setTerminateProcessBtn(true);
       };
 
       eventSource.onmessage = (event) => {
         const newLog = event.data;
+        if (
+          newLog.includes("PROCESS COMPLETE") ||
+          newLog.includes("run complete")
+        ) {
+          eventSource.close();
+          setTerminateProcessBtn(false);
+        }
         setLogs((prevLogs) => [...prevLogs, newLog]);
       };
 
@@ -53,6 +62,7 @@ const ProposalDuplicationChecker = () => {
 
       return () => {
         eventSource.close();
+        setTerminateProcessBtn(false);
       };
     }
 
@@ -61,8 +71,6 @@ const ProposalDuplicationChecker = () => {
 
   const handleClick = async (event) => {
     event.preventDefault();
-
-    // Call the first API to get the task ID
     const spawnResponse = await fetch(
       "http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026&main_test_cycle=221026",
       {
@@ -106,7 +114,12 @@ const ProposalDuplicationChecker = () => {
             setShowLogs={setShowLogs}
           />
         ) : showLogs ? (
-          <Logs data={logs} setShowTable={setShowTable} currentId={currentId} />
+          <Logs
+            data={logs}
+            setShowTable={setShowTable}
+            currentId={currentId}
+            terminateProcessBtn={terminateProcessBtn}
+          />
         ) : (
           <OtherConfigOptions
             button_label="Find Duplicates"

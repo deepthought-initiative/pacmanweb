@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import "../../css/searchBox.css";
@@ -12,6 +13,7 @@ const MatchReviewers = () => {
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [currentCycle, setCurrentCycle] = useState();
+  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
 
   // state variables for other config options
   const [runName, setRunName] = useState();
@@ -37,10 +39,18 @@ const MatchReviewers = () => {
 
       eventSource.onopen = () => {
         setShowLogs(true);
+        setTerminateProcessBtn(true);
       };
 
       eventSource.onmessage = (event) => {
         const newLog = event.data;
+        if (
+          newLog.includes("PROCESS COMPLETE") ||
+          newLog.includes("run complete")
+        ) {
+          eventSource.close();
+          setTerminateProcessBtn(false);
+        }
         setLogs((prevLogs) => [...prevLogs, newLog]);
       };
 
@@ -51,11 +61,13 @@ const MatchReviewers = () => {
 
       return () => {
         eventSource.close();
+        setTerminateProcessBtn(false);
       };
     }
 
     fetchLogs();
   }, [currentId, setLogs, setShowLogs]);
+
   const handleClick = async (event) => {
     event.preventDefault();
 
@@ -96,7 +108,12 @@ const MatchReviewers = () => {
             setShowLogs={setShowLogs}
           />
         ) : showLogs ? (
-          <Logs data={logs} setShowTable={setShowTable} currentId={currentId} />
+          <Logs
+            data={logs}
+            setShowTable={setShowTable}
+            currentId={currentId}
+            terminateProcessBtn={terminateProcessBtn}
+          />
         ) : (
           <OtherConfigOptions
             button_label="Match Reviewers"
