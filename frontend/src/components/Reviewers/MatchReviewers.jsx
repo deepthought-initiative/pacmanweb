@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
 import Logs from "../util/Logs";
@@ -27,51 +27,8 @@ const MatchReviewers = () => {
     172345,
   ];
 
-  useEffect(() => {
-    async function fetchLogs() {
-      if (!currentId) {
-        return;
-      }
-
-      const eventSource = new EventSource(
-        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
-      );
-
-      eventSource.onopen = () => {
-        setShowLogs(true);
-        setTerminateProcessBtn(true);
-      };
-
-      eventSource.onmessage = (event) => {
-        const newLog = event.data;
-        if (
-          newLog.includes("PROCESS COMPLETE") ||
-          newLog.includes("run complete")
-        ) {
-          eventSource.close();
-          setTerminateProcessBtn(false);
-        }
-        setLogs((prevLogs) => [...prevLogs, newLog]);
-      };
-
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-        eventSource.close();
-      };
-
-      return () => {
-        eventSource.close();
-        setTerminateProcessBtn(false);
-      };
-    }
-
-    fetchLogs();
-  }, [currentId, setLogs, setShowLogs]);
-
   const handleClick = async (event) => {
     event.preventDefault();
-
-    // Call the first API to get the task ID
     const spawnResponse = await fetch(
       "http://127.0.0.1:5000/api/run_pacman?mode=MATCH&main_test_cycle=221026",
       {
@@ -86,6 +43,12 @@ const MatchReviewers = () => {
     const data = await spawnResponse.json();
     console.log(data["result_id"]);
     setCurrentId(data["result_id"]);
+  };
+
+  const onTerminate = () => {
+    setCurrentId(undefined);
+    setShowLogs(false);
+    setShowTable(false);
   };
 
   return (
@@ -109,10 +72,10 @@ const MatchReviewers = () => {
           />
         ) : showLogs ? (
           <Logs
-            data={logs}
+            key={currentId}
             setShowTable={setShowTable}
             currentId={currentId}
-            terminateProcessBtn={terminateProcessBtn}
+            onTerminate={onTerminate}
           />
         ) : (
           <OtherConfigOptions

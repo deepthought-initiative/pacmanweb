@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
 import Logs from "../util/Logs";
@@ -10,9 +10,7 @@ import ProposalTable from "./ProposalTable";
 const ProposalCategorize = () => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
-  const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
-  const [terminateProcessBtn, setTerminateProcessBtn] = useState(false);
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
@@ -22,55 +20,12 @@ const ProposalCategorize = () => {
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
     useState();
 
-  useEffect(() => {
-    async function fetchLogs() {
-      if (!currentId) {
-        return;
-      }
-
-      const eventSource = new EventSource(
-        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
-      );
-
-      eventSource.onopen = () => {
-        setShowLogs(true);
-        setTerminateProcessBtn(true);
-      };
-
-      eventSource.onmessage = (event) => {
-        const newLog = event.data;
-        if (
-          newLog.includes("PROCESS COMPLETE") ||
-          newLog.includes("run complete")
-        ) {
-          eventSource.close();
-          setTerminateProcessBtn(false);
-        }
-        setLogs((prevLogs) => [...prevLogs, newLog]);
-      };
-
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-        eventSource.close();
-      };
-
-      return () => {
-        eventSource.close();
-        setTerminateProcessBtn(false);
-      };
-    }
-
-    fetchLogs();
-  }, [currentId, setLogs, setShowLogs]);
-
   const numbers = [
     123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
     172345,
   ];
   const handleClick = async (event) => {
     event.preventDefault();
-
-    // Call the first API to get the task ID
     const spawnResponse = await fetch(
       "http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=221026",
       {
@@ -84,6 +39,13 @@ const ProposalCategorize = () => {
 
     const data = await spawnResponse.json();
     setCurrentId(data["result_id"]);
+    setShowLogs(true);
+  };
+
+  const onTerminate = () => {
+    setCurrentId(undefined);
+    setShowLogs(false);
+    setShowTable(false);
   };
 
   return (
@@ -106,10 +68,10 @@ const ProposalCategorize = () => {
         />
       ) : showLogs ? (
         <Logs
-          data={logs}
+          key={currentId}
           setShowTable={setShowTable}
           currentId={currentId}
-          terminateProcessBtn={terminateProcessBtn}
+          onTerminate={onTerminate}
         />
       ) : (
         <OtherConfigOptions
