@@ -26,7 +26,6 @@ const TableForDuplicationChecker = ({
       );
       const tableData = await tableResponse.json();
       setDataToDisplay(reformatData(tableData));
-      console.log(reformatData(tableData));
     }
     fetchTable();
   }, [currentId, setShowTable]);

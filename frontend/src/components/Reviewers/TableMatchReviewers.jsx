@@ -21,7 +21,6 @@ const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
       );
       const tableData = await tableResponse.json();
       setDataToDisplay(tableData);
-      console.log(tableData);
     }
     fetchTable();
   }, [currentId, setShowTable]);
