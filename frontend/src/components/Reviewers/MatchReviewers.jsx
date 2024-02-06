@@ -7,7 +7,7 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableMatchReviewers from "./TableMatchReviewers";
 
-const MatchReviewers = () => {
+const MatchReviewers = ({ allCycles }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -21,11 +21,6 @@ const MatchReviewers = () => {
   const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
     useState();
-
-  const numbers = [
-    123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
-    172345,
-  ];
 
   const handleClick = async (event) => {
     event.preventDefault();
@@ -58,7 +53,7 @@ const MatchReviewers = () => {
         <div className="row">
           <div>
             <DropdownConfigOption
-              data={numbers}
+              data={allCycles}
               label="Selected Current Cycle"
               desc="Prefix used throughout script to match with cycle description"
               setCycle={setCurrentCycle}
