@@ -17,22 +17,29 @@ const UploadZipForm = () => {
       return;
     }
 
+    setUploading(true);
+
     try {
-      setUploading(true);
       const formData = new FormData();
       formData.append("zipFile", zipFile);
 
-      const response = await fetch("http://example.com/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "http://127.0.0.1:5000/api/upload?api_key=barebones",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Basic " + btoa("default:barebones"),
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to upload file");
       }
 
-      const data = await response.json();
-      console.log("File uploaded successfully:", data);
+      const message = await response.json();
+      alert(message["response"]);
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file");
