@@ -20,6 +20,9 @@ class RunPACMan:
         past_cycles=[],
         mode=None,
         runs_dir="",
+        modelfile="strolger_pacman_model_7cycles.joblib",
+        assignment_number_top_reviewers="5",
+        close_collaborator_time_frame="3"
     ):
         """Initialise RunPACMan Class.
 
@@ -63,6 +66,9 @@ class RunPACMan:
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
             runs_dir=runs_dir,
+            modelfile=modelfile,
+            assignment_number_top_reviewers=assignment_number_top_reviewers,
+            close_collaborator_time_frame=close_collaborator_time_frame,
         )
 
         if mode == "PROP":

@@ -20,7 +20,6 @@ redis_instance = redis.Redis()
 @api_bp.route("/get_cycles", methods=["GET"])
 @login_required
 def get_available_cycles():
-    options = request.args.to_dict(flat=True)
     return VerifyPACManDir().generate_response()
 
 
