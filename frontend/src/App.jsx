@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import ProposalDuplicationChecker from "./components/DuplicationCheck/ProposalDuplicationChecker";
@@ -7,14 +8,41 @@ import UploadZipForm from "./components/Upload/UploadZip";
 import Navbar from "./components/util/Navbar";
 
 function App() {
+  const [allCycles, setAllCycles] = useState([]);
+  useEffect(() => {
+    async function fetchCycles() {
+      const cycles = await fetch(
+        "http://127.0.0.1:5000/api/get_cycles?api_key=barebones",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Basic" + btoa("default:barebones"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const cycleList = await cycles.json();
+      setAllCycles(cycleList["proposal_cycles"]);
+    }
+    fetchCycles();
+  }, []);
   return (
     <>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/categorize" element={<ProposalCategorize />} />
-          <Route path="/duplication" element={<ProposalDuplicationChecker />} />
-          <Route path="/review" element={<MatchReviewers />} />
+          <Route
+            path="/categorize"
+            element={<ProposalCategorize allCycles={allCycles} />}
+          />
+          <Route
+            path="/duplication"
+            element={<ProposalDuplicationChecker allCycles={allCycles} />}
+          />
+          <Route
+            path="/review"
+            element={<MatchReviewers allCycles={allCycles} />}
+          />
           <Route path="/upload" element={<UploadZipForm />} />
         </Routes>
       </BrowserRouter>

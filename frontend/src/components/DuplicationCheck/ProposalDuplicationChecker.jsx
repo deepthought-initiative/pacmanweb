@@ -7,7 +7,7 @@ import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import TableForDuplicationChecker from "./TableForDuplicationChecker";
 
-const ProposalDuplicationChecker = () => {
+const ProposalDuplicationChecker = ({ allCycles }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -22,11 +22,6 @@ const ProposalDuplicationChecker = () => {
   const [numberOfTopReviewers, setNumberOfTopReviewers] = useState();
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
     useState();
-
-  const numbers = [
-    123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
-    172345,
-  ];
 
   const handleClick = async (event) => {
     event.preventDefault();
@@ -51,12 +46,13 @@ const ProposalDuplicationChecker = () => {
     setShowLogs(false);
     setShowTable(false);
   };
+
   return (
     <div className="mt-5" id="main-container">
       <div className="row">
         <div className="col-md-6">
           <DropdownConfigOption
-            data={numbers}
+            data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
             setCycle={setCurrentCycle}
@@ -64,7 +60,7 @@ const ProposalDuplicationChecker = () => {
         </div>
         <div className="col-md-6">
           <DropdownConfigOption
-            data={numbers}
+            data={allCycles}
             label="Selected Past Cycle"
             desc="Cycle prefixes of past cycles"
             setCycle={setPastCycle}

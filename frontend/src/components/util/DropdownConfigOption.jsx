@@ -15,11 +15,12 @@ const DropdownConfigOption = ({ data, label, desc, setCycle }) => {
           aria-label="Select Current Cycle"
           onChange={handleOnChange}
         >
-          {data.map((number) => (
-            <option key={number} value={number}>
-              {number}
-            </option>
-          ))}
+          {data &&
+            data.map((number) => (
+              <option key={number} value={number}>
+                {number}
+              </option>
+            ))}
         </select>
       </div>
       <div className="form-text text-start mt-2">{desc}</div>
