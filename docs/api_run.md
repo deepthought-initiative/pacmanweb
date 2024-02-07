@@ -47,3 +47,14 @@ Unfortunately, you cannot test streaming APIs on PACMan, but you can try them in
 To get results you can do [http://127.0.0.1:5000/api/outputs/<output_mode>/<result_id>?cycle_number=221026](http://127.0.0.1:5000/api/outputs/<output_mode>/<result_id>?cycle_number=221026) 
 
 You will have to replace the `output_mode` by one of the following- `proposal_cat_output`, `duplicates_output` or `match_reviewers_output`. `result_id` will be the hash from the output. Cycle number here is 221026 but that can be changed to something else.
+
+
+#### Uploading files
+The API- http://127.0.0.1:5000/api/upload can be used to upload files to the PACMan repo. Unline other requests, this will be a `POST` request with the files as form data in the body of the URL. There are a few contraints though-
+- The file has to be a zip file, or it will be rejected by the API. 
+- Panelist and model files can be placed in the root of the zip folder or inside separate folders- but the folder names must contain words "panelist" and "model" respectively.
+- Proposal files **need** to be in a separate folder, each proposal file being inside it's cycle folder. For example, for proposal 1 of Cycle 221026, the file path will be `zip_file_root/221026/00001.txtx`
+
+#### Getting available cycles and models
+The API- http://127.0.0.1:5000/api/get_cycles will return available cycles in panelist and proposal folders and the models present in the models folder. 
+

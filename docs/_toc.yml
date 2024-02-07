@@ -1,6 +1,7 @@
 format: jb-book
 root: intro
 chapters:
-- file: installation_frontend
 - file: installation_backend
-- file: api_testing
+- file: installation_frontend
+- file: api_run
+- file: testing_building_docs

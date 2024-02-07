@@ -5,7 +5,6 @@ import pathlib
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
-    ENV_NAME = os.environ.get("ENV_NAME", "pacman_linux")
 
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
@@ -13,7 +12,8 @@ class Config:
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
     DEFAULT_PASS = CREDS["default_password"]
-    TEST_ADS_API_KEY = CREDS["TEST_ADS_DEV_KEY"]
+    TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
+    ENV_NAME = CREDS["ENV_NAME"]
     if not SECRET_KEY:
         try:
             SECRET_KEY = CREDS.get("secret_key")
