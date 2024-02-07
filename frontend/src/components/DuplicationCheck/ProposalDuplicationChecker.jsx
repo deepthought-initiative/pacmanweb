@@ -24,7 +24,7 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      "http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026&main_test_cycle=221026",
+      `http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026&main_test_cycle=${currentCycle}`,
       {
         method: "GET",
         headers: {
@@ -49,6 +49,7 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
     return cycle !== currentCycle;
   });
 
+  const handlePastCycles = () => {};
   return (
     <div className="mt-5" id="main-container">
       <div className="row">
@@ -57,16 +58,33 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
             data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
+            defaultValue="Select a current cycle"
             setCycle={setCurrentCycle}
           />
         </div>
         <div className="col-md-6">
-          <DropdownConfigOption
-            data={filteredCycles}
-            label="Selected Past Cycle"
-            desc="Cycle prefixes of past cycles"
-            setCycle={setPastCycle}
-          />
+          <label className="form-label">Selected Past Cycle</label>
+          <div>
+            <select
+              className="form-select rounded-0 border-2"
+              onChange={handlePastCycles}
+              size="2"
+              multiple
+            >
+              <option disabled selected value="">
+                Select a past cycle
+              </option>
+              {filteredCycles &&
+                filteredCycles.map((number) => (
+                  <option key={number} value={number}>
+                    {number}
+                  </option>
+                ))}
+            </select>
+          </div>
+          <div className="form-text text-start mt-2">
+            Cycle prefixes of past cycles
+          </div>
         </div>
       </div>
       {showTable ? (
