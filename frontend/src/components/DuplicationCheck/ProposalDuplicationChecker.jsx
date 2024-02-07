@@ -51,7 +51,11 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
     return cycle !== currentCycle;
   });
 
-  const handlePastCycles = () => {};
+  const handlePastCycles = (event) => {
+    setPastCycle(event.target.value);
+    console.log(pastCycle);
+  };
+
   return (
     <div className="mt-5" id="main-container">
       <div className="row">
@@ -62,6 +66,7 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
             desc="Prefix used throughout script to match with cycle description"
             defaultValue="Select a current cycle"
             setCycle={setCurrentCycle}
+            disabled={showTable || showLogs}
           />
         </div>
         <div className="col-md-6">
