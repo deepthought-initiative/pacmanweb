@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
-const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
+const TableMatchReviewers = ({
+  currentId,
+  setShowTable,
+  setShowLogs,
+  currentCycle,
+}) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
@@ -13,7 +18,7 @@ const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
         return;
       }
       const tableResponse = await fetch(
-        `http://127.0.0.1:5000/api/outputs/match_reviewers_output/${currentId}?cycle_number=221026`,
+        `http://127.0.0.1:5000/api/outputs/match_reviewers_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

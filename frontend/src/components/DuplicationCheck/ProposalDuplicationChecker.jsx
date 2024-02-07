@@ -98,6 +98,7 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
           setShowTable={setShowTable}
           setShowLogs={setShowLogs}
           onCategorizeAnotherCycle={onTerminate}
+          currentCycle={currentCycle}
         />
       ) : showLogs ? (
         <Logs

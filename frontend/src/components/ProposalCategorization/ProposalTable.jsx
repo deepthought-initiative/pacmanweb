@@ -9,6 +9,7 @@ const ProposalTable = ({
   setShowTable,
   setShowLogs,
   onCategorizeAnotherCycle,
+  currentCycle,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -20,7 +21,7 @@ const ProposalTable = ({
         return;
       }
       const tableResponse = await fetch(
-        `http://127.0.0.1:5000/api/outputs/proposal_cat_output/${currentId}?cycle_number=221026`,
+        `http://127.0.0.1:5000/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

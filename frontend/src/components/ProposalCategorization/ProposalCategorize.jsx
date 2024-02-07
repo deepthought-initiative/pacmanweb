@@ -25,7 +25,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      `http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+      `http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
       {
         method: "GET",
         headers: {
@@ -61,6 +61,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
             desc="Prefix used throughout script to match with cycle description"
             defaultValue="Select a current cycle"
             setCycle={setCurrentCycle}
+            disabled={showTable || showLogs}
           />
         </div>
       </div>
@@ -70,6 +71,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
           setShowTable={setShowTable}
           setShowLogs={setShowLogs}
           onCategorizeAnotherCycle={onTerminate}
+          currentCycle={currentCycle}
         />
       ) : showLogs ? (
         <Logs
