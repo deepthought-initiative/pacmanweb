@@ -24,7 +24,7 @@ const MatchReviewers = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      "http://127.0.0.1:5000/api/run_pacman?mode=MATCH&main_test_cycle=221026",
+      `http://127.0.0.1:5000/api/run_pacman?mode=MATCH&&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
       {
         method: "GET",
         headers: {
@@ -55,6 +55,7 @@ const MatchReviewers = ({ allCycles, modalFile, setModalFile }) => {
               data={allCycles}
               label="Selected Current Cycle"
               desc="Prefix used throughout script to match with cycle description"
+              defaultValue="Select a current cycle"
               setCycle={setCurrentCycle}
             />
           </div>
