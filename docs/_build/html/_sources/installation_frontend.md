@@ -7,6 +7,7 @@ Start by installing all dependencies-
 npm install
 ```
 
+
 Then start the backend-
 ```none
 npm run dev

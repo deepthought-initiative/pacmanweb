@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Backend Installation &#8212; PACManWeb Docs</title>
+    <title>Running Tests and Building Docs &#8212; PACManWeb Docs</title>
   
   
   
@@ -62,11 +62,10 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'installation_backend';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'testing_building_docs';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Frontend Installation" href="installation_frontend.html" />
-    <link rel="prev" title="Welcome to PACMan Web Docs" href="intro.html" />
+    <link rel="prev" title="Trying out the API" href="api_run.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -171,10 +170,10 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Backend Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation_backend.html">Backend Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation_frontend.html">Frontend Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_run.html">Trying out the API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="testing_building_docs.html">Running Tests and Building Docs</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Running Tests and Building Docs</a></li>
 </ul>
 
     </div>
@@ -246,7 +245,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Finstallation_backend.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Ftesting_building_docs.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -276,7 +275,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/installation_backend.md" target="_blank"
+      <li><a href="_sources/testing_building_docs.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -360,7 +359,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Backend Installation</h1>
+    <h1>Running Tests and Building Docs</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -370,10 +369,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-docs">Building Docs</a></li>
 </ul>
             </nav>
         </div>
@@ -385,59 +382,25 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="backend-installation">
-<h1>Backend Installation<a class="headerlink" href="#backend-installation" title="Permalink to this heading">#</a></h1>
-<p>Start off by cloning the GitHub repo-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:deepthought-initiative/pacmanweb.git
-</pre></div>
-</div>
-<p>or by using https</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/deepthought-initiative/pacmanweb.git
-</pre></div>
-</div>
-<p>The PACMan directory needs to be placed next to the PACManWeb directory. Clone the PACMan repo in the same folder. The bash <code class="docutils literal notranslate"><span class="pre">ls</span></code> should say that both repos are next to each other. PACManWeb supports uploading files as well, so no need to run PACMan before moving on to the application.</p>
-<section id="install-conda-environments">
-<h2>Install Conda Environments<a class="headerlink" href="#install-conda-environments" title="Permalink to this heading">#</a></h2>
-<p>Head over to the PACManWeb directory. This environment installation has been done using Mamba and tested on Linux and Mac. Installing might work using Conda, but Mamba is recommended. To install mamba, head over too the <a class="reference external" href="https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html">mamba installation page</a>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--file<span class="w"> </span>env.yml<span class="w"> </span>--name<span class="w"> </span>pacmanweb
-</pre></div>
-</div>
-<p>Instructions to install the PACMan environment are listed here- <a class="github reference external" href="https://github.com/spacetelescope/PACMan?tab=readme-ov-file#installation">spacetelescope/PACMan</a>.</p>
-</section>
-<section id="config-variables">
-<h2>Config Variables<a class="headerlink" href="#config-variables" title="Permalink to this heading">#</a></h2>
-<p>PACManWeb needs access to a <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file to work, this needs to be present in the root of the PACManWeb repository.
-The <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file will be like this-</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;secret_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;default_password&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ADS_DEV_KEY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ENV_NAME&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>The secret key is a hash and can be generated by</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import secrets; print(secrets.token_hex())&#39;</span>
-</pre></div>
-</div>
-<p>The default password is your default password to use for the application. PACManWeb uses Basic Auth for secure transmission of files and execution of the application. <code class="docutils literal notranslate"><span class="pre">ADS_DEV_KEY</span></code> is the key that PACMan would use to access the ADS Database. <code class="docutils literal notranslate"><span class="pre">ENV_NAME</span></code> contains the name of the conda environment.</p>
-</section>
-<section id="setting-up-celery">
-<h2>Setting up Celery<a class="headerlink" href="#setting-up-celery" title="Permalink to this heading">#</a></h2>
-<p>PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis and backend and RabbitMQ as a message broker to run.</p>
-<ul class="simple">
-<li><p>Redis installation instructions can be found on the redis website- <a class="reference external" href="https://redis.io/docs/install/install-redis/">https://redis.io/docs/install/install-redis/</a>.</p></li>
-<li><p>RabbitMQ instructions can be found here- <a class="reference external" href="https://www.rabbitmq.com/download.html">https://www.rabbitmq.com/download.html</a>. Once installed, RabbitMQ will need to be setup with these commands- <a class="reference external" href="https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq">https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq</a>.</p></li>
-</ul>
-<p>Once Redis and RabbitMQ are setup, you can start running celery.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>celery -A pacmanweb.celery_app worker --loglevel=info
+  <section class="tex2jax_ignore mathjax_ignore" id="running-tests-and-building-docs">
+<h1>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Permalink to this heading">#</a></h1>
+<p>Although tests run and docs are updated whenever someone pushes to the main branch, here are instructions to both run tests and build docs locally.</p>
+<section id="running-tests">
+<h2>Running tests<a class="headerlink" href="#running-tests" title="Permalink to this heading">#</a></h2>
+<p>A tests infrastructure is available inside <code class="docutils literal notranslate"><span class="pre">pacmanweb/pacmanweb/tests</span></code>. The data folder contains sample proposal files and panelist files for testing purposes and copies over the model files from the PACMan folder(assumes PACMan has model files in its models folder).
+To run tests, move inside the tests and do-</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>.
 </pre></div>
 </div>
 </section>
-<section id="starting-flask-application">
-<h2>Starting Flask Application<a class="headerlink" href="#starting-flask-application" title="Permalink to this heading">#</a></h2>
-<p>To start Flask in developement mode-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask<span class="w"> </span>run
+<section id="building-docs">
+<h2>Building Docs<a class="headerlink" href="#building-docs" title="Permalink to this heading">#</a></h2>
+<p>Building docs requires the <code class="docutils literal notranslate"><span class="pre">jupyter-book</span></code> package which is by default not present in the environment file. To install the package, do</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>install<span class="w"> </span>jupyter-book
+</pre></div>
+</div>
+<p>To build the documentation, move to the root of the application and do-</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>--all<span class="w"> </span>docs
 </pre></div>
 </div>
 </section>
@@ -474,22 +437,13 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="intro.html"
+       href="api_run.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Welcome to PACMan Web Docs</p>
+        <p class="prev-next-title">Trying out the API</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="installation_frontend.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Frontend Installation</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -507,10 +461,8 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-docs">Building Docs</a></li>
 </ul>
   </nav></div>
 

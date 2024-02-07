@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Backend Installation &#8212; PACManWeb Docs</title>
+    <title>Trying out the API &#8212; PACManWeb Docs</title>
   
   
   
@@ -62,11 +62,11 @@ const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
     <script async="async" src="_static/sphinx-thebe.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'installation_backend';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_run';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Frontend Installation" href="installation_frontend.html" />
-    <link rel="prev" title="Welcome to PACMan Web Docs" href="intro.html" />
+    <link rel="next" title="Running Tests and Building Docs" href="testing_building_docs.html" />
+    <link rel="prev" title="Frontend Installation" href="installation_frontend.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -171,9 +171,9 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Backend Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation_backend.html">Backend Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation_frontend.html">Frontend Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_run.html">Trying out the API</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Trying out the API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="testing_building_docs.html">Running Tests and Building Docs</a></li>
 </ul>
 
@@ -246,7 +246,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Finstallation_backend.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fapi_run.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -276,7 +276,7 @@ const thebe_selector_output = ".output, .cell_output"
       
       
       
-      <li><a href="_sources/installation_backend.md" target="_blank"
+      <li><a href="_sources/api_run.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -360,7 +360,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Backend Installation</h1>
+    <h1>Trying out the API</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -370,10 +370,13 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spawning-a-new-pacman-process">Spawning a new PACMan process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seeing-the-progress-of-the-run">Seeing the progress of the run</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#terminating-a-task">Terminating a task</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-responses">Streaming Responses</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-results">Getting Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uploading-files">Uploading files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-available-cycles-and-models">Getting available cycles and models</a></li>
 </ul>
             </nav>
         </div>
@@ -385,61 +388,75 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="backend-installation">
-<h1>Backend Installation<a class="headerlink" href="#backend-installation" title="Permalink to this heading">#</a></h1>
-<p>Start off by cloning the GitHub repo-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:deepthought-initiative/pacmanweb.git
-</pre></div>
+  <section class="tex2jax_ignore mathjax_ignore" id="trying-out-the-api">
+<h1>Trying out the API<a class="headerlink" href="#trying-out-the-api" title="Permalink to this heading">#</a></h1>
+<p>To try out the API yourself, we’d recommend using <a class="reference external" href="https://www.postman.com/">Postman</a>. However you can also see the results in your browswer.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>There are three modes, <code class="docutils literal notranslate"><span class="pre">PROP</span></code>, <code class="docutils literal notranslate"><span class="pre">DUP</span></code> and <code class="docutils literal notranslate"><span class="pre">MATCH</span></code>. The cycles mentioned here are for demonstration purposes, you can replace them with the names of the cycles in your PACMan folder.</p></li>
+<li><p>Before heading on, make sure that Celery and Flask and running and there are no error messages.</p></li>
+</ul>
 </div>
-<p>or by using https</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/deepthought-initiative/pacmanweb.git
-</pre></div>
-</div>
-<p>The PACMan directory needs to be placed next to the PACManWeb directory. Clone the PACMan repo in the same folder. The bash <code class="docutils literal notranslate"><span class="pre">ls</span></code> should say that both repos are next to each other. PACManWeb supports uploading files as well, so no need to run PACMan before moving on to the application.</p>
-<section id="install-conda-environments">
-<h2>Install Conda Environments<a class="headerlink" href="#install-conda-environments" title="Permalink to this heading">#</a></h2>
-<p>Head over to the PACManWeb directory. This environment installation has been done using Mamba and tested on Linux and Mac. Installing might work using Conda, but Mamba is recommended. To install mamba, head over too the <a class="reference external" href="https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html">mamba installation page</a>.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--file<span class="w"> </span>env.yml<span class="w"> </span>--name<span class="w"> </span>pacmanweb
-</pre></div>
-</div>
-<p>Instructions to install the PACMan environment are listed here- <a class="github reference external" href="https://github.com/spacetelescope/PACMan?tab=readme-ov-file#installation">spacetelescope/PACMan</a>.</p>
-</section>
-<section id="config-variables">
-<h2>Config Variables<a class="headerlink" href="#config-variables" title="Permalink to this heading">#</a></h2>
-<p>PACManWeb needs access to a <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file to work, this needs to be present in the root of the PACManWeb repository.
-The <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file will be like this-</p>
+<section id="spawning-a-new-pacman-process">
+<h2>Spawning a new PACMan process<a class="headerlink" href="#spawning-a-new-pacman-process" title="Permalink to this heading">#</a></h2>
+<p>A new process can be spawned with this- <br />
+<a class="reference external" href="http://127.0.0.1:5000/api/run_pacman?mode=DUP&amp;past_cycles=221026,231026">http://127.0.0.1:5000/api/run_pacman?mode=DUP&amp;past_cycles=221026,231026</a> <br />
+This should get you the following response-</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;secret_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;default_password&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ADS_DEV_KEY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ENV_NAME&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span>
+<span class="w">    </span><span class="nt">&quot;output&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PACMan running with task id 2b87bfe7-eff2-43c2-a0ad-33ad93d3952a&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;result_id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;2b87bfe7-eff2-43c2-a0ad-33ad93d3952a&quot;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>The secret key is a hash and can be generated by</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import secrets; print(secrets.token_hex())&#39;</span>
+</section>
+<section id="seeing-the-progress-of-the-run">
+<h2>Seeing the progress of the run<a class="headerlink" href="#seeing-the-progress-of-the-run" title="Permalink to this heading">#</a></h2>
+<p>You can see the progress of the run in your Celery logs terminal or by sending another request-
+<a class="reference external" href="http://127.0.0.1:5000/api/prev_runs/%3Cresult_id%3E">http://127.0.0.1:5000/api/prev_runs/&lt;result_id&gt;</a> <br />
+Replace the <code class="docutils literal notranslate"><span class="pre">result_id</span></code> above with the hash you got in the previous response. If the process is still going on, it would send you a response like this-</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;ready&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>The default password is your default password to use for the application. PACManWeb uses Basic Auth for secure transmission of files and execution of the application. <code class="docutils literal notranslate"><span class="pre">ADS_DEV_KEY</span></code> is the key that PACMan would use to access the ADS Database. <code class="docutils literal notranslate"><span class="pre">ENV_NAME</span></code> contains the name of the conda environment.</p>
+<p>If it completed, the response would include the traceback of the run.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;ready&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;successful&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;INFO [proposal_scraper.scrape_cycles:576] /Users/PACMan/./runs/input_proposal_data/221026/*txtx\nINFO [proposal_scraper.scrape_cycles:579] Found 7 proposals to scrape\nRunning PACMan...\nLog file can be found at ./runs/logs/PACMan_e7a81b49-4f70-42fa-87fd-0fd112958baf_20240131T155649.log\n\rScraping Proposals:   0%|          | 0/7 [00:00&lt;?, ?it/s]\rScraping Proposals: 100%|##########| 7/7 [00:00&lt;00:00, 2328.69it/s]\nINFO [proposal_scraper.scrape_cycles:576] /Users/PACMan/./runs/input_proposal_data/231026/*txtx\nINFO [proposal_scraper.scrape_cycles:579] Found 6 proposals to scrape\n\rScraping Proposals:   0%|          | 0/6 [00:00&lt;?, ?it/s]\rScraping Proposals: 100%|##########| 6/6 [00:00&lt;00:00, 3131.25it/s]\n&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </section>
-<section id="setting-up-celery">
-<h2>Setting up Celery<a class="headerlink" href="#setting-up-celery" title="Permalink to this heading">#</a></h2>
-<p>PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis and backend and RabbitMQ as a message broker to run.</p>
+<section id="terminating-a-task">
+<h2>Terminating a task<a class="headerlink" href="#terminating-a-task" title="Permalink to this heading">#</a></h2>
+<p>To terminate a task, run- <a class="reference external" href="http://127.0.0.1:5000/api/terminate/%3Cresult_id%3E">http://127.0.0.1:5000/api/terminate/&lt;result_id&gt;</a></p>
+</section>
+<section id="streaming-responses">
+<h2>Streaming Responses<a class="headerlink" href="#streaming-responses" title="Permalink to this heading">#</a></h2>
+<p>Unfortunately, you cannot test streaming APIs on PACMan, but you can try them in your web browser- <br />
+<a class="reference external" href="http://127.0.0.1:5000/api/stream/%3Cresult_id%3E">http://127.0.0.1:5000/api/stream/&lt;result_id&gt;</a></p>
+</section>
+<section id="getting-results">
+<h2>Getting Results<a class="headerlink" href="#getting-results" title="Permalink to this heading">#</a></h2>
+<p>To get results you can do <a class="reference external" href="http://127.0.0.1:5000/api/outputs/%3Coutput_mode%3E/%3Cresult_id%3E?cycle_number=221026">http://127.0.0.1:5000/api/outputs/&lt;output_mode&gt;/&lt;result_id&gt;?cycle_number=221026</a></p>
+<p>You will have to replace the <code class="docutils literal notranslate"><span class="pre">output_mode</span></code> by one of the following- <code class="docutils literal notranslate"><span class="pre">proposal_cat_output</span></code>, <code class="docutils literal notranslate"><span class="pre">duplicates_output</span></code> or <code class="docutils literal notranslate"><span class="pre">match_reviewers_output</span></code>. <code class="docutils literal notranslate"><span class="pre">result_id</span></code> will be the hash from the output. Cycle number here is 221026 but that can be changed to something else.</p>
+</section>
+<section id="uploading-files">
+<h2>Uploading files<a class="headerlink" href="#uploading-files" title="Permalink to this heading">#</a></h2>
+<p>The API- <a class="reference external" href="http://127.0.0.1:5000/api/upload">http://127.0.0.1:5000/api/upload</a> can be used to upload files to the PACMan repo. Unline other requests, this will be a <code class="docutils literal notranslate"><span class="pre">POST</span></code> request with the files as form data in the body of the URL. There are a few contraints though-</p>
 <ul class="simple">
-<li><p>Redis installation instructions can be found on the redis website- <a class="reference external" href="https://redis.io/docs/install/install-redis/">https://redis.io/docs/install/install-redis/</a>.</p></li>
-<li><p>RabbitMQ instructions can be found here- <a class="reference external" href="https://www.rabbitmq.com/download.html">https://www.rabbitmq.com/download.html</a>. Once installed, RabbitMQ will need to be setup with these commands- <a class="reference external" href="https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq">https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq</a>.</p></li>
+<li><p>The file has to be a zip file, or it will be rejected by the API.</p></li>
+<li><p>Panelist and model files can be placed in the root of the zip folder or inside separate folders- but the folder names must contain words “panelist” and “model” respectively.</p></li>
+<li><p>Proposal files <strong>need</strong> to be in a separate folder, each proposal file being inside it’s cycle folder. For example, for proposal 1 of Cycle 221026, the file path will be <code class="docutils literal notranslate"><span class="pre">zip_file_root/221026/00001.txtx</span></code></p></li>
 </ul>
-<p>Once Redis and RabbitMQ are setup, you can start running celery.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>celery -A pacmanweb.celery_app worker --loglevel=info
-</pre></div>
-</div>
 </section>
-<section id="starting-flask-application">
-<h2>Starting Flask Application<a class="headerlink" href="#starting-flask-application" title="Permalink to this heading">#</a></h2>
-<p>To start Flask in developement mode-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask<span class="w"> </span>run
-</pre></div>
-</div>
+<section id="getting-available-cycles-and-models">
+<h2>Getting available cycles and models<a class="headerlink" href="#getting-available-cycles-and-models" title="Permalink to this heading">#</a></h2>
+<p>The API- <a class="reference external" href="http://127.0.0.1:5000/api/get_cycles">http://127.0.0.1:5000/api/get_cycles</a> will return available cycles in panelist and proposal folders and the models present in the models folder.</p>
 </section>
 </section>
 
@@ -474,20 +491,20 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="intro.html"
+       href="installation_frontend.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Welcome to PACMan Web Docs</p>
+        <p class="prev-next-title">Frontend Installation</p>
       </div>
     </a>
     <a class="right-next"
-       href="installation_frontend.html"
+       href="testing_building_docs.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Frontend Installation</p>
+        <p class="prev-next-title">Running Tests and Building Docs</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -507,10 +524,13 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spawning-a-new-pacman-process">Spawning a new PACMan process</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#seeing-the-progress-of-the-run">Seeing the progress of the run</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#terminating-a-task">Terminating a task</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#streaming-responses">Streaming Responses</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-results">Getting Results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#uploading-files">Uploading files</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-available-cycles-and-models">Getting available cycles and models</a></li>
 </ul>
   </nav></div>
 
