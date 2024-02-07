@@ -9,6 +9,7 @@ const ProposalTable = ({
   setShowTable,
   setShowLogs,
   onCategorizeAnotherCycle,
+  currentCycle,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -22,7 +23,7 @@ const ProposalTable = ({
       const tableResponse = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
-        }/api/outputs/proposal_cat_output/${currentId}?cycle_number=221026`,
+        }/api/outputs/proposal_cat_output/${currentId}?cycle_number==${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

@@ -7,6 +7,7 @@ const TableForDuplicationChecker = ({
   currentId,
   setShowTable,
   setShowLogs,
+  currentCycle,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -20,7 +21,7 @@ const TableForDuplicationChecker = ({
       const tableResponse = await fetch(
         `${
           import.meta.env.VITE_BASE_URL
-        }/api/outputs/duplicates_output/${currentId}?cycle_number=221026`,
+        }/api/outputs/duplicates_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

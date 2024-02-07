@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
-const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
+const TableMatchReviewers = ({
+  currentId,
+  setShowTable,
+  setShowLogs,
+  currentCycle,
+}) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
