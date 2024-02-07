@@ -1,59 +1,31 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
 import Logs from "../util/Logs";
 import OtherConfigOptions from "../util/OtherConfigOptions";
 import ProposalTable from "./ProposalTable";
 
-const ProposalCategorize = () => {
+const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
+  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
+  const [currentCycle, setCurrentCycle] = useState();
 
-  useEffect(() => {
-    async function fetchLogs() {
-      if (!currentId) {
-        return;
-      }
+  // state variables for other config options
+  const [runName, setRunName] = useState("");
+  const [selectedModal, setSelectedModal] = useState();
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
+  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
+    useState(3);
 
-      const eventSource = new EventSource(
-        `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
-      );
-
-      eventSource.onopen = () => {
-        setShowLogs(true);
-      };
-
-      eventSource.onmessage = (event) => {
-        const newLog = event.data;
-        setLogs((prevLogs) => [...prevLogs, newLog]);
-      };
-
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-        eventSource.close();
-      };
-
-      return () => {
-        eventSource.close();
-      };
-    }
-
-    fetchLogs();
-  }, [currentId, setLogs, setShowLogs]);
-
-  const numbers = [
-    123456, 987654, 456789, 567890, 234567, 890123, 345678, 678901, 789012,
-    172345,
-  ];
   const handleClick = async (event) => {
     event.preventDefault();
-
-    // Call the first API to get the task ID
     const spawnResponse = await fetch(
-      "http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=221026",
+      `http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
       {
         method: "GET",
         headers: {
@@ -62,9 +34,21 @@ const ProposalCategorize = () => {
         },
       }
     );
+    console.log(currentCycle);
+    console.log(closeCollaboratorTimeFrame);
+    console.log(numberOfTopReviewers);
+    console.log(modalFile);
 
     const data = await spawnResponse.json();
     setCurrentId(data["result_id"]);
+    setShowLogs(true);
+  };
+
+  const onTerminate = () => {
+    setCurrentId(undefined);
+    setShowLogs(false);
+    setShowTable(false);
+    setLogs([]);
   };
 
   return (
@@ -72,9 +56,11 @@ const ProposalCategorize = () => {
       <div className="row">
         <div>
           <DropdownConfigOption
-            data={numbers}
+            data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
+            defaultValue="Select a current cycle"
+            setCycle={setCurrentCycle}
           />
         </div>
       </div>
@@ -83,13 +69,30 @@ const ProposalCategorize = () => {
           currentId={currentId}
           setShowTable={setShowTable}
           setShowLogs={setShowLogs}
+          onCategorizeAnotherCycle={onTerminate}
         />
       ) : showLogs ? (
-        <Logs data={logs} setShowTable={setShowTable} currentId={currentId} />
+        <Logs
+          setShowTable={setShowTable}
+          currentId={currentId}
+          onTerminate={onTerminate}
+          logs={logs}
+          setLogs={setLogs}
+          showTerminateProcess={showTerminateProcess}
+          setShowTerminateProcess={setShowTerminateProcess}
+        />
       ) : (
         <OtherConfigOptions
           button_label="Categorize Proposal"
           handleClick={handleClick}
+          runName={runName}
+          modalFile={modalFile}
+          numberOfTopReviewers={numberOfTopReviewers}
+          closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
+          setModalFile={setSelectedModal}
+          setRunName={setRunName}
+          setNumberOfTopReviewers={setNumberOfTopReviewers}
+          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
         />
       )}
     </div>

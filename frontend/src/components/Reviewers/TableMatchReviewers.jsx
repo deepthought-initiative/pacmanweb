@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import "../../css/TableMatchReviewers.css";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
 const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
@@ -22,7 +21,6 @@ const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
       );
       const tableData = await tableResponse.json();
       setDataToDisplay(tableData);
-      console.log(tableData);
     }
     fetchTable();
   }, [currentId, setShowTable]);
@@ -137,12 +135,12 @@ const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
   return (
     <>
       <div
-        id="outer-table-container"
+        id="outer-container"
         className="container-fluid border border-1 border-black mt-5 rounded-3"
       >
         <div className="col-6 px-3">
           <h6 className="mx-3 my-4">All Reviewers</h6>
-          <div className="scroll-table-container">
+          <div className="table-container">
             <table className="container-fluid p-0">
               <thead>
                 <tr>

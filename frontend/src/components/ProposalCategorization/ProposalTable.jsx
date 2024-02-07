@@ -2,10 +2,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import "../../css/proposalTable.css";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
-const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
+const ProposalTable = ({
+  currentId,
+  setShowTable,
+  setShowLogs,
+  onCategorizeAnotherCycle,
+}) => {
   const [highlighted, setHighlighted] = useState();
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
@@ -24,7 +28,6 @@ const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
       );
       const tableData = await tableResponse.json();
       setDataToDisplay(tableData);
-      console.log(tableData);
     }
     fetchTable();
   }, [currentId, setShowTable]);
@@ -127,15 +130,13 @@ const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
     setCurrentRow(current_id);
   };
 
-  const viewLogs = () => {
+  const viewLogs = (event) => {
+    event.preventDefault();
+
     setShowLogs(true);
     setShowTable(false);
   };
 
-  const anotherCycle = () => {
-    setShowTable(false);
-    setShowLogs(false);
-  };
   return (
     <>
       <div
@@ -211,7 +212,7 @@ const ProposalTable = ({ currentId, setShowTable, setShowLogs }) => {
         </div>
       </div>
       <div className="button-tray container-fluid p-0">
-        <button className="btn rounded-0" onClick={anotherCycle}>
+        <button className="btn rounded-0" onClick={onCategorizeAnotherCycle}>
           Categorize Another Cycle
         </button>
         <a href={encodedUri} download="proposals.csv">

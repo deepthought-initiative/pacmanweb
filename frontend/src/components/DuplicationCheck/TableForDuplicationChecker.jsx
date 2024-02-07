@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import "../../css/TableForDuplicationChecker.css";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 
 const TableForDuplicationChecker = ({
@@ -27,7 +26,6 @@ const TableForDuplicationChecker = ({
       );
       const tableData = await tableResponse.json();
       setDataToDisplay(reformatData(tableData));
-      console.log(reformatData(tableData));
     }
     fetchTable();
   }, [currentId, setShowTable]);
