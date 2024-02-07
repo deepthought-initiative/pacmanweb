@@ -1,5 +1,11 @@
 /* eslint-disable react/prop-types */
-const DropdownConfigOption = ({ data, label, desc, setCycle }) => {
+const DropdownConfigOption = ({
+  data,
+  label,
+  desc,
+  setCycle,
+  defaultValue,
+}) => {
   const handleOnChange = (event) => {
     setCycle(event.target.value);
     console.log(event.target.value);
@@ -16,6 +22,9 @@ const DropdownConfigOption = ({ data, label, desc, setCycle }) => {
           aria-label="Select Current Cycle"
           onChange={handleOnChange}
         >
+          <option disabled selected value="">
+            {defaultValue}
+          </option>
           {data &&
             data.map((number) => (
               <option key={number} value={number}>

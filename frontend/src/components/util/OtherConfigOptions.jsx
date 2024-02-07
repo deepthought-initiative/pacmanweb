@@ -33,6 +33,7 @@ const OtherConfigOptions = ({
             data={modalFile}
             label="Select modal file to use"
             desc="Name of modal file to use"
+            defaultValue="Select a modal file"
             setValue={setModalFile}
           />
         </div>
