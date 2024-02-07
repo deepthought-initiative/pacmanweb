@@ -16,7 +16,8 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
   const [currentCycle, setCurrentCycle] = useState();
 
   // state variables for other config options
-  const [runName, setRunName] = useState("Sample Run Name");
+  const [runName, setRunName] = useState("");
+  const [selectedModal, setSelectedModal] = useState();
   const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
     useState(3);
@@ -24,7 +25,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      "http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=221026",
+      `http://127.0.0.1:5000/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
       {
         method: "GET",
         headers: {
@@ -33,6 +34,10 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
         },
       }
     );
+    console.log(currentCycle);
+    console.log(closeCollaboratorTimeFrame);
+    console.log(numberOfTopReviewers);
+    console.log(modalFile);
 
     const data = await spawnResponse.json();
     setCurrentId(data["result_id"]);
@@ -54,6 +59,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
             data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
+            defaultValue="Select a current cycle"
             setCycle={setCurrentCycle}
           />
         </div>
@@ -83,7 +89,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
           modalFile={modalFile}
           numberOfTopReviewers={numberOfTopReviewers}
           closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
-          setModalFile={setModalFile}
+          setModalFile={setSelectedModal}
           setRunName={setRunName}
           setNumberOfTopReviewers={setNumberOfTopReviewers}
           setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
