@@ -56,7 +56,7 @@ const MatchReviewers = ({ allCycles, modalFile, setModalFile }) => {
               label="Selected Current Cycle"
               desc="Prefix used throughout script to match with cycle description"
               defaultValue="Select a current cycle"
-              setCycle={setCurrentCycle}
+              setValue={setCurrentCycle}
               disabled={showTable || showLogs}
             />
           </div>

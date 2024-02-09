@@ -147,7 +147,7 @@ const ProposalTable = ({
         className="container-fluid border border-1 border-black mt-5"
       >
         <div className="col-md-9">
-          <h6 className="mx-3 my-4 fw-bolder">All Proposals</h6>
+          <h6 className="my-3">All Proposals</h6>
           <div className="table-container">
             <table className="container-fluid">
               <thead>
@@ -185,9 +185,9 @@ const ProposalTable = ({
           </div>
         </div>
         <div className="col-md-3">
-          <h6 className="mx-3 my-4">Alternate Categories</h6>
+          <h6 className="my-3">Alternate Categories</h6>
           {highlighted ? (
-            <div className="table-container rounded-4">
+            <div className="table-container">
               <table className="container-fluid">
                 <thead>
                   <tr>
