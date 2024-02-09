@@ -34,7 +34,9 @@ const Logs = ({
       return;
     }
     await fetch(
-      `http://127.0.0.1:5000/api/terminate/${currentId}?api_key=barebones`,
+      `${
+        import.meta.env.VITE_BASE_URL
+      }/api/terminate/${currentId}?api_key=barebones`,
       {
         method: "GET",
         headers: {
