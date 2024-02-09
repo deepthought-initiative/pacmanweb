@@ -13,6 +13,7 @@ img{
 
 .active{
     background-color: #E7ECEF;
+    font-weight: bold;
 }
 
 .icon{
