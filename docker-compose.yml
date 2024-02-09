@@ -1,40 +1,47 @@
 version: '3.8'
 
 services:
+  react:
+    container_name: react
+    volumes:
+      - .:/react
+    build:
+      context: ./frontend
+    ports: 
+      - "127.0.0.1:5173:3000"
+    command: npm run dev
   redis:
     image: redis:7-alpine
-
   web:
     container_name: web
+    image: web:app
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
-    image: pacmanweb
-    # this volume is used to map the files and folders on the host to the container
-    # so if we change code on the host, code in the docker container will also be changed
     volumes:
-      - .:/
+      - .:/app
     ports:
-      - 5010:5000
+      - 8000:5000
     env_file:
       - .flaskenv
     depends_on:
       - redis
+    command: flask run --host=0.0.0.0
   celery:
+    restart: always
     container_name: celery
+    command: celery -A pacmanweb.celery_app worker --loglevel=info
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
-    image: pacmanweb
     # this volume is used to map the files and folders on the host to the container
     # so if we change code on the host, code in the docker container will also be changed
     volumes:
-      - .:/
-    ports:
-      - 5010:5000
+      - .:/app
     env_file:
-      - .flaskenv
+      - .flaskenv 
     depends_on:
       - redis
+      - web
 
 
