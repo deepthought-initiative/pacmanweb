@@ -12,6 +12,30 @@ services:
     command: npm run dev
   redis:
     image: redis:7-alpine
+    restart: always
+  rabbitmq:
+    ports:
+      - '5672:5672'
+    hostname: pacmanweb-rabbit
+    image:
+      rabbitmq:3-management
+  celery:
+    restart: always
+    container_name: celery
+    command: celery -A pacmanweb.celery_app worker --loglevel=info
+    build:
+      context: .
+      dockerfile: ./pacmanweb/Dockerfile
+    volumes:
+      - .:/app
+    environment: 
+      - CUR_IP="152.58.33.43"
+    depends_on:
+      - redis
+      - rabbitmq
+    links:
+      - redis:redis
+      - rabbitmq:rabbitmq
   backend:
     container_name: backend
     image: backend:app
@@ -26,22 +50,10 @@ services:
       - .flaskenv
     depends_on:
       - redis
-    # command: flask run --host=0.0.0.0
+      - rabbitmq
+      - celery
     command: gunicorn 'pacmanweb:create_app()' --access-logfile=- --bind 0.0.0.0:8000
-  celery:
-    restart: always
-    container_name: celery
-    command: celery -A pacmanweb.celery_app worker --loglevel=info
-    build:
-      context: .
-      dockerfile: ./pacmanweb/Dockerfile
-    volumes:
-      - .:/app
-    env_file:
-      - .flaskenv 
-    depends_on:
-      - redis
-      - backend
+   
   nginx:
     image: nginx:latest
     ports:
@@ -57,4 +69,3 @@ services:
 
 volumes:
   react_build:
-

@@ -1,4 +1,5 @@
 import base64
+import os
 
 from celery import Celery
 from flask import Flask
@@ -8,8 +9,8 @@ from .config import Config
 
 celery_app = Celery(
     __name__,
-    backend="redis://localhost",
-    broker="pyamqp://",
+    result_backend="redis://redis:6379/0",
+    broker_url=f"amqp://guest:guest@rabbitmq:5672",
     include=["pacmanweb.tasks"],
 )
 
@@ -22,7 +23,7 @@ def create_app(config_class=Config):
     # the max limit to uploaded files is 1600 MBs
     # change the below length to allow sending bigger files
     app.config["MAX_CONTENT_LENGTH"] = 1600 * 1000 * 1000
-    celery_app.config_from_object(app.config["CELERY"])
+    # celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()
     login_manager.login_view = "auth.login"
