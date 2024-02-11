@@ -4,5 +4,5 @@ RUN micromamba install --name base --yes --file /tmp/env.yml \
     && micromamba clean --all --yes
 ARG MAMBA_DOCKERFILE_ACTIVATE=1
 ENV PYTHONBUFFERED=1
-COPY ../ /app
+COPY ../../../ /app
 WORKDIR /app
