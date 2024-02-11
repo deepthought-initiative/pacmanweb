@@ -24,7 +24,7 @@ const UploadZipForm = () => {
       formData.append("file", zipFile);
 
       const response = await fetch(
-        "http://127.0.0.1:5000/api/upload?api_key=barebones",
+        `${import.meta.env.VITE_BASE_URL}/api/upload?api_key=barebones`,
         {
           method: "POST",
           headers: {

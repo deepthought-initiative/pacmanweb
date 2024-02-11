@@ -14,7 +14,7 @@ function App() {
   useEffect(() => {
     async function fetchCycles() {
       const cycles = await fetch(
-        "http://127.0.0.1:5000/api/get_cycles?api_key=barebones",
+        `${import.meta.env.VITE_BASE_URL}/api/get_cycles?api_key=barebones`,
         {
           method: "GET",
           headers: {

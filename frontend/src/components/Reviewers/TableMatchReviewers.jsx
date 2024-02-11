@@ -13,7 +13,9 @@ const TableMatchReviewers = ({ currentId, setShowTable, setShowLogs }) => {
         return;
       }
       const tableResponse = await fetch(
-        `http://127.0.0.1:5000/api/outputs/match_reviewers_output/${currentId}?cycle_number=221026`,
+        `${
+          import.meta.env.VITE_BASE_URL
+        }/api/outputs/match_reviewers_output/${currentId}?cycle_number=221026`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },
