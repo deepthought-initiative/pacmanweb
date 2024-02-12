@@ -62,7 +62,8 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
             defaultValue="Select a current cycle"
-            setCycle={setCurrentCycle}
+            setValue={setCurrentCycle}
+            disabled={showTable || showLogs}
           />
         </div>
       </div>
@@ -72,6 +73,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
           setShowTable={setShowTable}
           setShowLogs={setShowLogs}
           onCategorizeAnotherCycle={onTerminate}
+          currentCycle={currentCycle}
         />
       ) : showLogs ? (
         <Logs
@@ -91,7 +93,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
           modalFile={modalFile}
           numberOfTopReviewers={numberOfTopReviewers}
           closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
-          setModalFile={setSelectedModal}
+          setSelectedModal={setSelectedModal}
           setRunName={setRunName}
           setNumberOfTopReviewers={setNumberOfTopReviewers}
           setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}

@@ -12,7 +12,7 @@ const OtherConfigOptions = ({
   numberOfTopReviewers,
   closeCollaboratorTimeFrame,
   setNumberOfTopReviewers,
-  setModalFile,
+  setSelectedModal,
   setRunName,
   setCloseCollaboratorTimeFrame,
 }) => {
@@ -33,8 +33,9 @@ const OtherConfigOptions = ({
             data={modalFile}
             label="Select modal file to use"
             desc="Name of modal file to use"
-            defaultValue="Select a modal file"
-            setValue={setModalFile}
+            setValue={setSelectedModal}
+            placeholderText="Select a current cycle"
+            disabled={false}
           />
         </div>
         <div className="single-option">

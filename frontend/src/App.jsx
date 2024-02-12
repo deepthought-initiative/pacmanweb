@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import ProposalDuplicationChecker from "./components/DuplicationCheck/ProposalDuplicationChecker";
-import ProposalCategorize from "./components/ProposalCategorization/ProposalCategorize";
-import MatchReviewers from "./components/Reviewers/MatchReviewers";
+import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
+import ProposalTable from "./components/ProposalCategorization/ProposalTable";
+import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Navbar from "./components/util/Navbar";
+import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -37,30 +38,46 @@ function App() {
           <Route
             path="/categorize"
             element={
-              <ProposalCategorize
+              <SinglePage
+                key="PROP"
+                mode="PROP"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                renderTableComponent={(props) => <ProposalTable {...props} />}
+                button_label="Proposals-Categorize"
               />
             }
           />
           <Route
             path="/duplication"
             element={
-              <ProposalDuplicationChecker
+              <SinglePage
+                key="DUP"
+                mode="DUP"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                renderTableComponent={(props) => (
+                  <TableForDuplicationChecker {...props} />
+                )}
+                button_label="Duplication Check"
               />
             }
           />
           <Route
             path="/review"
             element={
-              <MatchReviewers
+              <SinglePage
+                key="MATCH"
+                mode="MATCH"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                renderTableComponent={(props) => (
+                  <TableMatchReviewers {...props} />
+                )}
+                button_label="Match Reviewers"
               />
             }
           />

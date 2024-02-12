@@ -12,6 +12,7 @@ body {
 #outer-container {
   height: 500px;
   display: flex;
+  gap: 52px;
 }
 
 #log-container {
@@ -21,7 +22,15 @@ body {
   text-align: left;
   white-space: pre-wrap;
 }
-
+.col-md-9{
+  width: 71%;
+}
+.col-md-6{
+  width: 48%;
+}
+.col-3{
+  width: 21%;
+}
 #log-container>* {
   color: white;
   font-family: monospace;
@@ -29,42 +38,47 @@ body {
 
 h6 {
   text-align: left;
-  margin-top: 5px;
   padding-bottom: 10px;
   overflow-x: auto;
+  font-weight: bolder;
   white-space: nowrap;
+  font-size: larger;
 }
 
 .table-container {
   overflow-y: auto;
-  max-height: 400px;
+  background-color:#E7ECEF;
+  height: 400px;
 }
-
-table{
-  border-collapse: separate;
-}
-
-thead {
+thead th {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 td {
   cursor: pointer;
+  font-size: small;
 }
 
 th,
 td {
-  font-size: small;
   height: 65px;
-  background-color: #E7ECEF;
+  border-color: white;
+  border-style: solid;
+  border-width: 2px;
   text-align: left;
   vertical-align: middle;
   padding-top: 12px;
   padding-bottom: 12px;
   padding-left: 15px;
   padding-right: 20px;
+}
+
+th {
+  font-size: medium !important;
+  background-color: #E7ECEF;
+  z-index: 2;
 }
 
 .button-tray {

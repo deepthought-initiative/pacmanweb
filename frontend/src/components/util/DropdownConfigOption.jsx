@@ -3,11 +3,12 @@ const DropdownConfigOption = ({
   data,
   label,
   desc,
-  setCycle,
-  defaultValue,
+  setValue,
+  placeholderText,
+  disabled,
 }) => {
   const handleOnChange = (event) => {
-    setCycle(event.target.value);
+    setValue(event.target.value);
     console.log(event.target.value);
   };
   return (
@@ -20,10 +21,12 @@ const DropdownConfigOption = ({
           id="CurrentCycle"
           className="form-select rounded-0 border-2"
           aria-label="Select Current Cycle"
+          defaultValue={"DEFAULT"}
           onChange={handleOnChange}
+          disabled={disabled}
         >
-          <option disabled selected value="">
-            {defaultValue}
+          <option disabled value="DEFAULT">
+            {placeholderText}
           </option>
           {data &&
             data.map((number) => (

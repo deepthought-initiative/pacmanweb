@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import DefaultPfp from "../../assets/DefaultPfp.png";
-import QuestionMark from "../../assets/QuestionMark.jpeg";
+import QuestionMark from "../../assets/QuestionMark.png";
 import Settings from "../../assets/Settings.png";
 import "../../css/navbar.css";
 
@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="nav">
           <li
-            className={`nav-item border ms-5${
+            className={`nav-item border ms-4${
               isItemActive("/categorize") ? " active" : ""
             }`}
           >
@@ -37,7 +37,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-5${
+            className={`nav-item border ms-4${
               isItemActive("/duplication") ? " active" : ""
             }`}
           >
@@ -46,7 +46,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-5${
+            className={`nav-item border ms-4${
               isItemActive("/review") ? " active" : ""
             }`}
           >
@@ -55,7 +55,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-5${
+            className={`nav-item border ms-4${
               isItemActive("/upload") ? " active" : ""
             }`}
           >
