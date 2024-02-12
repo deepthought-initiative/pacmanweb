@@ -38,7 +38,6 @@ services:
       - rabbitmq:rabbitmq
   backend:
     container_name: backend
-    image: backend:app
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
