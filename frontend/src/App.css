@@ -21,11 +21,15 @@ body {
   overflow-y: auto;
   text-align: left;
   white-space: pre-wrap;
-  display: flex;
-  flex-direction: column-reverse;
 }
 .col-md-9{
   width: 71%;
+}
+.col-md-6{
+  width: 48%;
+}
+.col-3{
+  width: 21%;
 }
 #log-container>* {
   color: white;
