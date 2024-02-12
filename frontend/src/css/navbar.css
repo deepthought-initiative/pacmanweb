@@ -11,6 +11,10 @@ img{
     border-radius: 50%;
 }
 
+.nav-item{
+    width: 310px;
+}
+
 .active{
     background-color: #E7ECEF;
     font-weight: bold;
