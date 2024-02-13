@@ -63,6 +63,15 @@ const Navbar = () => {
               Upload a Zip
             </Link>
           </li>
+          <li
+            className={`nav-item border ms-4${
+              isItemActive("/upload") ? " active" : ""
+            }`}
+          >
+            <Link className="nav-link text-dark" to="/login">
+              Login
+            </Link>
+          </li>
         </ul>
       </div>
       <div id="right-corner">

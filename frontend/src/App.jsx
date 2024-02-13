@@ -5,6 +5,7 @@ import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDu
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
+import Login from "./components/util/LoginPage";
 import Navbar from "./components/util/Navbar";
 import SinglePage from "./components/util/SinglePage";
 
@@ -82,6 +83,7 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </>
