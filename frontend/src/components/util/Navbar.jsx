@@ -68,7 +68,7 @@ const Navbar = () => {
               isItemActive("/upload") ? " active" : ""
             }`}
           >
-            <Link className="nav-link text-dark" to="/login">
+            <Link className="nav-link text-dark" to="/">
               Login
             </Link>
           </li>

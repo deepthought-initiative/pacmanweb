@@ -15,16 +15,7 @@ function App() {
 
   useEffect(() => {
     async function fetchCycles() {
-      const cycles = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/get_cycles?api_key=barebones`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic" + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const cycles = await fetch(`/api/get_cycles`);
       const cycleList = await cycles.json();
       setAllCycles(cycleList["proposal_cycles"]);
       setModalFile(cycleList["models"]);
@@ -83,7 +74,7 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </>

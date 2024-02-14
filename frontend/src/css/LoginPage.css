@@ -35,7 +35,7 @@ input[type="password"] {
     border-radius: 4px;
 }
 
-button {
+.submit-button {
     width: 100%;
     padding: 10px;
     background-color: #7A8E99;

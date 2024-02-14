@@ -20,9 +20,7 @@ const TableMatchReviewers = ({
         return;
       }
       const tableResponse = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/outputs/match_reviewers_output/${currentId}?cycle_number=${currentCycle}`,
+        `/api/outputs/match_reviewers_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

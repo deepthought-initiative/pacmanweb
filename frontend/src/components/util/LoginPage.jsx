@@ -9,16 +9,17 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("/login", {
+      const formData = new FormData();
+      formData.append("username", username);
+      formData.append("password", password);
+
+      const response = await fetch(`/api/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
+        body: formData,
       });
       const data = await response.json();
       if (response.ok) {
-        window.location.href = "/"; // Redirect to dashboard after successful login
+        window.location.href = "/";
       } else {
         setError("Invalid username or password");
       }
@@ -49,7 +50,9 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button type="submit">Login</button>
+          <button className="submit-button" type="submit">
+            Login
+          </button>
         </form>
         {error && <div className="error-message">{error}</div>}
       </div>

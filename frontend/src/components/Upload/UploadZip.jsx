@@ -23,16 +23,10 @@ const UploadZipForm = () => {
       const formData = new FormData();
       formData.append("file", zipFile);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/upload?api_key=barebones`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`/api/upload`, {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error("Failed to upload file");
