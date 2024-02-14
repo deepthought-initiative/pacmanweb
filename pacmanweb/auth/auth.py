@@ -32,7 +32,7 @@ def login_post():
 
     user = User.get(username=username, password=password)
     if user is None:
-        return jsonify({"error": "Unauthorized"})
+        return jsonify({"error": "Unauthorized"}), 401
     else:
         login_user(user)
         return jsonify({"username": username, "password": password})
