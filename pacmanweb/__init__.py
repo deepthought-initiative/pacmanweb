@@ -31,7 +31,8 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return auth.User.get(user_id)
+        # return auth.User.get(user_id)
+        return auth.User(user_id)
 
     @login_manager.request_loader
     def load_user_from_request(request):

@@ -1,10 +1,21 @@
 import json
 
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from flask import (
+    Blueprint,
+    flash,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
 from flask_login import login_required, login_user, logout_user
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from pacmanweb import Config
+
+from .models import *
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -14,9 +25,17 @@ def login():
     return "Login"
 
 
-@auth_bp.route("/login", methods=["POST"])
+@auth_bp.route("/api/login", methods=["POST"])
 def login_post():
-    pass
+    username = request.form["username"]
+    password = request.form["password"]
+
+    user = User.get(username=username, password=password)
+    if user is None:
+        return jsonify({"error": "Unauthorized"})
+    else:
+        login_user(user)
+        return jsonify({"username": username, "password": password})
 
 
 @auth_bp.route("/signup")
@@ -26,6 +45,7 @@ def signup():
 
 @auth_bp.route("/logout")
 def logout():
+    logout_user()
     return "Logout"
 
 
