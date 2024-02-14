@@ -19,7 +19,8 @@ const Login = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        window.location.href = "/";
+        localStorage.setItem("loggedIn", "true");
+        window.location.href = "/categorize";
       } else {
         setError("Invalid username or password");
       }

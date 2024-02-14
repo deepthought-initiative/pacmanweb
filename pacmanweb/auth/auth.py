@@ -43,7 +43,7 @@ def signup():
     return "Signup"
 
 
-@auth_bp.route("/logout")
+@auth_bp.route("/logout", methods=["POST"])
 def logout():
     logout_user()
     return "Logout"

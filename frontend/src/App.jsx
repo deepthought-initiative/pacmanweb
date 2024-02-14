@@ -6,12 +6,16 @@ import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
+import Logout from "./components/util/Logout";
 import Navbar from "./components/util/Navbar";
 import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
   const [modalFile, setModalFile] = useState();
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("loggedIn") === "true"
+  );
 
   useEffect(() => {
     async function fetchCycles() {
@@ -22,7 +26,7 @@ function App() {
     }
     fetchCycles();
   }, []);
-  return (
+  return loggedIn ? (
     <>
       <BrowserRouter>
         <Navbar />
@@ -74,10 +78,15 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
-          <Route path="/" element={<Login />} />
+          <Route
+            path="/logout"
+            element={<Logout setLoggedIn={setLoggedIn} />}
+          />
         </Routes>
       </BrowserRouter>
     </>
+  ) : (
+    <Login setLoggedIn={setLoggedIn} />
   );
 }
 
