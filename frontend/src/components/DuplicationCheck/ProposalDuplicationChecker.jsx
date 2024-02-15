@@ -24,9 +24,7 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/api/run_pacman?mode=DUP&past_cycles=221026,231026&main_test_cycle=${currentCycle}`,
+      `/api/run_pacman?mode=DUP&past_cycles=221026,231026&main_test_cycle=${currentCycle}`,
       {
         method: "GET",
         headers: {
