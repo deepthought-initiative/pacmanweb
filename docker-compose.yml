@@ -39,6 +39,7 @@ services:
       - redis:redis
       - rabbitmq:rabbitmq
   backend:
+    platform: linux/amd64
     container_name: backend
     build:
       context: .

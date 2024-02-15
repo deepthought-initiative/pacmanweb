@@ -1,5 +1,5 @@
-FROM mambaorg/micromamba:1.5.6
-COPY --chown=$MAMBA_USER:$MAMBA_USER ../test_env.yml /tmp/env.yml
+FROM mambaorg/micromamba:1.5.6 
+COPY --chown=$MAMBA_USER:$MAMBA_USER ../linux_env.yml /tmp/env.yml
 RUN micromamba install --name base --yes --file /tmp/env.yml \
     && micromamba clean --all --yes
 ARG MAMBA_DOCKERFILE_ACTIVATE=1

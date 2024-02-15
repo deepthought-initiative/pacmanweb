@@ -161,10 +161,10 @@ dependencies:
   - celery
   - pandas
   - gunicorn
-  - pip:
-    - ads
-    - fingerprint
-    # - pyqt5-sip
-    # - pyqtwebengine
-prefix: /user/nmiles/miniconda3/envs/pacman_linux
+#   - pip:
+#     - ads
+#     - fingerprint
+#     # - pyqt5-sip
+#     # - pyqtwebengine
+# prefix: /user/nmiles/miniconda3/envs/pacman_linux
 
