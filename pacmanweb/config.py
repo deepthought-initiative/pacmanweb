@@ -28,5 +28,5 @@ class Config:
     CELERY = {}
 
     file_path = pathlib.Path(__file__).resolve()
-    PACMAN_PATH = file_path.parents[2] / "PACMan"
+    PACMAN_PATH = file_path.parents[1] / "PACMan"
     UPLOAD_FOLDER = ROOTDIR / "uploads"

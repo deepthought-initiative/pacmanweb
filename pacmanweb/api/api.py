@@ -27,7 +27,7 @@ from .util import MoveUploadedFiles, VerifyPACManDir
 ALLOWED_EXTENSIONS = {"zip"}
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
-redis_instance = redis.Redis()
+redis_instance = redis.from_url("redis://redis:6379/0")
 
 
 @api_bp.route("/get_cycles", methods=["GET"])
