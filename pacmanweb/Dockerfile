@@ -6,6 +6,7 @@ ARG MAMBA_DOCKERFILE_ACTIVATE=1
 ENV PYTHONBUFFERED=1
 RUN python3 -m spacy download en_core_web_sm
 RUN micromamba install -n base --yes scikit-learn=1.1 --channel conda-forge
-
+RUN micromamba remove -n base --yes pillow
+RUN micromamba install -n base --yes matplotlib matplotlib-base --channel conda-forge
 COPY ../../../ /app
 WORKDIR /app
