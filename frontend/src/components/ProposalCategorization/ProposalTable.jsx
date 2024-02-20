@@ -23,7 +23,7 @@ const ProposalTable = ({
         return;
       }
       const tableResponse = await fetch(
-        `/api/outputs/proposal_cat_output/${currentId}?cycle_number==${currentCycle}`,
+        `/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           credentials: "include",
