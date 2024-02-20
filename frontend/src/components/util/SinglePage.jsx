@@ -34,9 +34,7 @@ const SinglePage = ({
     var spawnResponse;
     if (mode == "DUP") {
       spawnResponse = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+        `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
         {
           method: "GET",
           headers: {
@@ -47,9 +45,7 @@ const SinglePage = ({
       );
     } else {
       spawnResponse = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
         {
           method: "GET",
           headers: {

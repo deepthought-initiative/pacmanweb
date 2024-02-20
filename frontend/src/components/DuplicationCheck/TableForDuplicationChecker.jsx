@@ -21,9 +21,7 @@ const TableForDuplicationChecker = ({
         return;
       }
       const tableResponse = await fetch(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }/api/outputs/duplicates_output/${currentId}?cycle_number=${currentCycle}`,
+        `/api/outputs/duplicates_output/${currentId}?cycle_number=${currentCycle}`,
         {
           method: "GET",
           headers: { Authorization: "Basic " + btoa("default:barebones") },

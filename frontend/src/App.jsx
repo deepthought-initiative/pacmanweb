@@ -5,32 +5,28 @@ import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDu
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
+import Login from "./components/util/LoginPage";
+import Logout from "./components/util/Logout";
 import Navbar from "./components/util/Navbar";
 import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
   const [modalFile, setModalFile] = useState();
+  const [loggedIn, setLoggedIn] = useState(
+    localStorage.getItem("loggedIn") === "true"
+  );
 
   useEffect(() => {
     async function fetchCycles() {
-      const cycles = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/api/get_cycles?api_key=barebones`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic" + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const cycles = await fetch(`/api/get_cycles`);
       const cycleList = await cycles.json();
       setAllCycles(cycleList["proposal_cycles"]);
       setModalFile(cycleList["models"]);
     }
     fetchCycles();
   }, []);
-  return (
+  return loggedIn ? (
     <>
       <BrowserRouter>
         <Navbar />
@@ -82,9 +78,15 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
+          <Route
+            path="/logout"
+            element={<Logout setLoggedIn={setLoggedIn} />}
+          />
         </Routes>
       </BrowserRouter>
     </>
+  ) : (
+    <Login setLoggedIn={setLoggedIn} />
   );
 }
 

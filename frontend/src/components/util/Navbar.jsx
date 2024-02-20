@@ -77,7 +77,7 @@ const Navbar = () => {
           </a>
         </div>
         <div>
-          <a href="#">
+          <a href="/logout">
             <img src={DefaultPfp} />
           </a>
         </div>

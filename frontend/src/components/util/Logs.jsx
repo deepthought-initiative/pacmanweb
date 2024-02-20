@@ -33,18 +33,9 @@ const Logs = ({
     if (!currentId) {
       return;
     }
-    await fetch(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/api/terminate/${currentId}?api_key=barebones`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Basic " + btoa("default:barebones"),
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    await fetch(`/api/terminate/${currentId}`, {
+      method: "POST",
+    });
     onTerminate();
   };
 
@@ -52,9 +43,7 @@ const Logs = ({
     if (!currentId) {
       return;
     }
-    const eventSource = new EventSource(
-      `http://127.0.0.1:5000/api/stream/${currentId}?api_key=barebones`
-    );
+    const eventSource = new EventSource(`/api/stream/${currentId}`);
     eventSource.onopen = () => {
       setShowTerminateProcess(true);
     };

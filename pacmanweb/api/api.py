@@ -8,12 +8,12 @@ from celery.result import AsyncResult
 from flask import (
     Blueprint,
     Response,
+    flash,
     g,
     json,
+    redirect,
     request,
     stream_with_context,
-    flash,
-    redirect,
 )
 from flask_login import login_required
 from werkzeug.utils import secure_filename
@@ -22,7 +22,7 @@ from pacmanweb import Config
 
 from .. import celery_app
 from ..tasks import pacman_task
-from .util import VerifyPACManDir, MoveUploadedFiles
+from .util import MoveUploadedFiles, VerifyPACManDir
 
 ALLOWED_EXTENSIONS = {"zip"}
 
@@ -98,7 +98,7 @@ def stream_task(result_id):
     return Response(stream_with_context(generate()), mimetype="text/event-stream")
 
 
-@api_bp.route("/terminate/<result_id>", methods=["GET"])
+@api_bp.route("/terminate/<result_id>", methods=["POST"])
 @login_required
 def stop_task(result_id):
     task = AsyncResult(result_id, app=celery_app)
