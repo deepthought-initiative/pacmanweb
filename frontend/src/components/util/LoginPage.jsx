@@ -20,7 +20,7 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("loggedIn", "true");
-        window.location.href = "/categorize";
+        window.location.href = "/";
       } else {
         setError("Invalid username or password");
       }
