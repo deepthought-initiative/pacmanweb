@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     # celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()
-    login_manager.login_view = "api.login"
+    login_manager.login_view = "api.api.login"
     login_manager.init_app(app)
     from . import auth
 
