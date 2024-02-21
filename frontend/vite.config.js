@@ -22,7 +22,10 @@ export default defineConfig({
     '/api': {
       target: 'http://0.0.0.0:8080',
       changeOrigin: true,
-      // rewrite: (path) => path.replace(/^\/api/, ''),
+    },
+    '/login': {
+      target: 'http://0.0.0.0:8080',
+      changeOrigin: true,
     },
    }
   },

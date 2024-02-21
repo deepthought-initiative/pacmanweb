@@ -15,7 +15,8 @@ class Config:
         ENV_NAME = CREDS["ENV_NAME"]
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    DEFAULT_PASS = CREDS["default_password"]
+    DEFAULT_USERNAME = CREDS.get("default_username", "default")
+    DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
     if not SECRET_KEY:

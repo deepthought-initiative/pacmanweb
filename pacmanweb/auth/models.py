@@ -1,6 +1,7 @@
 from flask_login import UserMixin
+from pacmanweb import Config
 
-credentials = {"11": "abc", "22": "xyz"}
+credentials = {Config.DEFAULT_USERNAME: Config.DEFAULT_PASSWORD}
 
 
 class User(UserMixin):
@@ -12,6 +13,6 @@ class User(UserMixin):
 
     @staticmethod
     def get(username, password):
-        if username in credentials and credentials[username] == password:
+        if username in credentials.keys() and credentials[username] == password:
             return User(username)
         return None

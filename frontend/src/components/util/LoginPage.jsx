@@ -10,13 +10,13 @@ const Login = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
+      formData.append("creds", btoa(`${username}:${password}`));
 
-      const response = await fetch(`/api/login`, {
+      const response = await fetch(`/login`, {
         method: "POST",
         body: formData,
       });
+
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("loggedIn", "true");

@@ -1,4 +1,5 @@
 import json
+import base64
 
 from flask import (
     Blueprint,
@@ -19,22 +20,18 @@ from .models import *
 
 auth_bp = Blueprint("auth", __name__)
 
-
-@auth_bp.route("/login")
+@auth_bp.route("/login", methods=["GET", "POST"])
 def login():
-    return "Login"
-
-
-@auth_bp.route("/api/login", methods=["POST"])
-def login_post():
-    username = request.form["username"]
-    password = request.form["password"]
+    encoded_creds = request.form["creds"]
+    decoded_creds = base64.b64decode(encoded_creds)
+    username, password = decoded_creds.decode("utf-8").split(":")
 
     user = User.get(username=username, password=password)
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
     else:
         login_user(user)
+        next = request.args.get('next')
         return jsonify({"username": username, "password": password})
 
 
@@ -50,7 +47,7 @@ def logout():
 
 
 def validate_key(api_key):
-    password = Config.DEFAULT_PASS
+    password = Config.DEFAULT_PASSWORD
     password_hash = generate_password_hash(password)
     if check_password_hash(password_hash, api_key):
         return True

@@ -32,7 +32,6 @@ def create_app(config_class=Config):
 
     @login_manager.user_loader
     def load_user(user_id):
-        # return auth.User.get(user_id)
         return auth.User(user_id)
 
     @login_manager.request_loader
@@ -44,7 +43,7 @@ def create_app(config_class=Config):
             if auth.validate_key(api_key):
                 user = auth.User()
                 return user
-
+            
         # next, try to login using Basic Auth
         auth_header = request.headers.get("Authorization")
         if auth_header:
@@ -54,9 +53,8 @@ def create_app(config_class=Config):
                 username, password = decoded_authb.decode("utf-8").split(":")
             except TypeError:
                 pass
-            if auth.validate_key(password):
-                user = auth.User()
-                return user
+            user = auth.User.get(username, password)
+            return user
 
         # finally, return None if both methods did not login the user
         return None
@@ -82,5 +80,4 @@ def create_app(config_class=Config):
         response.headers['Cache-Control'] = 'public, max-age=0'
         return response
         
-
     return app
