@@ -12,7 +12,7 @@ const Login = () => {
       const formData = new FormData();
       formData.append("creds", btoa(`${username}:${password}`));
 
-      const response = await fetch(`/login`, {
+      const response = await fetch(`/api/login`, {
         method: "POST",
         body: formData,
       });

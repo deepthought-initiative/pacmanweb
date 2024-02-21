@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     # celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()
-    login_manager.login_view = "auth.login"
+    login_manager.login_view = "api.login"
     login_manager.init_app(app)
     from . import auth
 
@@ -62,7 +62,6 @@ def create_app(config_class=Config):
     from .api import api, outputs
 
     api.api_bp.register_blueprint(outputs.outputs_bp)
-    app.register_blueprint(auth.auth_bp)
     app.register_blueprint(api.api_bp)
 
     @app.after_request
