@@ -16,6 +16,7 @@ services:
     ports:
       - '6379:6379'
   rabbitmq:
+    restart: always
     ports:
       - '5672:5672'
     hostname: pacmanweb-rabbit
