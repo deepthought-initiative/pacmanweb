@@ -106,3 +106,51 @@ th {
 .highlighted>td {
   animation: highlight 0.5s ease-in-out forwards;
 }
+
+/*ERROR MESSAGE*/
+.error-container{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.error-container>img {
+  border-radius: 50%;
+  overflow: hidden;
+  height: 20px;
+  width: 20px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.option-header{
+  display: flex;
+  justify-content: space-between;
+}
+
+.config-error-message {
+  color: red;
+    animation: shake 0.5s ease;
+  }
+  
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+  
+    25% {
+      transform: translateX(-5px);
+    }
+  
+    50% {
+      transform: translateX(5px);
+    }
+  
+    75% {
+      transform: translateX(-5px);
+    }
+  
+    100% {
+      transform: translateX(0);
+    }
+  }
