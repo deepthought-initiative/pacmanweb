@@ -15,6 +15,10 @@ const OtherConfigOptions = ({
   setSelectedModal,
   setRunName,
   setCloseCollaboratorTimeFrame,
+  runNameError,
+  selectedModalError,
+  numberOfTopReviewersError,
+  closeCollaboratorTimeFrameError,
 }) => {
   return (
     <>
@@ -26,6 +30,7 @@ const OtherConfigOptions = ({
             value={runName}
             desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
             setValue={setRunName}
+            error={runNameError}
           />
         </div>
         <div className="single-option">
@@ -36,6 +41,7 @@ const OtherConfigOptions = ({
             setValue={setSelectedModal}
             placeholderText="Select a current cycle"
             disabled={false}
+            error={selectedModalError}
           />
         </div>
         <div className="single-option">
@@ -44,6 +50,7 @@ const OtherConfigOptions = ({
             value={numberOfTopReviewers}
             desc="Number of top recommended reviewers"
             setValue={setNumberOfTopReviewers}
+            error={numberOfTopReviewersError}
           />
         </div>
         <div className="single-option">
@@ -52,6 +59,7 @@ const OtherConfigOptions = ({
             value={closeCollaboratorTimeFrame}
             desc="Number of years over which to check close collaborators"
             setValue={setCloseCollaboratorTimeFrame}
+            error={closeCollaboratorTimeFrameError}
           />
         </div>
       </div>

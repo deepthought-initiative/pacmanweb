@@ -3,6 +3,7 @@
 import { useState } from "react";
 import "../../css/searchBox.css";
 import DropdownConfigOption from "../util/DropdownConfigOption";
+import ErrorMessage from "../util/ErrorMessage.jsx";
 import Logs from "../util/Logs";
 import OtherConfigOptions from "./OtherConfigOptions";
 
@@ -29,35 +30,91 @@ const SinglePage = ({
   const [pastCycle, setPastCycle] = useState([]);
   const bothPastandCurrentCycles = [...pastCycle, currentCycle];
 
+  // Error variables
+  const [currentCycleError, setCurrentCycleError] = useState("");
+  const [runNameError, setRunNameError] = useState("");
+  const [selectedModalError, setSelectedModalError] = useState("");
+  const [numberOfTopReviewersError, setNumberOfTopReviewersError] =
+    useState("");
+  const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
+    useState("");
+  const [pastCycleError, setPastCycleError] = useState("");
+
+  const validateFields = () => {
+    let noError = true;
+    if (!currentCycle) {
+      setCurrentCycleError("Current Cycle is required.");
+      noError = false;
+    }
+    if (!runName) {
+      setRunNameError("Run Name is required.");
+      noError = false;
+    }
+    if (!selectedModal) {
+      setSelectedModalError("Modal file is required.");
+      noError = false;
+    }
+    if (!numberOfTopReviewers) {
+      setNumberOfTopReviewersError("Number of Top Reviewers is required.");
+      noError = false;
+    }
+    if (!closeCollaboratorTimeFrame) {
+      setCloseCollaboratorTimeFrameError(
+        "Close Collaborator Timeframe is required."
+      );
+      noError = false;
+    }
+
+    // Validate pastCycle only if mode is "DUP"
+    if (mode === "DUP" && pastCycle.length === 0) {
+      setPastCycleError("At least one Past Cycle must be selected.");
+      noError = false;
+    }
+    return noError;
+  };
+
+  const resetErrors = () => {
+    setCurrentCycleError("");
+    setRunNameError("");
+    setSelectedModalError("");
+    setNumberOfTopReviewersError("");
+    setCloseCollaboratorTimeFrameError("");
+    setPastCycleError("");
+  };
+
   const handleClick = async (event) => {
     event.preventDefault();
-    var spawnResponse;
-    if (mode == "DUP") {
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
-    } else {
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+    resetErrors();
+    const checkErrors = validateFields();
+    if (checkErrors) {
+      let spawnResponse;
+      if (mode == "DUP") {
+        spawnResponse = await fetch(
+          `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Basic " + btoa("default:barebones"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        spawnResponse = await fetch(
+          `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Basic " + btoa("default:barebones"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+      const data = await spawnResponse.json();
+      setCurrentId(data["result_id"]);
+      setShowLogs(true);
     }
-    const data = await spawnResponse.json();
-    setCurrentId(data["result_id"]);
-    setShowLogs(true);
   };
 
   const onTerminate = () => {
@@ -89,11 +146,15 @@ const SinglePage = ({
               placeholderText="Select a current cycle"
               setValue={setCurrentCycle}
               disabled={showTable || showLogs}
+              error={currentCycleError}
             />
           </div>
           {mode === "DUP" && (
-            <div className="col-md-6">
-              <label className="form-label">Selected Past Cycle</label>
+            <div className="col-md-6 ms-auto">
+              <div className="option-header">
+                <label className="form-label">Selected Past Cycle</label>
+                {pastCycleError && <ErrorMessage message={pastCycleError} />}
+              </div>
               <div>
                 <select
                   className="form-select rounded-0 border-2"
@@ -150,6 +211,10 @@ const SinglePage = ({
             setRunName={setRunName}
             setNumberOfTopReviewers={setNumberOfTopReviewers}
             setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
+            runNameError={runNameError}
+            selectedModalError={selectedModalError}
+            numberOfTopReviewersError={numberOfTopReviewersError}
+            closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
           />
         )}
       </div>

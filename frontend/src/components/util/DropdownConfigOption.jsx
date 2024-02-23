@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import ErrorMessage from "../util/ErrorMessage.jsx";
 const DropdownConfigOption = ({
   data,
   label,
@@ -6,6 +7,7 @@ const DropdownConfigOption = ({
   setValue,
   placeholderText,
   disabled,
+  error,
 }) => {
   const handleOnChange = (event) => {
     setValue(event.target.value);
@@ -13,15 +15,18 @@ const DropdownConfigOption = ({
   };
   return (
     <div>
-      <label className="form-label" htmlFor="CurrentCycle">
-        {label}
-      </label>
+      <div className="option-header">
+        <label className="form-label" htmlFor="CurrentCycle">
+          {label}
+        </label>
+        {error && <ErrorMessage message={error} />}
+      </div>
       <div>
         <select
           id="CurrentCycle"
           className="form-select rounded-0 border-2"
           aria-label="Select Current Cycle"
-          defaultValue={"DEFAULT"}
+          size="2"
           onChange={handleOnChange}
           disabled={disabled}
         >
