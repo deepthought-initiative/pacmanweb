@@ -6,6 +6,8 @@ import { defineConfig } from "vite";
 //   plugins: [react()],
 // });
 
+const { REACT_APP_BASE_URL, REACT_APP_API_URL } = process.env;
+
 export default defineConfig({
   base: "/",
   plugins: [react()],
@@ -17,12 +19,12 @@ export default defineConfig({
    port: 8080,
    strictPort: true,
    host: true,
-   origin: "http://0.0.0.0:8080",
+   origin: REACT_APP_BASE_URL || "http://0.0.0.0:8080",
    proxy: {
     '/api': {
-      target: 'http://0.0.0.0:8080',
+        target: REACT_APP_API_URL || 'http://0.0.0.0:8080',
       changeOrigin: true,
+      },
     },
-   }
   },
  });

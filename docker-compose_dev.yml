@@ -1,26 +1,28 @@
-version: '3.8'
+version: "3.8"
 services:
   frontend:
     container_name: frontend
     volumes:
-      - react_build:/frontend/dist 
+      - react_build:/frontend/dist
+    environment:
+      - REACT_APP_BASE_URL=http://127.0.0.1:8080
+      - REACT_APP_API_URL=http://127.0.0.1:8000
     build:
       context: ./frontend
-    ports: 
+    ports:
       - "8080:8080"
     command: npm run dev
   redis:
     image: redis:7-alpine
     restart: always
     ports:
-      - '6379:6379'
+      - "6379:6379"
   rabbitmq:
     restart: always
     ports:
-      - '5672:5672'
+      - "5672:5672"
     hostname: pacmanweb-rabbit
-    image:
-      rabbitmq:3-management
+    image: rabbitmq:3-management
   celery:
     restart: always
     container_name: celery
@@ -55,17 +57,17 @@ services:
     links:
       - redis:redis
       - rabbitmq:rabbitmq
-    command: gunicorn 'pacmanweb:create_app()' --access-logfile=- --bind 0.0.0.0:8000
+    command: flask --app pacmanweb run --port 8000
   nginx:
     image: nginx:latest
     ports:
       - 80:8080
     volumes:
-      - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf:ro 
-      - react_build:/var/www/frontend 
+      - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf:ro
+      - react_build:/var/www/frontend
     depends_on:
       - backend
-      - frontend  
+      - frontend
       - celery
       - redis
 
