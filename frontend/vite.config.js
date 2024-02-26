@@ -22,8 +22,7 @@ export default defineConfig({
    origin: REACT_APP_BASE_URL || "http://0.0.0.0:8080",
    proxy: {
     '/api': {
-        target: REACT_APP_API_URL || 'http://0.0.0.0:8080',
-      changeOrigin: true,
+      target: REACT_APP_API_URL || 'http://0.0.0.0:8080',
       },
     },
   },
