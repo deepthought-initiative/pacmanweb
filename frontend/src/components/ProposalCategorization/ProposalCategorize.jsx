@@ -25,9 +25,7 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
   const handleClick = async (event) => {
     event.preventDefault();
     const spawnResponse = await fetch(
-      `${
-        import.meta.env.VITE_BASE_URL
-      }/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+      `/api/run_pacman?mode=PROP&main_test_cycle=${currentCycle}&modelfile=${modalFile}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
       {
         method: "GET",
         headers: {

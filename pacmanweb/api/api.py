@@ -1,6 +1,7 @@
 import pathlib
 import subprocess
 import time
+import base64
 
 import redis
 from celery import shared_task
@@ -14,8 +15,9 @@ from flask import (
     redirect,
     request,
     stream_with_context,
+    jsonify
 )
-from flask_login import login_required
+from flask_login import login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
 from pacmanweb import Config
@@ -23,11 +25,37 @@ from pacmanweb import Config
 from .. import celery_app
 from ..tasks import pacman_task
 from .util import MoveUploadedFiles, VerifyPACManDir
+from ..auth.models import *
 
 ALLOWED_EXTENSIONS = {"zip"}
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
-redis_instance = redis.Redis()
+redis_instance = redis.from_url("redis://redis:6379/0")
+
+@api_bp.route("/login", methods=["GET", "POST"])
+def login():
+    encoded_creds = request.form["creds"]
+    decoded_creds = base64.b64decode(encoded_creds)
+    username, password = decoded_creds.decode("utf-8").split(":")
+
+    user = User.get(username=username, password=password)
+    if user is None:
+        return jsonify({"error": "Unauthorized"}), 401
+    else:
+        login_user(user)
+        next = request.args.get('next')
+        return jsonify({"username": username, "password": password})
+
+
+@api_bp.route("/signup")
+def signup():
+    return "Signup"
+
+
+@api_bp.route("/logout", methods=["POST"])
+def logout():
+    logout_user()
+    return "Logout"
 
 
 @api_bp.route("/get_cycles", methods=["GET"])

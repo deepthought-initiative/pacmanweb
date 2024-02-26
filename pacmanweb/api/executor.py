@@ -6,7 +6,7 @@ import redis
 
 from pacmanweb import Config
 
-redis_instance = redis.Redis()
+redis_instance = redis.from_url("redis://redis:6379/0")
 
 
 class RunPACMan:
@@ -21,8 +21,8 @@ class RunPACMan:
         mode=None,
         runs_dir="",
         modelfile="strolger_pacman_model_7cycles.joblib",
-        assignment_number_top_reviewers="5",
-        close_collaborator_time_frame="3",
+        assignment_number_top_reviewers=5,
+        close_collaborator_time_frame=3,
     ):
         """Initialise RunPACMan Class.
 
@@ -60,6 +60,9 @@ class RunPACMan:
             "cross_validate",
         ]
         options = {item: "false" for item in proc_options}
+        assignment_number_top_reviewers = int(assignment_number_top_reviewers)
+        close_collaborator_time_frame = int(close_collaborator_time_frame)
+        
         options = options | dict(
             run_name=run_name,
             reuse_run=reuse_run,
@@ -104,8 +107,11 @@ class RunPACMan:
 
         self.TEST_ADS_API_KEY = self.flask_config.TEST_ADS_API_KEY
         self.ENV_NAME = self.flask_config.ENV_NAME
+        # self.commands = (
+        #     f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
+        # )
         self.commands = (
-            f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
+            f"micromamba run -n {self.ENV_NAME}  python run_pacman.py"
         )
         self.verify_pacman_directory()
 

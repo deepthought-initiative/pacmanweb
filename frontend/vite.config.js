@@ -2,11 +2,28 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
+// export default defineConfig({
+//   plugins: [react()],
+// });
+
+const { REACT_APP_BASE_URL, REACT_APP_API_URL } = process.env;
+
 export default defineConfig({
+  base: "/",
   plugins: [react()],
+  preview: {
+   port: 8080,
+   strictPort: true,
+  },
   server: {
-    proxy: {
-      "/api": "http://127.0.0.1:5000",
+   port: 8080,
+   strictPort: true,
+   host: true,
+   origin: REACT_APP_BASE_URL || "http://0.0.0.0:8080",
+   proxy: {
+    '/api': {
+      target: REACT_APP_API_URL || 'http://0.0.0.0:8080',
+      },
     },
   },
-});
+ });

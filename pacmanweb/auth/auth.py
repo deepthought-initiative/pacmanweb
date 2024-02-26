@@ -1,4 +1,5 @@
 import json
+import base64
 
 from flask import (
     Blueprint,
@@ -17,40 +18,8 @@ from pacmanweb import Config
 
 from .models import *
 
-auth_bp = Blueprint("auth", __name__)
-
-
-@auth_bp.route("/login")
-def login():
-    return "Login"
-
-
-@auth_bp.route("/api/login", methods=["POST"])
-def login_post():
-    username = request.form["username"]
-    password = request.form["password"]
-
-    user = User.get(username=username, password=password)
-    if user is None:
-        return jsonify({"error": "Unauthorized"}), 401
-    else:
-        login_user(user)
-        return jsonify({"username": username, "password": password})
-
-
-@auth_bp.route("/signup")
-def signup():
-    return "Signup"
-
-
-@auth_bp.route("/logout", methods=["POST"])
-def logout():
-    logout_user()
-    return "Logout"
-
-
 def validate_key(api_key):
-    password = Config.DEFAULT_PASS
+    password = Config.DEFAULT_PASSWORD
     password_hash = generate_password_hash(password)
     if check_password_hash(password_hash, api_key):
         return True

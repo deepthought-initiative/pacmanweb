@@ -1,5 +1,5 @@
-# .flaskenv
-FLASK_APP = "pacmanweb"
-FLASK_ENV = "development"
-FLASK_RUN_HOST = '0.0.0.0'
-FLASK_RUN_PORT = '5000'
+# # .flaskenv
+# FLASK_APP = "pacmanweb"
+# FLASK_ENV = "development"
+# FLASK_RUN_HOST = '0.0.0.0'
+# FLASK_RUN_PORT = '5000'

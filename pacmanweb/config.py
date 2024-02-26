@@ -9,9 +9,14 @@ class Config:
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
         CREDS = json.load(secrets)
+    
+    # will surpass the environment variable
+    if CREDS.get("ENV_NAME", None):
+        ENV_NAME = CREDS["ENV_NAME"]
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    DEFAULT_PASS = CREDS["default_password"]
+    DEFAULT_USERNAME = CREDS.get("default_username", "default")
+    DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
     if not SECRET_KEY:
@@ -24,5 +29,5 @@ class Config:
     CELERY = {}
 
     file_path = pathlib.Path(__file__).resolve()
-    PACMAN_PATH = file_path.parents[2] / "PACMan"
+    PACMAN_PATH = file_path.parents[1] / "PACMan"
     UPLOAD_FOLDER = ROOTDIR / "uploads"

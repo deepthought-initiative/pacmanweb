@@ -10,17 +10,17 @@ const Login = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
+      formData.append("creds", btoa(`${username}:${password}`));
 
       const response = await fetch(`/api/login`, {
         method: "POST",
         body: formData,
       });
+
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("loggedIn", "true");
-        window.location.href = "/categorize";
+        window.location.href = "/";
       } else {
         setError("Invalid username or password");
       }

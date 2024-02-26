@@ -3,6 +3,8 @@ name = "pacmanweb"
 dependencies = [
     "flask",
 ]
+version="0.1"
+description="Web interface for PACMan"
 
 [build-system]
 requires = ["flit_core<4"]
