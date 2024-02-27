@@ -5,3 +5,4 @@ chapters:
 - file: installation_frontend
 - file: api_run
 - file: testing_building_docs
+- file: docker_setup.md
