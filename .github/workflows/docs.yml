@@ -1,12 +1,12 @@
 name: Docs
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [ labeled ]
 
 jobs:
   build:
+    if: ${{ github.event.label.name == 'label_name' }}
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
           python
           jupyter-book
 
-    - run: if git -C docs status --porcelain | grep -v 'docs/_build' | grep -q .; then exit 1; fi
+    - run: if git diff --name-only "$(git rev-parse --abbrev-ref HEAD)" | cat | grep 'docs' | grep -q .; then exit 1; fi
       id: docs_check
 
     - run: jupyter-book build --all docs
