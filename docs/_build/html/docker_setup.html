@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Running Tests and Building Docs &#8212; PACManWeb Docs</title>
+    <title>Docker Compose Setup &#8212; PACManWeb Docs</title>
   
   
   
@@ -57,11 +57,10 @@
     <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'testing_building_docs';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docker_setup';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Docker Compose Setup" href="docker_setup.html" />
-    <link rel="prev" title="Trying out the API" href="api_run.html" />
+    <link rel="prev" title="Running Tests and Building Docs" href="testing_building_docs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -180,8 +179,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation_backend.html">Backend Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation_frontend.html">Frontend Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_run.html">Trying out the API</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Running Tests and Building Docs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker_setup.html">Docker Compose Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing_building_docs.html">Running Tests and Building Docs</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Docker Compose Setup</a></li>
 </ul>
 
     </div>
@@ -253,7 +252,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Ftesting_building_docs.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fdocker_setup.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -283,7 +282,7 @@
       
       
       
-      <li><a href="_sources/testing_building_docs.md" target="_blank"
+      <li><a href="_sources/docker_setup.md" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -367,7 +366,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Running Tests and Building Docs</h1>
+    <h1>Docker Compose Setup</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -377,8 +376,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running tests</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-docs">Building Docs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-deployment">Local Deployment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-deployment">Production Deployment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-errors">Common Errors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eof-error"><code class="docutils literal notranslate"><span class="pre">EOF</span></code> Error</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#libmamba-timeout"><code class="docutils literal notranslate"><span class="pre">libmamba</span></code> timeout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#libmamba-could-not-solve">libmamba Could not solve</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cannot-access-runs">Cannot access runs/…</a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -390,27 +396,61 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="running-tests-and-building-docs">
-<h1>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h1>
-<p>Although tests run and docs are updated whenever someone pushes to the main branch, here are instructions to both run tests and build docs locally.</p>
-<section id="running-tests">
-<h2>Running tests<a class="headerlink" href="#running-tests" title="Link to this heading">#</a></h2>
-<p>A tests infrastructure is available inside <code class="docutils literal notranslate"><span class="pre">pacmanweb/pacmanweb/tests</span></code>. The data folder contains sample proposal files and panelist files for testing purposes and copies over the model files from the PACMan folder(assumes PACMan has model files in its models folder).
-To run tests, move inside the tests and do-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>.
+  <section class="tex2jax_ignore mathjax_ignore" id="docker-compose-setup">
+<h1>Docker Compose Setup<a class="headerlink" href="#docker-compose-setup" title="Link to this heading">#</a></h1>
+<p>The website can also be setup using docker compose.</p>
+<section id="local-deployment">
+<h2>Local Deployment<a class="headerlink" href="#local-deployment" title="Link to this heading">#</a></h2>
+<p>Start out by building the containers-</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose_dev.yml<span class="w"> </span>build
+</pre></div>
+</div>
+<p>followed by</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose_dev.yml<span class="w"> </span>up
 </pre></div>
 </div>
 </section>
-<section id="building-docs">
-<h2>Building Docs<a class="headerlink" href="#building-docs" title="Link to this heading">#</a></h2>
-<p>Building docs requires the <code class="docutils literal notranslate"><span class="pre">jupyter-book</span></code> package which is by default not present in the environment file. To install the package, do</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>install<span class="w"> </span>jupyter-book
+<section id="production-deployment">
+<h2>Production Deployment<a class="headerlink" href="#production-deployment" title="Link to this heading">#</a></h2>
+<p>Start out by building the containers-</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.yml<span class="w"> </span>build
 </pre></div>
 </div>
-<p>To build the documentation, move to the root of the application and do-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>--all<span class="w"> </span>docs
+<p>followed by</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.yml<span class="w"> </span>up
 </pre></div>
 </div>
+</section>
+<section id="common-errors">
+<h2>Common Errors<a class="headerlink" href="#common-errors" title="Link to this heading">#</a></h2>
+<section id="eof-error">
+<h3><code class="docutils literal notranslate"><span class="pre">EOF</span></code> Error<a class="headerlink" href="#eof-error" title="Link to this heading">#</a></h3>
+<p>This can typically look like-</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">failed</span> <span class="n">to</span> <span class="n">solve</span><span class="p">:</span> <span class="n">node</span><span class="p">:</span><span class="mi">21</span><span class="o">-</span><span class="n">alpine3</span><span class="mf">.18</span><span class="p">:</span> <span class="n">failed</span> <span class="n">to</span> <span class="n">do</span> <span class="n">request</span><span class="p">:</span> <span class="n">Head</span> <span class="s2">&quot;https://registry-1.docker.io/v2/library/node/manifests/21-alpine3.18&quot;</span><span class="p">:</span> <span class="n">EOF</span>
+</pre></div>
+</div>
+<p>Can just be fixed by retrying.</p>
+</section>
+<section id="libmamba-timeout">
+<h3><code class="docutils literal notranslate"><span class="pre">libmamba</span></code> timeout<a class="headerlink" href="#libmamba-timeout" title="Link to this heading">#</a></h3>
+<p>This can typically look like-</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">critical</span> <span class="n">libmamba</span> <span class="n">Download</span> <span class="n">error</span> <span class="p">(</span><span class="mi">28</span><span class="p">)</span> <span class="n">Timeout</span> <span class="n">was</span> <span class="n">reached</span> <span class="p">[</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">conda</span><span class="o">.</span><span class="n">anaconda</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">conda</span><span class="o">-</span><span class="n">forge</span><span class="o">/</span><span class="n">linux</span><span class="o">-</span><span class="n">aarch64</span><span class="o">/</span><span class="n">python</span><span class="o">-</span><span class="mf">3.11.8</span><span class="o">-</span><span class="n">h43d1f9e_0_cpython</span><span class="o">.</span><span class="n">conda</span><span class="p">]</span>
+<span class="mf">100.7</span>     <span class="n">Operation</span> <span class="n">too</span> <span class="n">slow</span><span class="o">.</span> <span class="n">Less</span> <span class="n">than</span> <span class="mi">30</span> <span class="nb">bytes</span><span class="o">/</span><span class="n">sec</span> <span class="n">transferred</span> <span class="n">the</span> <span class="n">last</span> <span class="mi">60</span> <span class="n">seconds</span>
+</pre></div>
+</div>
+<p>Can also just be fixed by retrying.</p>
+</section>
+<section id="libmamba-could-not-solve">
+<h3>libmamba Could not solve<a class="headerlink" href="#libmamba-could-not-solve" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">critical</span> <span class="n">libmamba</span> <span class="n">Could</span> <span class="ow">not</span> <span class="n">solve</span> <span class="k">for</span> <span class="n">environment</span> <span class="n">specs</span>
+</pre></div>
+</div>
+<p>Means you will need to to change your backend Dockerfile- pacmanweb/Dockerfile. If your operating system is MacOS, please uncomment the lines as mentioned in the file(or comment them for Linux).</p>
+</section>
+<section id="cannot-access-runs">
+<h3>Cannot access runs/…<a class="headerlink" href="#cannot-access-runs" title="Link to this heading">#</a></h3>
+<p>Should be fixed by changing permissions for the PACMan repo.</p>
+</section>
 </section>
 </section>
 
@@ -445,22 +485,13 @@ To run tests, move inside the tests and do-</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="api_run.html"
+       href="testing_building_docs.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Trying out the API</p>
+        <p class="prev-next-title">Running Tests and Building Docs</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="docker_setup.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Docker Compose Setup</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
@@ -478,8 +509,15 @@ To run tests, move inside the tests and do-</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#running-tests">Running tests</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#building-docs">Building Docs</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#local-deployment">Local Deployment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-deployment">Production Deployment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-errors">Common Errors</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eof-error"><code class="docutils literal notranslate"><span class="pre">EOF</span></code> Error</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#libmamba-timeout"><code class="docutils literal notranslate"><span class="pre">libmamba</span></code> timeout</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#libmamba-could-not-solve">libmamba Could not solve</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cannot-access-runs">Cannot access runs/…</a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
