@@ -23,14 +23,14 @@ from werkzeug.utils import secure_filename
 from pacmanweb import Config
 
 from .. import celery_app
-from ..tasks import pacman_task
+from pacmanweb.tasks import pacman_task
 from .util import MoveUploadedFiles, VerifyPACManDir
 from ..auth.models import *
 
 ALLOWED_EXTENSIONS = {"zip"}
 
 api_bp = Blueprint("api", __name__, url_prefix="/api")
-redis_instance = redis.from_url("redis://redis:6379/0")
+redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
 @api_bp.route("/login", methods=["GET", "POST"])
 def login():

@@ -2,6 +2,8 @@ import json
 import os
 import pathlib
 
+# or prod
+MODE="dev"
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
@@ -19,6 +21,22 @@ class Config:
     DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
+    
+    if MODE=="prod":
+        CELERY_RESULT_BACKEND="redis://redis:6379/0"
+        CELERY_BROKER_URL=f"amqp://guest:guest@rabbitmq:5672"
+        ENV_NAME = "base" # env needs to be base for docker
+        SUBPROCESS_COMMANDS = (
+                f"micromamba run -n {ENV_NAME}  python run_pacman.py"
+            )
+        
+    if MODE=="dev":
+        CELERY_RESULT_BACKEND="redis://"
+        CELERY_BROKER_URL=f"pyamqp://"
+        SUBPROCESS_COMMANDS = (
+                f"conda run -n {ENV_NAME}  python run_pacman.py"
+            )
+    
     if not SECRET_KEY:
         try:
             SECRET_KEY = CREDS.get("secret_key")

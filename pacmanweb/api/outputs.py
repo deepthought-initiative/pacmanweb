@@ -1,3 +1,4 @@
+from os import access, R_OK
 import ast
 import json
 import pathlib
@@ -21,11 +22,21 @@ def make_records(dataframe):
 
 class PropCat:
     def __init__(self, output_dir, cycle_number) -> None:
-        model_file_fpath = next((output_dir / "model_results").iterdir())
-        self.parse_model_results(model_file_fpath)
-        recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
-        self.parse_recategorization(recat_fpath)
-        self.calculate_alternate_categories()
+        model_file_readable, recat_file_readable = True, True
+        self.prop_response = {}
+        try:
+            self.model_file_fpath = next((output_dir / "model_results").iterdir())
+        except StopIteration:
+            model_file_readable = False
+        if not model_file_readable or not access(self.model_file_fpath, R_OK):
+            model_file_readable = False     
+           
+        self.recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
+        recat_file_readable = self.recat_fpath.exists() or access(self.recat_fpath, R_OK)
+        if not model_file_readable or not recat_file_readable:
+            self.prop_response = {
+                "value": "model generated file not found or recategorization file not found"
+            }
 
     def parse_model_results(self, model_file_fpath):
         with open(model_file_fpath) as f:
@@ -88,14 +99,21 @@ class PropCat:
         self.alternate_cat_dict = alternate_cat_dict
 
     def get_prop_table(self, start_row=None, end_row=None):
+        if self.prop_response != {}:
+            # an error
+            return self.prop_response, 500
+        
+        self.parse_model_results(self.model_file_fpath)
+        self.parse_recategorization(self.recat_fpath)
+        self.calculate_alternate_categories()
         prop_response = self.prop_table[start_row:end_row].T.to_dict()
         for key in prop_response.keys():
             prop_response[key]["Alternate Categories"] = self.alternate_cat_dict[key]
-        return prop_response
+        return prop_response, 200
 
 
 class DupCat:
-    def __init__(self, output_dir, cycle_number=None) -> None:
+    def __init__(self, output_dir, cycle_number=None):
         dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.data = self.parse_duplicates(dup_fpath)
 

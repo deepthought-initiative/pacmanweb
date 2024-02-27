@@ -6,7 +6,7 @@ import redis
 
 from pacmanweb import Config
 
-redis_instance = redis.from_url("redis://redis:6379/0")
+redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
 
 class RunPACMan:
@@ -110,9 +110,7 @@ class RunPACMan:
         # self.commands = (
         #     f"conda run -n {self.ENV_NAME} --no-capture-output  python run_pacman.py"
         # )
-        self.commands = (
-            f"micromamba run -n {self.ENV_NAME}  python run_pacman.py"
-        )
+        self.commands = self.flask_config.SUBPROCESS_COMMANDS
         self.verify_pacman_directory()
 
     def verify_pacman_directory(self, alternate_pacman_path=None):
