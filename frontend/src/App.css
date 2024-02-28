@@ -175,6 +175,9 @@ th {
 .dropdown-container {
   position: relative;
 }
+.gg.open {
+  opacity: 1;
+}
 
 .sample {
   height: 52px;
@@ -248,4 +251,40 @@ th {
 
 .dropdown-list ul li.selected {
   background-color: #E7ECEF;
+}
+
+h3{
+  text-align: left;
+  margin-bottom: 30px;
+  font-weight: bolder;
+}
+
+.custom-form-label{
+  position: absolute;
+  top: -9px;
+  left: 30px;
+  background-color: white;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.btn {
+  font-weight: bolder;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #7A8E99;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #576872;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }

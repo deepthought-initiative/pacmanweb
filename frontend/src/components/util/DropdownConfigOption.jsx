@@ -32,19 +32,11 @@ const DropdownConfigOption = ({
         </label>
         {error && <ErrorMessage message={error} />}
       </div>
-      <div
-        className={`dropdown-wrapper ${
-          dropdownClicked ? "expanded overflow-auto" : ""
-        }`}
-        style={{ position: "relative" }}
-      >
+      <div>
         <select
           id="CurrentCycle"
-          className={`form-select rounded-0 border-2 dropdown-wrapper ${
-            dropdownClicked ? "expanded overflow-auto" : ""
-          }`}
+          className="form-select rounded-0 border-2"
           aria-label="Select Current Cycle"
-          size="3"
           onChange={handleOnChange}
           onClick={handleDropdownClick}
           disabled={disabled}

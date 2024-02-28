@@ -41,7 +41,7 @@ function App() {
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 renderTableComponent={(props) => <ProposalTable {...props} />}
-                button_label="Proposals-Categorize"
+                button_label="Categorize Proposals"
               />
             }
           />

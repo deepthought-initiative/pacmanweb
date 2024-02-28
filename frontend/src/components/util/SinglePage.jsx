@@ -204,13 +204,15 @@ const SinglePage = ({
 
   return (
     <div className="mt-5" id="main-container">
+      {!showLogs && !showTable && <h3>Start a New Process</h3>}
       <div className="row">
         <NewDropdown
           data={allCycles}
           label="Selected Current Cycle"
           desc="Prefix used throughout script to match with cycle description"
           placeholderText="Select a current cycle"
-          setValue={setCurrentCycle}
+          currentCycle={currentCycle}
+          setCurrentCycle={setCurrentCycle}
           disabled={showTable || showLogs}
           error={currentCycleError}
         />
