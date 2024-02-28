@@ -258,6 +258,10 @@ def data_handler(celery_task_id, cycle_number, mode):
 @login_required
 def proposal_cat_output(result_id):
     options = request.args.to_dict(flat=True)
+    if "cycle_number" not in options.keys():
+        return {
+            "value": "Please provide a cycle number to get the proposal categorisation output."
+        }, 500
     response = data_handler(
         celery_task_id=result_id, cycle_number=options["cycle_number"], mode="PROP"
     )
@@ -269,6 +273,10 @@ def proposal_cat_output(result_id):
 @login_required
 def proposal_cat_output_download(result_id):
     options = request.args.to_dict(flat=True)
+    if "cycle_number" not in options.keys():
+        return {
+            "value": "Please provide a cycle number to get the proposal categorisation output."
+        }, 500
     output_dir = Config.PACMAN_PATH / "runs" / result_id
     prop_cat = PropCat(
         output_dir=output_dir,
@@ -289,6 +297,10 @@ def proposal_cat_output_download(result_id):
 @login_required
 def duplicates_output(result_id):
     options = request.args.to_dict(flat=True)
+    if "cycle_number" not in options.keys():
+        return {
+            "value": "Please provide a cycle number to get the duplicates output."
+        }, 500
     response = data_handler(
         celery_task_id=result_id, cycle_number=options["cycle_number"], mode="DUP"
     )
