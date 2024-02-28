@@ -24,6 +24,8 @@ class VerifyPACManDir:
         self.panelist_directory = self.runs_dir / "input_panelist_data"
         self.models_dir = self.pacman_path / "models"
         self.result = defaultdict(list)
+        self.result["proposal_cycles_invalid"] = set()
+        self.result["proposal_cycles_valid"] = set()
 
     def verify_directory(self, directory, key, file_extension=None):
         if directory.is_dir():
@@ -31,6 +33,16 @@ class VerifyPACManDir:
                 if key == "proposal_cycles":
                     if item.is_dir():
                         self.result[key].append(item.stem)
+                        for subitem in item.iterdir():
+                            subitem_valid = (
+                                subitem.is_file()
+                                and subitem.name.endswith(".txtx")
+                                and len(subitem.stem) == 5
+                            )
+                            if not subitem_valid:
+                                self.result["proposal_cycles_invalid"].add(item.name)
+                            if subitem_valid:
+                                self.result["proposal_cycles_valid"].add(item.name)
                     else:
                         self.result[f"{key}_extra_files"].append(item.name)
                     continue
@@ -47,6 +59,17 @@ class VerifyPACManDir:
     def verify_proposals_dir(self):
         self.verify_directory(
             self.proposal_directory, "proposal_cycles", file_extension=None
+        )
+        # if a directory is invalid it can't be valid
+        self.result["proposal_cycles_valid"] = (
+            self.result["proposal_cycles_valid"]
+            - self.result["proposal_cycles_invalid"]
+        )
+        self.result["proposal_cycles_invalid"] = list(
+            self.result["proposal_cycles_invalid"]
+        )
+        self.result["proposal_cycles_valid"] = list(
+            self.result["proposal_cycles_valid"]
         )
 
     def verify_panelist_dir(self):
