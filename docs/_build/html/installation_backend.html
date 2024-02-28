@@ -434,6 +434,12 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
 <p>PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis and backend and RabbitMQ as a message broker to run.</p>
 <ul class="simple">
 <li><p>Redis installation instructions can be found on the redis website- <a class="reference external" href="https://redis.io/docs/install/install-redis/">https://redis.io/docs/install/install-redis/</a>.</p></li>
+<li><p>Redis can also be installed like so-</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-stack<span class="w"> </span>-p<span class="w"> </span><span class="m">6379</span>:6379<span class="w"> </span>-p<span class="w"> </span><span class="m">8001</span>:8001<span class="w"> </span>redis/redis-stack:latest
+</pre></div>
+</div>
+<ul class="simple">
 <li><p>RabbitMQ instructions can be found here- <a class="reference external" href="https://www.rabbitmq.com/download.html">https://www.rabbitmq.com/download.html</a>. Once installed, RabbitMQ will need to be setup with these commands- <a class="reference external" href="https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq">https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq</a>.</p></li>
 </ul>
 <p>Once Redis and RabbitMQ are setup, you can start running celery.</p>

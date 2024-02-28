@@ -43,6 +43,10 @@ The default password is your default password to use for the application. PACMan
 #### Setting up Celery
 PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis and backend and RabbitMQ as a message broker to run.
 - Redis installation instructions can be found on the redis website- https://redis.io/docs/install/install-redis/.
+- Redis can also be installed like so-
+```bash
+docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
+```
 - RabbitMQ instructions can be found here- https://www.rabbitmq.com/download.html. Once installed, RabbitMQ will need to be setup with these commands- https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq.
 
 Once Redis and RabbitMQ are setup, you can start running celery. 
