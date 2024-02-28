@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import ErrorMessage from "../util/ErrorMessage.jsx";
+
 const DropdownConfigOption = ({
   data,
   label,
@@ -9,30 +11,44 @@ const DropdownConfigOption = ({
   disabled,
   error,
 }) => {
+  const [dropdownClicked, setDropdownClicked] = useState(false);
+
   const handleOnChange = (event) => {
     setValue(event.target.value);
     console.log(event.target.value);
   };
+
+  const handleDropdownClick = (event) => {
+    setDropdownClicked(!dropdownClicked);
+    // Prevent default behavior to prevent potential form submission
+    event.preventDefault();
+  };
+
   return (
-    <div>
+    <div className="dropdown-container">
       <div className="option-header">
         <label className="form-label" htmlFor="CurrentCycle">
           {label}
         </label>
         {error && <ErrorMessage message={error} />}
       </div>
-      <div>
+      <div
+        className={`dropdown-wrapper ${
+          dropdownClicked ? "expanded overflow-auto" : ""
+        }`}
+        style={{ position: "relative" }}
+      >
         <select
           id="CurrentCycle"
-          className="form-select rounded-0 border-2"
+          className={`form-select rounded-0 border-2 dropdown-wrapper ${
+            dropdownClicked ? "expanded overflow-auto" : ""
+          }`}
           aria-label="Select Current Cycle"
-          size="2"
+          size="3"
           onChange={handleOnChange}
+          onClick={handleDropdownClick}
           disabled={disabled}
         >
-          <option disabled value="DEFAULT">
-            {placeholderText}
-          </option>
           {data &&
             data.map((number) => (
               <option key={number} value={number}>

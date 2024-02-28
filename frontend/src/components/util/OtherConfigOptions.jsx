@@ -15,13 +15,13 @@ const OtherConfigOptions = ({
   setSelectedModal,
   setRunName,
   setCloseCollaboratorTimeFrame,
-  runNameError,
   selectedModalError,
   numberOfTopReviewersError,
   closeCollaboratorTimeFrameError,
+  submitButtonStatus,
 }) => {
   return (
-    <>
+    <form>
       <div className="separator">Other Options(optional)</div>
       <div className="all-options">
         <div className="single-option">
@@ -30,7 +30,6 @@ const OtherConfigOptions = ({
             value={runName}
             desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
             setValue={setRunName}
-            error={runNameError}
           />
         </div>
         <div className="single-option">
@@ -65,12 +64,16 @@ const OtherConfigOptions = ({
       </div>
       <div className="row mt-5">
         <div className="col-md-6 text-start">
-          <button className="btn rounded-0" onClick={handleClick}>
+          <button
+            className="btn rounded-0"
+            onClick={handleClick}
+            disabled={!submitButtonStatus}
+          >
             {button_label}
           </button>
         </div>
       </div>
-    </>
+    </form>
   );
 };
 

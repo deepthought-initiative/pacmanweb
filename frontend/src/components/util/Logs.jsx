@@ -1,29 +1,15 @@
 /* eslint-disable react/prop-types */
 
-import { useEffect } from "react";
-
 const Logs = ({
   currentId,
   setShowTable,
   onTerminate,
   logs,
-  setLogs,
+  processStatus,
+  logContainerRef,
   showTerminateProcess,
-  setShowTerminateProcess,
+  dataToDisplay,
 }) => {
-  const headers = [
-    "Proposal Number",
-    "Title",
-    "PACMan Science Category",
-    "PACMan Probability",
-    "Original Science Category",
-  ];
-  const csvContent =
-    headers.join(",") +
-    "\n" +
-    logs.map((row) => Object.values(row).join(",")).join("\n");
-
-  const encodedUri = encodeURI(`data:text/csv;charset=utf-8,${csvContent}`);
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
@@ -39,40 +25,26 @@ const Logs = ({
     onTerminate();
   };
 
-  useEffect(() => {
-    if (!currentId) {
-      return;
-    }
-    const eventSource = new EventSource(`/api/stream/${currentId}`);
-    eventSource.onopen = () => {
-      setShowTerminateProcess(true);
-    };
-    eventSource.onmessage = (event) => {
-      const newLog = event.data;
-      if (
-        newLog.includes("PROCESS COMPLETE") ||
-        newLog.includes("run complete")
-      ) {
-        eventSource.close();
-        setShowTerminateProcess(false);
-      }
-      setLogs((prevLogs) => [...prevLogs, newLog]);
-    };
-    eventSource.onerror = (error) => {
-      console.error("EventSource failed:", error);
-      eventSource.close();
-      setShowTerminateProcess(false);
-    };
-    return () => {
-      eventSource.close();
-    };
-  }, [currentId, setLogs, setShowTerminateProcess]);
-
   return (
     <>
-      <div id="log-container" className="container-fluid mt-5">
+      <div
+        ref={logContainerRef}
+        id="log-container"
+        className="container-fluid mt-5"
+      >
         {logs.map((log, index) => (
-          <div key={index}>{log}</div>
+          <div
+            key={index}
+            className={
+              !showTerminateProcess && index === logs.length - 1
+                ? processStatus
+                  ? "success"
+                  : "failed"
+                : ""
+            }
+          >
+            {log}
+          </div>
         ))}
       </div>
       {showTerminateProcess ? (
@@ -81,15 +53,19 @@ const Logs = ({
             Terminate Process
           </button>
         </div>
-      ) : (
+      ) : dataToDisplay ? (
         <div className="button-tray p-0 container-fluid">
           <button className="btn rounded-0" onClick={handleTable}>
             See Results
           </button>
-          <a href={encodedUri} download="proposals.csv">
-            <button className="btn rounded-0">Download As CSV</button>
-          </a>
+          <button className="btn rounded-0">Download As CSV</button>
           <button className="btn rounded-0">View Logs</button>
+        </div>
+      ) : (
+        <div className="button-tray container-fluid p-0">
+          <button className="btn rounded-0" onClick={onTerminate}>
+            Categorize Another Cycle
+          </button>
         </div>
       )}
     </>
