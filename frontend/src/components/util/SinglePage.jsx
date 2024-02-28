@@ -4,8 +4,8 @@ import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 import Logs from "../util/Logs";
-// import NewDropdown from "./NewDropdown.jsx";
-import DropdownConfigOption from "./DropdownConfigOption.jsx";
+import NewDropdown from "./NewDropdown.jsx";
+// import DropdownConfigOption from "./DropdownConfigOption.jsx";
 import OtherConfigOptions from "./OtherConfigOptions";
 
 const SinglePage = ({
@@ -205,16 +205,16 @@ const SinglePage = ({
   return (
     <div className="mt-5" id="main-container">
       <div className="row">
-        {/* <NewDropdown
-            data={allCycles}
-            label="Selected Current Cycle"
-            desc="Prefix used throughout script to match with cycle description"
-            placeholderText="Select a current cycle"
-            setValue={setCurrentCycle}
-            disabled={showTable || showLogs}
-            error={currentCycleError}
-          /> */}
-        <div className={mode === "DUP" && "col-md-6"}>
+        <NewDropdown
+          data={allCycles}
+          label="Selected Current Cycle"
+          desc="Prefix used throughout script to match with cycle description"
+          placeholderText="Select a current cycle"
+          setValue={setCurrentCycle}
+          disabled={showTable || showLogs}
+          error={currentCycleError}
+        />
+        {/* <div className={mode === "DUP" && "col-md-6"}>
           <DropdownConfigOption
             data={allCycles}
             label="Selected Current Cycle"
@@ -224,7 +224,7 @@ const SinglePage = ({
             disabled={showTable || showLogs}
             error={currentCycleError}
           />
-        </div>
+        </div> */}
         {mode === "DUP" && (
           <div className="col-md-6 ms-auto">
             <div className="option-header">
