@@ -3,7 +3,7 @@ import os
 import pathlib
 
 # or prod
-MODE = "dev"
+MODE = "prod"
 
 
 class Config:

@@ -6,7 +6,12 @@ import { defineConfig } from "vite";
 //   plugins: [react()],
 // });
 
+
 const { REACT_APP_BASE_URL, REACT_APP_API_URL } = process.env;
+
+
+// const REACT_APP_BASE_URL="http://127.0.0.1:8080";
+// const REACT_APP_API_URL="http://127.0.0.1:8000";
 
 export default defineConfig({
   base: "/",
