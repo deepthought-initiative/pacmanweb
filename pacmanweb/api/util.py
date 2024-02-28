@@ -83,17 +83,15 @@ class MoveUploadedFiles:
             # containing all the proposal files of that cycle
             if not item.is_dir():
                 continue
-            
-            dest_fpath = self.proposal_directory / item.name 
+
+            dest_fpath = self.proposal_directory / item.name
             if not dest_fpath.exists():
                 dest_fpath.mkdir(parents=True, exist_ok=True)
-                
+
             for subitem in item.iterdir():
                 if subitem.is_file() and subitem.name.endswith(".txtx"):
                     # subitem.replace(self.proposal_directory / item.name / subitem.name)
                     shutil.move(str(subitem), str(dest_fpath / subitem.name))
-
-
 
     def move_panelists_and_models(self, dir_=None, file=None):
         if file and any(

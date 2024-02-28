@@ -7,7 +7,7 @@ from collections import defaultdict
 from io import StringIO
 
 import pandas as pd
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from flask_login import login_required
 from pacmanweb import Config
 
@@ -21,7 +21,7 @@ def make_records(dataframe):
 
 
 class PropCat:
-    def __init__(self, output_dir, cycle_number) -> None:
+    def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         model_file_readable, recat_file_readable = True, True
         self.prop_response = {}
         try:
@@ -29,14 +29,18 @@ class PropCat:
         except StopIteration:
             model_file_readable = False
         if not model_file_readable or not access(self.model_file_fpath, R_OK):
-            model_file_readable = False     
-           
+            model_file_readable = False
+
         self.recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
-        recat_file_readable = self.recat_fpath.exists() or access(self.recat_fpath, R_OK)
+        recat_file_readable = self.recat_fpath.exists() or access(
+            self.recat_fpath, R_OK
+        )
         if not model_file_readable or not recat_file_readable:
             self.prop_response = {
                 "value": "model generated file not found or recategorization file not found"
             }
+        self.cycle_number = cycle_number
+        self.celery_task_id = celery_task_id
 
     def parse_model_results(self, model_file_fpath):
         with open(model_file_fpath) as f:
@@ -102,7 +106,7 @@ class PropCat:
         if self.prop_response != {}:
             # an error
             return self.prop_response, 500
-        
+
         self.parse_model_results(self.model_file_fpath)
         self.parse_recategorization(self.recat_fpath)
         self.calculate_alternate_categories()
@@ -111,11 +115,22 @@ class PropCat:
             prop_response[key]["Alternate Categories"] = self.alternate_cat_dict[key]
         return prop_response, 200
 
+    def generate_prop_response_csv(self):
+        if self.prop_response != {}:
+            return self.prop_response, 500
+        self.prop_table.to_csv(
+            Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_prop_cat.csv"
+        )
+
 
 class DupCat:
     def __init__(self, output_dir, cycle_number=None):
-        dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
-        self.data = self.parse_duplicates(dup_fpath)
+        self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
+        self.response = {}
+        if not self.dup_fpath.exists() or not access(self.dup_fpath, R_OK):
+            self.response = {
+                "value": "duplications.txt file not accessible for this cycle."
+            }
 
     def parse_duplicates(self, dup_fpath):
         data = pd.read_csv(
@@ -142,10 +157,13 @@ class DupCat:
         return data
 
     def get_for_cycle(self, cycle=None):
+        if self.response != {}:
+            return self.response, 500
+        self.data = self.parse_duplicates(self.dup_fpath)
         cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
         cycle_data = cycle_data.droplevel(0).T.to_dict()
         cycle_data = {str(key): value for key, value in cycle_data.items()}
-        return cycle_data
+        return cycle_data, 200
 
 
 class MatchRev:
@@ -163,23 +181,36 @@ class MatchRev:
 
     def read_matches(self):
         fname_suffix = "panelists_match_check.pkl"
-        data = pd.read_pickle(
-            self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
-        )
+        try:
+            data = pd.read_pickle(
+                self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
+            )
+        except:
+            data = {"value": f"{fname_suffix} file not accessible for this cycle."}
+            return data
         for key, value in data.items():
             data[key] = {k: v for k, v in value}
         return data
 
     def read_conflicts(self):
         fname_suffix = "panelists_conflicts.pkl"
-        data = pd.read_pickle(
-            self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
-        )
+        try:
+            data = pd.read_pickle(
+                self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
+            )
+        except:
+            data = {"value": f"{fname_suffix} file not accessible for this cycle."}
         return data
 
     def read_panelists(self):
         fname_suffix = "panelists.txt"
-        data = pd.read_csv(self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}")
+        try:
+            data = pd.read_csv(
+                self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
+            )
+        except:
+            data = {"value": f"{fname_suffix} file not accessible for this cycle."}
+            return data
         data["prob"] = data.apply(
             lambda row: row[row["model_classification"].replace(" ", "_") + "_prob"],
             axis=1,
@@ -189,6 +220,8 @@ class MatchRev:
     def make_main_table(self):
         self.read_panelists()
         data = self.main_table_raw
+        if isinstance(data, dict):
+            return {"value": f"panelist file not accessible for this cycle."}
         data = data.drop(
             columns=[item for item in data.columns if item.endswith("_prob")]
             + ["encoded_model_classification"]
@@ -207,7 +240,11 @@ class MatchRev:
 def data_handler(celery_task_id, cycle_number, mode):
     output_dir = Config.PACMAN_PATH / "runs" / celery_task_id
     if mode == "PROP":
-        prop_cat = PropCat(output_dir=output_dir, cycle_number=cycle_number)
+        prop_cat = PropCat(
+            output_dir=output_dir,
+            cycle_number=cycle_number,
+            celery_task_id=celery_task_id,
+        )
         return prop_cat.get_prop_table()
     if mode == "DUP":
         dup_cat = DupCat(output_dir=output_dir, cycle_number=cycle_number)
@@ -226,6 +263,26 @@ def proposal_cat_output(result_id):
     )
 
     return json.dumps(response)
+
+
+@outputs_bp.route("/proposal_cat_output_download/<result_id>", methods=["GET"])
+@login_required
+def proposal_cat_output_download(result_id):
+    options = request.args.to_dict(flat=True)
+    output_dir = Config.PACMAN_PATH / "runs" / result_id
+    prop_cat = PropCat(
+        output_dir=output_dir,
+        cycle_number=options["cycle_number"],
+        celery_task_id=result_id,
+    )
+    prop_cat.get_prop_table()
+    prop_cat.generate_prop_response_csv()
+    return send_file(
+        Config.DOWNLOAD_FOLDER / f"{result_id}_prop_cat.csv",
+        mimetype="text/csv",
+        download_name=f"{result_id}_prop_cat.csv",
+        as_attachment=True,
+    )
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])

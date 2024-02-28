@@ -43,7 +43,7 @@ def create_app(config_class=Config):
             if auth.validate_key(api_key):
                 user = auth.User()
                 return user
-            
+
         # next, try to login using Basic Auth
         auth_header = request.headers.get("Authorization")
         if auth_header:
@@ -76,7 +76,7 @@ def create_app(config_class=Config):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
-        response.headers['Cache-Control'] = 'public, max-age=0'
+        response.headers["Cache-Control"] = "public, max-age=0"
         return response
-        
+
     return app

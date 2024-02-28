@@ -15,7 +15,7 @@ from flask import (
     redirect,
     request,
     stream_with_context,
-    jsonify
+    jsonify,
 )
 from flask_login import login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
@@ -32,6 +32,7 @@ ALLOWED_EXTENSIONS = {"zip"}
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
+
 @api_bp.route("/login", methods=["GET", "POST"])
 def login():
     encoded_creds = request.form["creds"]
@@ -43,7 +44,7 @@ def login():
         return jsonify({"error": "Unauthorized"}), 401
     else:
         login_user(user)
-        next = request.args.get('next')
+        next = request.args.get("next")
         return jsonify({"username": username, "password": password})
 
 
@@ -74,6 +75,10 @@ def run_pacman():
         return {"output": "Mode is required."}
     if options.get("past_cycles", None):
         options["past_cycles"] = options["past_cycles"].split(",")
+    if options.get("mode", None) == "DUP" and options.get("past_cycles", None) is None:
+        return {
+            "output": "DUP mode needs past cycles with the same cycle included.",
+        }
     result = pacman_task.delay(options=options)
     return {
         "output": f"PACMan running with task id {result.id}",
@@ -149,7 +154,6 @@ def upload_zip():
         flash("No file part")
         return {"response": "no file part"}
     file = request.files["file"]
-    print(file)
     if file.filename == "":
         flash("No selected file")
         return {"response": "no selected file"}
@@ -157,6 +161,5 @@ def upload_zip():
         # do not remove this
         filename = secure_filename(file.filename)
         file.save(pathlib.Path(Config.UPLOAD_FOLDER) / filename)
-        print(file, filename)
         MoveUploadedFiles(str(filename)).move_items()
         return {"response": "file saved sucessfully"}
