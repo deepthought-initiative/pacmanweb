@@ -9,8 +9,8 @@ from .config import Config
 
 celery_app = Celery(
     __name__,
-    result_backend="redis://redis:6379/0",
-    broker_url=f"amqp://guest:guest@rabbitmq:5672",
+    result_backend=Config.CELERY_RESULT_BACKEND,
+    broker_url=Config.CELERY_BROKER_URL,
     include=["pacmanweb.tasks"],
 )
 
@@ -26,7 +26,7 @@ def create_app(config_class=Config):
     # celery_app.config_from_object(app.config["CELERY"])
 
     login_manager = LoginManager()
-    login_manager.login_view = "api.api.login"
+    login_manager.login_view = "api.login"
     login_manager.init_app(app)
     from . import auth
 
@@ -43,7 +43,7 @@ def create_app(config_class=Config):
             if auth.validate_key(api_key):
                 user = auth.User()
                 return user
-            
+
         # next, try to login using Basic Auth
         auth_header = request.headers.get("Authorization")
         if auth_header:
@@ -76,7 +76,7 @@ def create_app(config_class=Config):
         response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
-        response.headers['Cache-Control'] = 'public, max-age=0'
+        response.headers["Cache-Control"] = "public, max-age=0"
         return response
-        
+
     return app
