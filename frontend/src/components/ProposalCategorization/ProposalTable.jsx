@@ -31,7 +31,8 @@ const ProposalTable = ({
         }
       );
       const tableData = await tableResponse.json();
-      setDataToDisplay(tableData);
+      const [resdata, code] = tableData;
+      setDataToDisplay(resdata);
       console.log(tableData);
     }
     fetchTable();

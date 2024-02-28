@@ -28,6 +28,8 @@ const TableForDuplicationChecker = ({
         }
       );
       const tableData = await tableResponse.json();
+      const [resdata, code] = tableData;
+      setDataToDisplay(resdata);
       setDataToDisplay(reformatData(tableData));
     }
     fetchTable();
