@@ -68,7 +68,7 @@ const SinglePage = ({
 
     // Validate pastCycle only if mode is "DUP"
     if (mode === "DUP" && pastCycle.length === 0) {
-      setPastCycleError("Select at least one Past Cycle.");
+      setPastCycleError("Select at least one");
       noError = false;
     }
     return noError;

@@ -311,6 +311,8 @@ h3{
 
 .btn:active {
   animation: clickanimation 0.3s ease;
+  background-color: #7A8E99 !important;
+  color: white !important;
 }
 
 @keyframes clickanimation {

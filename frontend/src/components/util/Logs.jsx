@@ -53,6 +53,12 @@ const Logs = ({
             Terminate Process
           </button>
         </div>
+      ) : !processStatus ? (
+        <div className="button-tray container-fluid p-0">
+          <button className="btn rounded-0" onClick={onTerminate}>
+            Categorize Another Cycle
+          </button>
+        </div>
       ) : dataToDisplay ? (
         <div className="button-tray p-0 container-fluid">
           <button className="btn rounded-0" onClick={handleTable}>
