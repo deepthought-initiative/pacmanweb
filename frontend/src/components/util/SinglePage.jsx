@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
-import ErrorMessage from "../util/ErrorMessage.jsx";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
 // import DropdownConfigOption from "./DropdownConfigOption.jsx";
@@ -51,19 +50,19 @@ const SinglePage = ({
   const validateFields = () => {
     let noError = true;
     if (!currentCycle) {
-      setCurrentCycleError("Current Cycle is required.");
+      setCurrentCycleError("Required");
       noError = false;
     }
     if (!selectedModal) {
-      setSelectedModalError("Modal file is required.");
+      setSelectedModalError("Required");
       noError = false;
     }
     if (!numberOfTopReviewers) {
-      setNumberOfTopReviewersError("Number of Top Reviewers is required.");
+      setNumberOfTopReviewersError("Required");
       noError = false;
     }
     if (!closeCollaboratorTimeFrame) {
-      setCloseCollaboratorTimeFrameError("Collaborator Timeframe is required.");
+      setCloseCollaboratorTimeFrameError("Required");
       noError = false;
     }
 
@@ -138,12 +137,12 @@ const SinglePage = ({
     return cycle !== currentCycle;
   });
 
-  const handlePastCycles = (event) => {
-    const options = Array.from(event.target.selectedOptions).map(
-      (option) => option.value
-    );
-    setPastCycle(options);
-  };
+  // const handlePastCycles = (event) => {
+  //   const options = Array.from(event.target.selectedOptions).map(
+  //     (option) => option.value
+  //   );
+  //   setPastCycle(options);
+  // };
 
   const fetchStatus = useCallback(async () => {
     const statusResponse = await fetch(`/api/prev_runs/${currentId}`);
@@ -204,58 +203,61 @@ const SinglePage = ({
 
   return (
     <div className="mt-5" id="main-container">
-      {!showLogs && !showTable && <h3>Start a New Process</h3>}
-      <div className="row">
-        <NewDropdown
-          data={allCycles}
-          label="Selected Current Cycle"
-          desc="Prefix used throughout script to match with cycle description"
-          placeholderText="Select a current cycle"
-          currentCycle={currentCycle}
-          setCurrentCycle={setCurrentCycle}
-          disabled={showTable || showLogs}
-          error={currentCycleError}
-        />
-        {/* <div className={mode === "DUP" && "col-md-6"}>
-          <DropdownConfigOption
+      {!showLogs && !showTable && <h3>Start a new process</h3>}
+      <div className={`${mode === "DUP" && "d-flex"}`}>
+        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
+          <NewDropdown
             data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
-            placeholderText="Select a current cycle"
-            setValue={setCurrentCycle}
+            inputField={currentCycle}
+            multiple={false}
+            setInputField={setCurrentCycle}
             disabled={showTable || showLogs}
             error={currentCycleError}
           />
-        </div> */}
+        </div>
         {mode === "DUP" && (
-          <div className="col-md-6 ms-auto">
-            <div className="option-header">
-              <label className="form-label">Selected Past Cycle</label>
-              {pastCycleError && <ErrorMessage message={pastCycleError} />}
-            </div>
-            <div>
-              <select
-                className="form-select rounded-0 border-2"
-                onChange={handlePastCycles}
-                size="2"
-                defaultValue={["DEFAULT"]}
-                multiple
-                disabled={showLogs || showTable}
-              >
-                <option disabled value={"DEFAULT"}>
-                  Select a past cycle
-                </option>
-                {filteredCycles &&
-                  filteredCycles.map((number) => (
-                    <option key={number} value={number}>
-                      {number}
-                    </option>
-                  ))}
-              </select>
-            </div>
-            <div className="form-text text-start mt-2">
-              Cycle prefixes of past cycles
-            </div>
+          // <div className="col-md-6 ms-auto">
+          //   <div className="option-header">
+          //     <label className="form-label">Selected Past Cycle</label>
+          //     {pastCycleError && <ErrorMessage message={pastCycleError} />}
+          //   </div>
+          //   <div>
+          //     <select
+          //       className="form-select rounded-0 border-2"
+          //       onChange={handlePastCycles}
+          //       size="2"
+          //       defaultValue={["DEFAULT"]}
+          //       multiple
+          //       disabled={showLogs || showTable}
+          //     >
+          //       <option disabled value={"DEFAULT"}>
+          //         Select a past cycle
+          //       </option>
+          //       {filteredCycles &&
+          //         filteredCycles.map((number) => (
+          //           <option key={number} value={number}>
+          //             {number}
+          //           </option>
+          //         ))}
+          //     </select>
+          //   </div>
+          //   <div className="form-text text-start mt-2">
+          //     Cycle prefixes of past cycles
+          //   </div>
+          // </div>
+          <div className="row col-md-6 ms-auto">
+            <NewDropdown
+              data={filteredCycles}
+              label="Selected Past Cycle(Multiple)"
+              desc="Cycle prefixes of past cycles"
+              inputField={pastCycle}
+              multiple={true}
+              setInputField={setPastCycle}
+              disabled={showTable || showLogs}
+              error={pastCycleError}
+            />
           </div>
         )}
       </div>
@@ -285,6 +287,7 @@ const SinglePage = ({
           modalFile={modalFile}
           numberOfTopReviewers={numberOfTopReviewers}
           closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
+          selectedModal={selectedModal}
           setSelectedModal={setSelectedModal}
           setRunName={setRunName}
           setNumberOfTopReviewers={setNumberOfTopReviewers}

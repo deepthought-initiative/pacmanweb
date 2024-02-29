@@ -6,8 +6,9 @@ const NewDropdown = ({
   data,
   label,
   desc,
-  currentCycle,
-  setCurrentCycle,
+  multiple,
+  inputField,
+  setInputField,
   disabled,
   error,
 }) => {
@@ -28,8 +29,15 @@ const NewDropdown = ({
   }, [dropdownRef]);
 
   const handleOptionClick = (value) => {
-    setCurrentCycle(value);
-    setDropdownOpen(false);
+    if (multiple) {
+      const updatedInputField = inputField.includes(value)
+        ? inputField.filter((item) => item !== value)
+        : [...inputField, value];
+      setInputField(updatedInputField);
+    } else {
+      setInputField(value);
+      setDropdownOpen(false);
+    }
   };
 
   const handleDropdownToggle = () => {
@@ -42,24 +50,39 @@ const NewDropdown = ({
         <label className="custom-form-label">{label}</label>
       </div>
       <div
-        className={`sample ${disabled ? "disabled" : ""}`}
+        className={`option-display ${error ? "required" : ""} ${
+          disabled ? "disabled" : ""
+        }`}
         onClick={handleDropdownToggle}
       >
-        {currentCycle || " "}
+        {multiple
+          ? inputField.length > 0
+            ? inputField.join(", ")
+            : " "
+          : inputField || " "}
+        <div className={`triangle ${dropdownOpen ? "upside-down" : ""}`}></div>
       </div>
       <div className="option-header">
         <div className="form-text text-start ms-4">{desc}</div>
         {error && <ErrorMessage message={error} />}
       </div>
       {dropdownOpen && !disabled && (
-        <div className="gg">
+        <div className="dropdown-list-container">
           <div className="dropdown-list">
             <ul>
               {data.map((value) => (
                 <li
                   key={value}
                   onClick={() => handleOptionClick(value)}
-                  className={currentCycle === value ? "selected" : ""}
+                  className={
+                    multiple
+                      ? inputField.includes(value)
+                        ? "selected"
+                        : ""
+                      : inputField === value
+                      ? "selected"
+                      : ""
+                  }
                 >
                   {value}
                 </li>

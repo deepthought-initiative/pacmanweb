@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="nav">
           <li
-            className={`nav-item ms-2${
+            className={`nav-item ms-4${
               isItemActive("/categorize") ? " active" : ""
             }`}
           >

@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import "../../css/otherConfigOptions.css";
-import DropdownConfigOption from "./DropdownConfigOption";
 import InputConfigOption from "./InputConfigOption";
+import NewDropdown from "./NewDropdown.jsx";
 
 const OtherConfigOptions = ({
   button_label,
@@ -12,6 +12,7 @@ const OtherConfigOptions = ({
   numberOfTopReviewers,
   closeCollaboratorTimeFrame,
   setNumberOfTopReviewers,
+  selectedModal,
   setSelectedModal,
   setRunName,
   setCloseCollaboratorTimeFrame,
@@ -22,21 +23,23 @@ const OtherConfigOptions = ({
 }) => {
   return (
     <form>
-      <div className="separator">Other Options(optional)</div>
+      <div className="separator">Other Options</div>
       <div className="all-options">
         <div className="single-option">
           <InputConfigOption
-            label="Enter Run name"
+            label="Enter Run name(optional)"
             value={runName}
             desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
             setValue={setRunName}
           />
         </div>
-        <div className="single-option">
-          <DropdownConfigOption
+        <div className="row single-option">
+          <NewDropdown
             data={modalFile}
+            multiple={false}
             label="Select modal file to use"
             desc="Name of modal file to use"
+            inputField={selectedModal}
             setValue={setSelectedModal}
             placeholderText="Select a current cycle"
             disabled={false}

@@ -117,8 +117,8 @@ th {
 .error-container>img {
   border-radius: 50%;
   overflow: hidden;
-  height: 20px;
-  width: 20px;
+  height: 10px;
+  width: 10px;
   object-fit: cover;
   object-position: center;
 }
@@ -130,7 +130,8 @@ th {
 
 .config-error-message {
   color: red;
-    animation: shake 0.5s ease;
+  font-size: 13px;
+  animation: shake 0.5s ease;
   }
   
   @keyframes shake {
@@ -175,29 +176,32 @@ th {
 .dropdown-container {
   position: relative;
 }
-.gg.open {
+.dropdown-list-container.open {
   opacity: 1;
 }
 
-.sample {
-  height: 52px;
+.option-display {
+  height: 50px;
   cursor: pointer;
   overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border: 1px solid #858C94;
+  font-weight: 900;
   text-align: left;
   padding-left: 10px;
-  padding-top: 11px;
-  padding-bottom: 5px;
+  padding-top: 13px;
 }
 
-.sample li {
+.option-display li {
   padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
   position: relative;
   font-size: 16px;
   color: #333;
+}
+
+.required{
+  border: 2px solid red;
 }
 
 .expanded {
@@ -212,23 +216,23 @@ th {
   text-align: left;
   width: 100%;
   background-color: white;
-  max-height: 100px;
+  max-height: 150px;
   overflow-y: auto;
   border: 1px solid #ccc;
   border-radius: 3px;
 }
 
-.gg {
+.dropdown-list-container {
   width: 100%;
   position: relative;
-  top: 12%;
+  top: 19%;
 }
 
-.gg::after {
+.dropdown-list-container::after {
   content: "";
   position: absolute;
   top: -8px;
-  left: 14px;
+  left: 20px;
   width: 0;
   height: 0;
   border-left: 10px solid transparent;
@@ -257,6 +261,7 @@ h3{
   text-align: left;
   margin-bottom: 30px;
   font-weight: bolder;
+  font-size: 24px;
 }
 
 .custom-form-label{
@@ -266,25 +271,96 @@ h3{
   background-color: white;
   padding-left: 3px;
   padding-right: 3px;
+  z-index: 4;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.custom-input-form-label {
+  position: absolute;
+  top: -10px;
+  left: 21px;
+  background-color: white;
+  padding-left: 3px;
+  padding-right: 3px;
+  z-index: 4;
+  font-size: 13px;
+  font-weight: 900;
 }
 
 .btn {
   font-weight: bolder;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 10px 20px;
   border: none;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   background-color: #7A8E99;
   color: white;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
 }
 
 .btn:hover {
-  background-color: #576872;
-  color: white;
+  background-color: #7A8E99 !important;
+  color: white !important;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+  animation: clickanimation 0.3s ease;
+}
+
+@keyframes clickanimation {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    background-color: #7A8E99;
+    color: white;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      background-color: #7A8E99;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      background-color: #7A8E99;
+    color: white;
+  }
+}
+
+.input-group input {
+  height: 50px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.input-group input:focus {
+  outline: none;
+  z-index: 0;
+}
+
+.form-text{
+  font-size: 13px;
+}
+
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid #7A8E99;;
+  position: absolute;
+  top: 35%;
+  right: 35px;
+  transform: translateY(-50%);
+  border-radius: 20%;
+}
+
+.triangle.upside-down {
+  border-bottom: none;
+  border-radius: 20%;
+  border-top: 9px solid #7A8E99;
 }
