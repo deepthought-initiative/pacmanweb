@@ -21,6 +21,8 @@ body {
   overflow-y: auto;
   text-align: left;
   white-space: pre-wrap;
+  border-radius: 10px;
+  box-shadow:0 0 5px 5px rgba(0, 0, 0, 0.3);
 }
 .col-md-9{
   width: 71%;
@@ -33,7 +35,8 @@ body {
 }
 #log-container>* {
   color: white;
-  font-family: monospace;
+  font-family: 'roboto mono';
+  font-size: 13px;
 }
 
 h6 {
@@ -351,7 +354,7 @@ h3{
   height: 0;
   border-left: 9px solid transparent;
   border-right: 9px solid transparent;
-  border-bottom: 9px solid #7A8E99;;
+  border-top: 9px solid #7A8E99;
   position: absolute;
   top: 35%;
   right: 35px;
@@ -359,8 +362,8 @@ h3{
   border-radius: 20%;
 }
 
-.triangle.upside-down {
-  border-bottom: none;
+.triangle.reverse {
+  border-top: none;
+  border-bottom: 9px solid #7A8E99;
   border-radius: 20%;
-  border-top: 9px solid #7A8E99;
 }

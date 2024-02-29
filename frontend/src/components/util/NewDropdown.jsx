@@ -60,7 +60,7 @@ const NewDropdown = ({
             ? inputField.join(", ")
             : " "
           : inputField || " "}
-        <div className={`triangle ${dropdownOpen ? "upside-down" : ""}`}></div>
+        <div className={`triangle ${dropdownOpen ? "reverse" : ""}`}></div>
       </div>
       <div className="option-header">
         <div className="form-text text-start ms-4">{desc}</div>
