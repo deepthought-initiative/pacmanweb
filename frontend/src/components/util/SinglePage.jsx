@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -17,7 +17,7 @@ const SinglePage = ({
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [currentId, setCurrentId] = useState();
+  const [currentId, setCurrentId] = useState(null);
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
 
@@ -82,6 +82,104 @@ const SinglePage = ({
     setPastCycleError("");
   };
 
+  const onTerminate = () => {
+    setCurrentId(undefined);
+    setShowLogs(false);
+    setShowTable(false);
+    setLogs([]);
+    setCurrentCycle("");
+    setPastCycle([]);
+    setRunName("");
+    setSelectedModal("strolger_pacman_model_7cycles.joblib");
+    setSubmitButtonStatus(true);
+    setNumberOfTopReviewers(5);
+    setCloseCollaboratorTimeFrame(3);
+  };
+
+  const filteredCycles = allCycles.filter((cycle) => {
+    return cycle !== currentCycle;
+  });
+
+  // const handlePastCycles = (event) => {
+  //   const options = Array.from(event.target.selectedOptions).map(
+  //     (option) => option.value
+  //   );
+  //   setPastCycle(options);
+  // };
+
+  const fetchStatus = useCallback(async () => {
+    try {
+      const statusResponse = await fetch(`/api/prev_runs/${currentId}`);
+      if (!statusResponse.ok) {
+        throw new Error(`Failed to fetch status: ${statusResponse.statusText}`);
+      }
+      const activityStatus = await statusResponse.json();
+      const status = activityStatus["successful"];
+      const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
+      setProcessStatus(status);
+      setLogs((prevLogs) => [...prevLogs, statusLog]);
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+    } catch (error) {
+      console.error("Error fetching status:", error);
+    }
+  }, [currentId, setProcessStatus, setLogs]);
+
+  const fetchTable = useCallback(async () => {
+    if (!currentId) {
+      return;
+    }
+    try {
+      const tableResponse = await fetch(
+        `/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: { Authorization: "Basic " + btoa("default:barebones") },
+        }
+      );
+      if (!tableResponse.ok) {
+        throw new Error(
+          `Failed to fetch table data: ${tableResponse.statusText}`
+        );
+      }
+      const tableData = await tableResponse.json();
+      setDataToDisplay(tableData);
+      console.log(tableData);
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+    }
+  }, [currentCycle, currentId, setDataToDisplay]);
+
+  const fetchLogs = useCallback(
+    (curId) => {
+      const eventSource = new EventSource(`/api/stream/${curId}`);
+      eventSource.onopen = () => {
+        setShowTerminateProcess(true);
+      };
+      eventSource.onmessage = (event) => {
+        const newLog = event.data;
+        if (
+          newLog.includes("PROCESS COMPLETE") ||
+          newLog.includes("run complete")
+        ) {
+          fetchTable();
+          fetchStatus();
+          eventSource.close();
+          setShowTerminateProcess(false);
+        }
+        setLogs((prevLogs) => [...prevLogs, newLog]);
+        logContainerRef.current.scrollTop =
+          logContainerRef.current.scrollHeight;
+      };
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+        eventSource.close();
+        setShowTerminateProcess(false);
+      };
+    },
+    [currentId, setLogs, setShowTerminateProcess]
+  );
+
   const handleClick = async (event) => {
     event.preventDefault();
     resetErrors();
@@ -115,91 +213,16 @@ const SinglePage = ({
       setCurrentId(data["result_id"]);
       setShowLogs(true);
       setSubmitButtonStatus(false);
-      await fetchLogs(data["result_id"]);
+      // await fetchLogs(data["result_id"]);
     }
   };
 
-  const onTerminate = () => {
-    setCurrentId(undefined);
-    setShowLogs(false);
-    setShowTable(false);
-    setLogs([]);
-    setCurrentCycle("");
-    setPastCycle([]);
-    setRunName("");
-    setSelectedModal("strolger_pacman_model_7cycles.joblib");
-    setSubmitButtonStatus(true);
-    setNumberOfTopReviewers(5);
-    setCloseCollaboratorTimeFrame(3);
-  };
-
-  const filteredCycles = allCycles.filter((cycle) => {
-    return cycle !== currentCycle;
-  });
-
-  // const handlePastCycles = (event) => {
-  //   const options = Array.from(event.target.selectedOptions).map(
-  //     (option) => option.value
-  //   );
-  //   setPastCycle(options);
-  // };
-
-  const fetchStatus = useCallback(async () => {
-    const statusResponse = await fetch(`/api/prev_runs/${currentId}`);
-    const processStatus = await statusResponse.json();
-    const status = processStatus["successful"];
-    const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
-    setProcessStatus(status);
-    setLogs((prevLogs) => [...prevLogs, statusLog]);
-    logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-  }, [currentId, setProcessStatus, setLogs]);
-
-  const fetchTable = useCallback(async () => {
-    if (!currentId) {
-      return;
+  // useEffect hook to fetch logs when component mounts or currentId changes
+  useEffect(() => {
+    if (currentId) {
+      fetchLogs(currentId);
     }
-    const tableResponse = await fetch(
-      `/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: { Authorization: "Basic " + btoa("default:barebones") },
-      }
-    );
-    const tableData = await tableResponse.json();
-    setDataToDisplay(tableData);
-    console.log(tableData);
-  }, [currentCycle, currentId, setDataToDisplay]);
-
-  const fetchLogs = useCallback(
-    (currentId) => {
-      const eventSource = new EventSource(`/api/stream/${currentId}`);
-      eventSource.onopen = () => {
-        setShowTerminateProcess(true);
-      };
-      eventSource.onmessage = (event) => {
-        const newLog = event.data;
-        if (
-          newLog.includes("PROCESS COMPLETE") ||
-          newLog.includes("run complete")
-        ) {
-          fetchTable();
-          fetchStatus();
-          eventSource.close();
-          setShowTerminateProcess(false);
-        }
-        setLogs((prevLogs) => [...prevLogs, newLog]);
-        logContainerRef.current.scrollTop =
-          logContainerRef.current.scrollHeight;
-      };
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-        eventSource.close();
-        setShowTerminateProcess(false);
-      };
-    },
-    [setLogs, setShowTerminateProcess, fetchStatus, fetchTable]
-  );
+  }, [currentId, fetchLogs]);
 
   return (
     <div className="mt-5" id="main-container">
