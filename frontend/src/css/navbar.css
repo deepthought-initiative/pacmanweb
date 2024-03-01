@@ -12,15 +12,19 @@ img{
 }
 
 .nav-item{
-    width: 310px;
+    width: 223px;
+    font-size: 14px;
 }
 
 .active{
     background-color: #E7ECEF;
-    font-weight: bold;
 }
 
 .icon{
     height: 20px;
     width: 20px;
+}
+
+.nav{
+    margin-left: 100px;
 }

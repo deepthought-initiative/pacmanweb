@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="collapse navbar-collapse" id="navbarNav">
         <ul className="nav">
           <li
-            className={`nav-item border ms-4${
+            className={`nav-item ms-4${
               isItemActive("/categorize") ? " active" : ""
             }`}
           >
@@ -37,7 +37,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-4${
+            className={`nav-item ms-4${
               isItemActive("/duplication") ? " active" : ""
             }`}
           >
@@ -46,7 +46,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-4${
+            className={`nav-item ms-4${
               isItemActive("/review") ? " active" : ""
             }`}
           >
@@ -55,7 +55,7 @@ const Navbar = () => {
             </Link>
           </li>
           <li
-            className={`nav-item border ms-4${
+            className={`nav-item ms-4${
               isItemActive("/upload") ? " active" : ""
             }`}
           >

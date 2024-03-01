@@ -12,17 +12,31 @@ import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
-  const [modalFile, setModalFile] = useState();
+  const [modalFile, setModalFile] = useState([]);
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("loggedIn") === "true"
   );
 
   useEffect(() => {
     async function fetchCycles() {
-      const cycles = await fetch(`/api/get_cycles`);
-      const cycleList = await cycles.json();
-      setAllCycles(cycleList["proposal_cycles"]);
-      setModalFile(cycleList["models"]);
+      const fullResponse = await fetch(`/api/get_cycles`);
+      const fullResponseJson = await fullResponse.json();
+      const valid_cycles = fullResponseJson["proposal_cycles_valid"];
+      const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
+      const allAvailableCycles = valid_cycles
+        .concat(invalid_cycles)
+        .map((cycleNumber) => ({
+          cycleNumber: cycleNumber,
+          label: cycleNumber.toString(), // Convert id to string for display
+          style: {
+            backgroundColor: valid_cycles.includes(cycleNumber)
+              ? ""
+              : "#FFBABA",
+          },
+        }));
+
+      setAllCycles(allAvailableCycles);
+      setModalFile(fullResponseJson["models"]);
     }
     fetchCycles();
   }, []);
@@ -41,7 +55,7 @@ function App() {
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 renderTableComponent={(props) => <ProposalTable {...props} />}
-                button_label="Proposals-Categorize"
+                button_label="Categorize Proposals"
               />
             }
           />

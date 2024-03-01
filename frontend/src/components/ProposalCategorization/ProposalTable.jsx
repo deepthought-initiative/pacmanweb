@@ -2,41 +2,18 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
 const ProposalTable = ({
-  currentId,
   setShowTable,
   setShowLogs,
   onCategorizeAnotherCycle,
-  currentCycle,
+  dataToDisplay,
 }) => {
   const [highlighted, setHighlighted] = useState();
-  const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
-
-  useEffect(() => {
-    async function fetchTable() {
-      if (!currentId) {
-        return;
-      }
-      const tableResponse = await fetch(
-        `/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        }
-      );
-      const tableData = await tableResponse.json();
-      const [resdata, code] = tableData;
-      setDataToDisplay(resdata);
-      console.log(tableData);
-    }
-    fetchTable();
-  }, [currentId, setShowTable]);
 
   const expo = (num) => {
     if (num < 0.001) {
@@ -86,13 +63,13 @@ const ProposalTable = ({
                       <td className="col-2 text-break" scope="row">
                         {key}
                       </td>
-                      <td className="col-6 text-break">
+                      <td className="col-md-6 text-break">
                         {value["PACMan Science Category"]}
                       </td>
-                      <td className="col-2 text-break">
+                      <td className="col-md-2 text-break">
                         {value["PACMan Probability"]}
                       </td>
-                      <td className="col-4 text-break">
+                      <td className="col-md-4 text-break">
                         {value["Original Science Category"]}
                       </td>
                     </tr>

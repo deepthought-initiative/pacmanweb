@@ -1,24 +1,29 @@
 /* eslint-disable react/prop-types */
-const InputConfigOption = ({ label, desc, setValue, value }) => {
+import ErrorMessage from "../util/ErrorMessage.jsx";
+
+const InputConfigOption = ({ label, desc, setValue, value, error }) => {
   const handleOnChange = (event) => {
     setValue(event.target.value);
     console.log(event.target.value);
   };
   return (
-    <>
-      <label className="form-label" htmlFor="CurrentCycle">
-        {label}
-      </label>
-      <div className="input-group">
+    <div className="dropdown-container">
+      <div className="option-header">
+        <label className="custom-input-form-label">{label}</label>
+      </div>
+      <div className={`input-group ${error ? "required" : ""}`}>
         <input
           value={value}
           onChange={handleOnChange}
           type="text"
-          className="form-control rounded-0 border-2"
+          className="rounded-0"
         />
       </div>
-      <div className="form-text text-start">{desc}</div>
-    </>
+      <div className="option-header">
+        <div className="form-text text-start ms-4">{desc}</div>
+        {error && <ErrorMessage message={error} />}
+      </div>
+    </div>
   );
 };
 
