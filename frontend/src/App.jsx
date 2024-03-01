@@ -19,10 +19,26 @@ function App() {
 
   useEffect(() => {
     async function fetchCycles() {
-      const cycles = await fetch(`/api/get_cycles`);
-      const cycleList = await cycles.json();
-      setAllCycles(cycleList["proposal_cycles"]);
-      setModalFile(cycleList["models"]);
+      const fullResponse = await fetch(`/api/get_cycles`);
+      const fullResponseJson = await fullResponse.json();
+      // const valid_cycles = fullResponseJson["proposal_cycles_valid"];
+      // const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
+
+      // const allAvailableCycles = valid_cycles
+      //   .concat(invalid_cycles)
+      //   .map((cycleNumber) => ({
+      //     cycleNumber: cycleNumber,
+      //     label: cycleNumber.toString(), // Convert id to string for display
+      //     style: {
+      //       backgroundColor: valid_cycles.includes(cycleNumber)
+      //         ? "white"
+      //         : "red",
+      //     },
+      //   }));
+
+      // setAllCycles(allAvailableCycles);
+      setAllCycles(fullResponseJson["proposal_cycles"]);
+      setModalFile(fullResponseJson["models"]);
     }
     fetchCycles();
   }, []);
