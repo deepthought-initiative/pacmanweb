@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -115,6 +116,7 @@ const SinglePage = ({
       }
       const activityStatus = await statusResponse.json();
       const status = activityStatus["successful"];
+      console.log(status);
       const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
       setProcessStatus(status);
       setLogs((prevLogs) => [...prevLogs, statusLog]);
@@ -143,7 +145,8 @@ const SinglePage = ({
         );
       }
       const tableData = await tableResponse.json();
-      setDataToDisplay(tableData);
+      const [tabularData, code] = tableData;
+      setDataToDisplay(tabularData);
       console.log(tableData);
     } catch (error) {
       console.error("Error fetching table data:", error);
@@ -177,7 +180,7 @@ const SinglePage = ({
         setShowTerminateProcess(false);
       };
     },
-    [currentId, setLogs, setShowTerminateProcess]
+    [fetchStatus, fetchTable]
   );
 
   const handleClick = async (event) => {
