@@ -28,13 +28,13 @@ class PropCat:
             self.model_file_fpath = next((output_dir / "model_results").iterdir())
         except StopIteration:
             model_file_readable = False
-        if not model_file_readable or not access(self.model_file_fpath, R_OK):
+        if not model_file_readable and not access(self.model_file_fpath, R_OK):
             model_file_readable = False
 
         self.recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
-        recat_file_readable = self.recat_fpath.exists() or access(
+        recat_file_readable = self.recat_fpath.exists() and access(
             self.recat_fpath, R_OK
-        )
+        ) and not pd.read_csv(self.recat_fpath).empty
         if not model_file_readable or not recat_file_readable:
             self.prop_response = {
                 "value": "model generated file not found or recategorization file not found"
