@@ -21,6 +21,13 @@ const OtherConfigOptions = ({
   closeCollaboratorTimeFrameError,
   submitButtonStatus,
 }) => {
+  const validModalFile = modalFile.map((modal) => ({
+    cycleNumber: modal,
+    label: modal.toString(),
+    style: {
+      backgroundColor: "",
+    },
+  }));
   return (
     <form>
       <div className="separator">Other Options</div>
@@ -35,12 +42,12 @@ const OtherConfigOptions = ({
         </div>
         <div className="row single-option">
           <NewDropdown
-            data={modalFile}
+            data={validModalFile}
             multiple={false}
             label="Select modal file to use"
             desc="Name of modal file to use"
             inputField={selectedModal}
-            setValue={setSelectedModal}
+            setInputField={setSelectedModal}
             placeholderText="Select a current cycle"
             disabled={false}
             error={selectedModalError}

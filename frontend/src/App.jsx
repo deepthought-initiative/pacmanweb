@@ -12,7 +12,7 @@ import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
-  const [modalFile, setModalFile] = useState();
+  const [modalFile, setModalFile] = useState([]);
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("loggedIn") === "true"
   );
@@ -21,23 +21,21 @@ function App() {
     async function fetchCycles() {
       const fullResponse = await fetch(`/api/get_cycles`);
       const fullResponseJson = await fullResponse.json();
-      // const valid_cycles = fullResponseJson["proposal_cycles_valid"];
-      // const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
+      const valid_cycles = fullResponseJson["proposal_cycles_valid"];
+      const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
+      const allAvailableCycles = valid_cycles
+        .concat(invalid_cycles)
+        .map((cycleNumber) => ({
+          cycleNumber: cycleNumber,
+          label: cycleNumber.toString(), // Convert id to string for display
+          style: {
+            backgroundColor: valid_cycles.includes(cycleNumber)
+              ? ""
+              : "#FFBABA",
+          },
+        }));
 
-      // const allAvailableCycles = valid_cycles
-      //   .concat(invalid_cycles)
-      //   .map((cycleNumber) => ({
-      //     cycleNumber: cycleNumber,
-      //     label: cycleNumber.toString(), // Convert id to string for display
-      //     style: {
-      //       backgroundColor: valid_cycles.includes(cycleNumber)
-      //         ? "white"
-      //         : "red",
-      //     },
-      //   }));
-
-      // setAllCycles(allAvailableCycles);
-      setAllCycles(fullResponseJson["proposal_cycles"]);
+      setAllCycles(allAvailableCycles);
       setModalFile(fullResponseJson["models"]);
     }
     fetchCycles();

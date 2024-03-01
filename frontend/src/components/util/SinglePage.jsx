@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -18,7 +18,7 @@ const SinglePage = ({
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
-  const [currentId, setCurrentId] = useState(null);
+  const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
 
@@ -84,10 +84,12 @@ const SinglePage = ({
   };
 
   const onTerminate = () => {
-    setCurrentId(undefined);
+    setCurrentId();
     setShowLogs(false);
     setShowTable(false);
     setLogs([]);
+    setShowTerminateProcess(true);
+    setProcessStatus(false);
     setCurrentCycle("");
     setPastCycle([]);
     setRunName("");
@@ -108,65 +110,76 @@ const SinglePage = ({
   //   setPastCycle(options);
   // };
 
-  const fetchStatus = useCallback(async () => {
-    try {
-      const statusResponse = await fetch(`/api/prev_runs/${currentId}`);
-      if (!statusResponse.ok) {
-        throw new Error(`Failed to fetch status: ${statusResponse.statusText}`);
-      }
-      const activityStatus = await statusResponse.json();
-      const status = activityStatus["successful"];
-      console.log(status);
-      const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
-      setProcessStatus(status);
-      setLogs((prevLogs) => [...prevLogs, statusLog]);
-      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-    } catch (error) {
-      console.error("Error fetching status:", error);
-    }
-  }, [currentId, setProcessStatus, setLogs]);
-
-  const fetchTable = useCallback(async () => {
-    if (!currentId) {
-      return;
-    }
-    try {
-      const tableResponse = await fetch(
-        `/api/outputs/proposal_cat_output/${currentId}?cycle_number=${currentCycle}`,
-        {
-          method: "GET",
-          credentials: "include",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
+  const fetchStatus = useCallback(
+    async (curId) => {
+      try {
+        const statusResponse = await fetch(`/api/prev_runs/${curId}`);
+        if (!statusResponse.ok) {
+          throw new Error(
+            `Failed to fetch status: ${statusResponse.statusText}`
+          );
         }
-      );
-      if (!tableResponse.ok) {
-        throw new Error(
-          `Failed to fetch table data: ${tableResponse.statusText}`
-        );
+        const activityStatus = await statusResponse.json();
+        const status = activityStatus["successful"];
+        console.log(status);
+        const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
+        setProcessStatus(status);
+        setLogs((prevLogs) => [...prevLogs, statusLog]);
+        logContainerRef.current.scrollTop =
+          logContainerRef.current.scrollHeight;
+      } catch (error) {
+        console.error("Error fetching status:", error);
       }
-      const tableData = await tableResponse.json();
-      const [tabularData, code] = tableData;
-      setDataToDisplay(tabularData);
-      console.log(tableData);
-    } catch (error) {
-      console.error("Error fetching table data:", error);
-    }
-  }, [currentCycle, currentId, setDataToDisplay]);
+    },
+    [setProcessStatus, setLogs]
+  );
+
+  const fetchTable = useCallback(
+    async (curId) => {
+      if (!curId) {
+        return;
+      }
+      try {
+        const tableResponse = await fetch(
+          `/api/outputs/proposal_cat_output/${curId}?cycle_number=${currentCycle}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { Authorization: "Basic " + btoa("default:barebones") },
+          }
+        );
+        if (!tableResponse.ok) {
+          throw new Error(
+            `Failed to fetch table data: ${tableResponse.statusText}`
+          );
+        }
+        const tableData = await tableResponse.json();
+        const [tabularData, code] = tableData;
+        setDataToDisplay(tabularData);
+        console.log(tableData, code);
+      } catch (error) {
+        console.error("Error fetching table data:", error);
+      }
+    },
+    [currentCycle, setDataToDisplay]
+  );
 
   const fetchLogs = useCallback(
     (curId) => {
       const eventSource = new EventSource(`/api/stream/${curId}`);
       eventSource.onopen = () => {
         setShowTerminateProcess(true);
+        console.log("open");
       };
       eventSource.onmessage = (event) => {
         const newLog = event.data;
+        console.log("message");
         if (
           newLog.includes("PROCESS COMPLETE") ||
           newLog.includes("run complete")
         ) {
-          fetchTable();
-          fetchStatus();
+          fetchTable(curId);
+          fetchStatus(curId);
           eventSource.close();
           setShowTerminateProcess(false);
         }
@@ -216,16 +229,16 @@ const SinglePage = ({
       setCurrentId(data["result_id"]);
       setShowLogs(true);
       setSubmitButtonStatus(false);
-      // await fetchLogs(data["result_id"]);
+      await fetchLogs(data["result_id"]);
     }
   };
 
-  // useEffect hook to fetch logs when component mounts or currentId changes
-  useEffect(() => {
-    if (currentId) {
-      fetchLogs(currentId);
-    }
-  }, [currentId, fetchLogs]);
+  // // useEffect hook to fetch logs when component mounts or currentId changes
+  // useEffect(() => {
+  //   if (currentId) {
+  //     fetchLogs(currentId);
+  //   }
+  // }, [currentId, fetchLogs]);
 
   return (
     <div className="mt-5" id="main-container">
