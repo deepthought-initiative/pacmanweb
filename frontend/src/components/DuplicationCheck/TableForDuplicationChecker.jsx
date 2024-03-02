@@ -13,7 +13,6 @@ const TableForDuplicationChecker = ({
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-
   const reformatData = (originalData) => {
     const reformattedData = {};
 
