@@ -103,12 +103,37 @@ const SinglePage = ({
     return cycle !== currentCycle;
   });
 
-  // const handlePastCycles = (event) => {
-  //   const options = Array.from(event.target.selectedOptions).map(
-  //     (option) => option.value
-  //   );
-  //   setPastCycle(options);
-  // };
+  //Only needed on duplication page.
+  const reformatData = (originalData) => {
+    const reformattedData = {};
+
+    for (const key in originalData) {
+      const [firstNo, secondNo] = key
+        .replace(/[()]/g, "")
+        .split(", ")
+        .map(Number);
+
+      if (!reformattedData[firstNo]) {
+        reformattedData[firstNo] = [];
+      }
+
+      if (!reformattedData[secondNo]) {
+        reformattedData[secondNo] = [];
+      }
+
+      reformattedData[firstNo].push({
+        duplicateProposalNumber: secondNo.toString(),
+        ...originalData[key],
+      });
+
+      reformattedData[secondNo].push({
+        duplicateProposalNumber: firstNo.toString(),
+        ...originalData[key],
+      });
+    }
+
+    return reformattedData;
+  };
 
   const fetchStatus = useCallback(
     async (curId) => {
@@ -139,9 +164,19 @@ const SinglePage = ({
       if (!curId) {
         return;
       }
+      let tableCategory = "";
+      if (mode == "PROP") {
+        tableCategory = "proposal_cat_output";
+      }
+      if (mode == "DUP") {
+        tableCategory = "duplicates_output";
+      }
+      if (mode == "MATCH") {
+        tableCategory = "match_reviewers_output";
+      }
       try {
         const tableResponse = await fetch(
-          `/api/outputs/proposal_cat_output/${curId}?cycle_number=${currentCycle}`,
+          `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
           {
             method: "GET",
             credentials: "include",
@@ -155,13 +190,17 @@ const SinglePage = ({
         }
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
-        setDataToDisplay(tabularData);
-        console.log(tableData, code);
+        if (mode == "DUP") {
+          setDataToDisplay(reformatData(tabularData));
+        } else {
+          setDataToDisplay(tabularData);
+        }
+        console.log(reformatData(tabularData));
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, setDataToDisplay]
+    [currentCycle, mode]
   );
 
   const fetchLogs = useCallback(

@@ -1,36 +1,16 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
 const TableMatchReviewers = ({
-  currentId,
   setShowTable,
   setShowLogs,
   onCategorizeAnotherCycle,
-  currentCycle,
+  dataToDisplay,
 }) => {
   const [highlighted, setHighlighted] = useState();
-  const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
-
-  useEffect(() => {
-    async function fetchTable() {
-      if (!currentId) {
-        return;
-      }
-      const tableResponse = await fetch(
-        `/api/outputs/match_reviewers_output/${currentId}?cycle_number=${currentCycle}`,
-        {
-          method: "GET",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        }
-      );
-      const tableData = await tableResponse.json();
-      setDataToDisplay(tableData);
-    }
-    fetchTable();
-  }, [currentId, setShowTable]);
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));

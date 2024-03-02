@@ -1,40 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
 const TableForDuplicationChecker = ({
-  currentId,
   setShowTable,
   setShowLogs,
-  currentCycle,
+  dataToDisplay,
   onCategorizeAnotherCycle,
 }) => {
   const [highlighted, setHighlighted] = useState();
-  const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
-
-  useEffect(() => {
-    async function fetchTable() {
-      if (!currentId) {
-        return;
-      }
-      const tableResponse = await fetch(
-        `/api/outputs/duplicates_output/${currentId}?cycle_number=${currentCycle}`,
-        {
-          method: "GET",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        }
-      );
-      const tableData = await tableResponse.json();
-      const [resdata, code] = tableData;
-      setDataToDisplay(resdata);
-      setDataToDisplay(reformatData(tableData));
-    }
-    fetchTable();
-  }, [currentId, setShowTable]);
-
   const reformatData = (originalData) => {
     const reformattedData = {};
 
