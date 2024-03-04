@@ -28,13 +28,6 @@ const NewDropdown = ({
     };
   }, [dropdownRef]);
 
-  // useEffect(() => {
-  //   const handleInputChange = () => {
-  //     setInputField(inputField.filter((item) => item !== value));
-  //   };
-  //   handleInputChange();
-  // }, []);
-
   const handleOptionClick = (value) => {
     if (multiple) {
       const updatedInputField = inputField.includes(value)
