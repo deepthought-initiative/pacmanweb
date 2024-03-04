@@ -34,7 +34,6 @@ function App() {
               : "#FFBABA",
           },
         }));
-
       setAllCycles(allAvailableCycles);
       setModalFile(fullResponseJson["models"]);
     }

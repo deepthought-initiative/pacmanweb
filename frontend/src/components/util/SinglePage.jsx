@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -21,6 +21,7 @@ const SinglePage = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
+  const [filteredCycles, setFilteredCycles] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -99,9 +100,20 @@ const SinglePage = ({
     setCloseCollaboratorTimeFrame(3);
   };
 
-  const filteredCycles = allCycles.filter((cycle) => {
-    return cycle !== currentCycle;
-  });
+  useEffect(() => {
+    const handleFilteringCycles = () => {
+      let newCycles;
+      if (currentCycle) {
+        newCycles = allCycles.filter((cycle) => {
+          return cycle.cycleNumber !== currentCycle;
+        });
+      } else {
+        newCycles = allCycles;
+      }
+      setFilteredCycles(newCycles);
+    };
+    handleFilteringCycles();
+  }, [allCycles, currentCycle]);
 
   //Only needed on duplication page.
   const reformatData = (originalData) => {
@@ -270,6 +282,8 @@ const SinglePage = ({
       setSubmitButtonStatus(false);
       await fetchLogs(data["result_id"]);
     }
+    console.log(allCycles);
+    console.log(filteredCycles);
   };
 
   // // useEffect hook to fetch logs when component mounts or currentId changes
@@ -296,35 +310,6 @@ const SinglePage = ({
           />
         </div>
         {mode === "DUP" && (
-          // <div className="col-md-6 ms-auto">
-          //   <div className="option-header">
-          //     <label className="form-label">Selected Past Cycle</label>
-          //     {pastCycleError && <ErrorMessage message={pastCycleError} />}
-          //   </div>
-          //   <div>
-          //     <select
-          //       className="form-select rounded-0 border-2"
-          //       onChange={handlePastCycles}
-          //       size="2"
-          //       defaultValue={["DEFAULT"]}
-          //       multiple
-          //       disabled={showLogs || showTable}
-          //     >
-          //       <option disabled value={"DEFAULT"}>
-          //         Select a past cycle
-          //       </option>
-          //       {filteredCycles &&
-          //         filteredCycles.map((number) => (
-          //           <option key={number} value={number}>
-          //             {number}
-          //           </option>
-          //         ))}
-          //     </select>
-          //   </div>
-          //   <div className="form-text text-start mt-2">
-          //     Cycle prefixes of past cycles
-          //   </div>
-          // </div>
           <div className="row col-md-6 ms-auto">
             <NewDropdown
               data={filteredCycles}
@@ -341,6 +326,7 @@ const SinglePage = ({
       </div>
       {showTable ? (
         renderTableComponent({
+          currentId: currentId,
           setShowTable: setShowTable,
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,

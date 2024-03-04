@@ -11,6 +11,7 @@ const ProposalTable = ({
   setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
+  currentId,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -111,7 +112,7 @@ const ProposalTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadContent={dataToDisplay}
+        currentId={currentId}
       />
     </>
   );
