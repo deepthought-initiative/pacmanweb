@@ -100,9 +100,9 @@ const TableForDuplicationChecker = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {dataToDisplay &&
-                    dataToDisplay[currentRow] &&
-                    dataToDisplay[currentRow].map((row) => (
+                  {reformatData(dataToDisplay) &&
+                    reformatData(dataToDisplay)[currentRow] &&
+                    reformatData(dataToDisplay)[currentRow].map((row) => (
                       <tr key={row["no"]}>
                         <td className="text-break">{row["Cycle 2"]}</td>
                         <td className="text-break">

@@ -112,38 +112,6 @@ const SinglePage = ({
     setFilteredCycles(newCycles);
   };
 
-  //Only needed on duplication page.
-  const reformatData = (originalData) => {
-    const reformattedData = {};
-
-    for (const key in originalData) {
-      const [firstNo, secondNo] = key
-        .replace(/[()]/g, "")
-        .split(", ")
-        .map(Number);
-
-      if (!reformattedData[firstNo]) {
-        reformattedData[firstNo] = [];
-      }
-
-      if (!reformattedData[secondNo]) {
-        reformattedData[secondNo] = [];
-      }
-
-      reformattedData[firstNo].push({
-        duplicateProposalNumber: secondNo.toString(),
-        ...originalData[key],
-      });
-
-      reformattedData[secondNo].push({
-        duplicateProposalNumber: firstNo.toString(),
-        ...originalData[key],
-      });
-    }
-
-    return reformattedData;
-  };
-
   const fetchStatus = useCallback(
     async (curId) => {
       try {
@@ -199,13 +167,8 @@ const SinglePage = ({
         }
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
-        if (mode == "DUP") {
-          setDataToDisplay(reformatData(tabularData));
-        } else {
-          setDataToDisplay(tabularData);
-        }
-        console.log(reformatData(tabularData));
-        await fetchStatus(curId);
+        setDataToDisplay(tabularData);
+        console.log(tabularData);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
@@ -218,7 +181,6 @@ const SinglePage = ({
       const eventSource = new EventSource(`/api/stream/${curId}`);
       eventSource.onopen = () => {
         setShowTerminateProcess(true);
-        console.log("open");
       };
       eventSource.onmessage = (event) => {
         const newLog = event.data;
