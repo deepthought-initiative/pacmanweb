@@ -1,3 +1,4 @@
+import os
 import shutil
 from collections import defaultdict
 import zipfile
@@ -130,7 +131,20 @@ class MoveUploadedFiles:
                 self.move_panelists_and_models(file=item)
 
     def move_items(self):
-        for item in (self.extract_directory / f"{self.fname.stem}").iterdir():
+        contents = os.listdir(self.extract_directory)
+        try:
+            subdir = next(
+                (
+                    item
+                    for item in contents
+                    if os.path.isdir(os.path.join(self.extract_directory, item))
+                    and item != "__MACOSX"
+                ),
+                None,
+            )
+        except:
+            subdir = self.fname.stem
+        for item in (self.extract_directory / subdir).iterdir():
             if item.is_dir():
                 if "proposal" in item.stem:
                     self.move_proposals(item)
