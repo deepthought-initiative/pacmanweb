@@ -5,7 +5,6 @@ import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
-// import DropdownConfigOption from "./DropdownConfigOption.jsx";
 import OtherConfigOptions from "./OtherConfigOptions";
 
 const SinglePage = ({
@@ -257,35 +256,6 @@ const SinglePage = ({
           />
         </div>
         {mode === "DUP" && (
-          // <div className="col-md-6 ms-auto">
-          //   <div className="option-header">
-          //     <label className="form-label">Selected Past Cycle</label>
-          //     {pastCycleError && <ErrorMessage message={pastCycleError} />}
-          //   </div>
-          //   <div>
-          //     <select
-          //       className="form-select rounded-0 border-2"
-          //       onChange={handlePastCycles}
-          //       size="2"
-          //       defaultValue={["DEFAULT"]}
-          //       multiple
-          //       disabled={showLogs || showTable}
-          //     >
-          //       <option disabled value={"DEFAULT"}>
-          //         Select a past cycle
-          //       </option>
-          //       {filteredCycles &&
-          //         filteredCycles.map((number) => (
-          //           <option key={number} value={number}>
-          //             {number}
-          //           </option>
-          //         ))}
-          //     </select>
-          //   </div>
-          //   <div className="form-text text-start mt-2">
-          //     Cycle prefixes of past cycles
-          //   </div>
-          // </div>
           <div className="row col-md-6 ms-auto">
             <NewDropdown
               data={filteredCycles}
@@ -306,6 +276,7 @@ const SinglePage = ({
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
+          currentId: currentId,
         })
       ) : showLogs ? (
         <Logs
