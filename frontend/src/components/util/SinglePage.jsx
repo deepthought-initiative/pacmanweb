@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -100,20 +100,17 @@ const SinglePage = ({
     setCloseCollaboratorTimeFrame(3);
   };
 
-  useEffect(() => {
-    const handleFilteringCycles = () => {
-      let newCycles;
-      if (currentCycle) {
-        newCycles = allCycles.filter((cycle) => {
-          return cycle.cycleNumber !== currentCycle;
-        });
-      } else {
-        newCycles = allCycles;
-      }
-      setFilteredCycles(newCycles);
-    };
-    handleFilteringCycles();
-  }, [allCycles, currentCycle]);
+  const handleFilteringCycles = (newCurrentCycle) => {
+    const newCycles = allCycles.filter((cycle) => {
+      return cycle.cycleNumber !== newCurrentCycle;
+    });
+    const newPastCycles = pastCycle.filter((cycle) => {
+      return cycle !== newCurrentCycle;
+    });
+    setCurrentCycle(newCurrentCycle);
+    setPastCycle(newPastCycles);
+    setFilteredCycles(newCycles);
+  };
 
   //Only needed on duplication page.
   const reformatData = (originalData) => {
@@ -208,6 +205,7 @@ const SinglePage = ({
           setDataToDisplay(tabularData);
         }
         console.log(reformatData(tabularData));
+        await fetchStatus(curId);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
@@ -230,7 +228,6 @@ const SinglePage = ({
           newLog.includes("run complete")
         ) {
           fetchTable(curId);
-          fetchStatus(curId);
           eventSource.close();
           setShowTerminateProcess(false);
         }
@@ -304,7 +301,7 @@ const SinglePage = ({
             desc="Prefix used throughout script to match with cycle description"
             inputField={currentCycle}
             multiple={false}
-            setInputField={setCurrentCycle}
+            setInputField={handleFilteringCycles}
             disabled={showTable || showLogs}
             error={currentCycleError}
           />
