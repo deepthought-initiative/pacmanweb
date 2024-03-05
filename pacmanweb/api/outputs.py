@@ -347,6 +347,7 @@ def download_data_as_csv(result_id):
             download_name=f"{result_id}_dup.csv",
             as_attachment=True,
         )
+
     # if mode == "MATCH":
     #     match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
 
