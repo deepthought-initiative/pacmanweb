@@ -173,12 +173,10 @@ class DupCat:
         if self.response != {}:
             return self.response, 500
         self.data = self.parse_duplicates(self.dup_fpath)
-        self.data.to_csv(Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_dup.csv")
-        # print(self.data)
-        # cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
-        # cycle_data.droplevel(0).to_csv(
-        #     Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_dup.csv"
-        # )
+        cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
+        cycle_data.droplevel(0).to_csv(
+            Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_dup.csv"
+        )
 
 
 class MatchRev:
@@ -342,7 +340,7 @@ def download_data_as_csv(result_id):
             cycle_number=options["cycle_number"],
             celery_task_id=result_id,
         )
-        dup_cat.generate_dup_response_csv()
+        dup_cat.generate_dup_response_csv(options["cycle_number"])
         return send_file(
             Config.DOWNLOAD_FOLDER / f"{result_id}_dup.csv",
             mimetype="text/csv",
