@@ -168,12 +168,12 @@ const SinglePage = ({
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
         setDataToDisplay(tabularData);
-        console.log(tabularData);
+        await fetchStatus(curId);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, mode]
+    [currentCycle, fetchStatus, mode]
   );
 
   const fetchLogs = useCallback(
@@ -203,7 +203,7 @@ const SinglePage = ({
         setShowTerminateProcess(false);
       };
     },
-    [fetchStatus, fetchTable]
+    [fetchTable]
   );
 
   const handleClick = async (event) => {
