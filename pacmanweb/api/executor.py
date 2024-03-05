@@ -155,6 +155,9 @@ class RunPACMan:
             shell=True,
             env=env,
         )
+        redis_instance.xadd(
+                    f"process {self.celery_task_id} output", {"line": "STARTING RUN"}
+                )
         if self.proc.poll() is None:
             for line in iter(self.proc.stdout.readline, b""):
                 print(line.decode(), end="")
