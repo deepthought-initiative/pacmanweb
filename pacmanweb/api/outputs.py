@@ -1,14 +1,15 @@
-from os import access, R_OK
 import ast
 import json
 import pathlib
 import re
 from collections import defaultdict
 from io import StringIO
+from os import R_OK, access
 
 import pandas as pd
 from flask import Blueprint, request, send_file
 from flask_login import login_required
+
 from pacmanweb import Config
 
 outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
@@ -32,9 +33,11 @@ class PropCat:
             model_file_readable = False
 
         self.recat_fpath = output_dir / "store" / f"{cycle_number}_recategorization.txt"
-        recat_file_readable = self.recat_fpath.exists() and access(
-            self.recat_fpath, R_OK
-        ) and not pd.read_csv(self.recat_fpath).empty
+        recat_file_readable = (
+            self.recat_fpath.exists()
+            and access(self.recat_fpath, R_OK)
+            and not pd.read_csv(self.recat_fpath).empty
+        )
         if not model_file_readable or not recat_file_readable:
             self.prop_response = {
                 "value": "model generated file not found or recategorization file not found"
@@ -165,6 +168,15 @@ class DupCat:
         cycle_data = {str(key): value for key, value in cycle_data.items()}
         return cycle_data, 200
 
+    def generate_dup_response_csv(self, cycle=None):
+        if self.response != {}:
+            return self.response, 500
+        self.data = self.parse_duplicates(self.dup_fpath)
+        cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
+        cycle_data.droplevel(0).to_csv(
+            Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_dup.csv"
+        )
+
 
 class MatchRev:
     def __init__(self, output_dir, cycle_number) -> None:
@@ -291,6 +303,43 @@ def proposal_cat_output_download(result_id):
         download_name=f"{result_id}_prop_cat.csv",
         as_attachment=True,
     )
+
+
+@outputs_bp.route("/download/<result_id>", methods=["GET"])
+@login_required
+def download_data_as_csv(result_id):
+    options = request.args.to_dict(flat=True)
+    mode = options["mode"]
+    if "cycle_number" not in options.keys():
+        return {
+            "value": "Please provide a cycle number to get the proposal categorisation output."
+        }, 500
+    output_dir = Config.PACMAN_PATH / "runs" / result_id
+    if mode == "PROP":
+        prop_cat = PropCat(
+            output_dir=output_dir,
+            cycle_number=options["cycle_number"],
+            celery_task_id=result_id,
+        )
+        prop_cat.get_prop_table()
+        prop_cat.generate_prop_response_csv()
+        return send_file(
+            Config.DOWNLOAD_FOLDER / f"{result_id}_prop_cat.csv",
+            mimetype="text/csv",
+            download_name=f"{result_id}_prop_cat.csv",
+            as_attachment=True,
+        )
+    # if mode == "DUP":
+    #     dup_cat = DupCat(output_dir=output_dir, cycle_number=options["cycle_number"])
+    #     dup_cat.generate_dup_response_csv()
+    #     return send_file(
+    #         Config.DOWNLOAD_FOLDER / f"{result_id}_dup.csv",
+    #         mimetype="text/csv",
+    #         download_name=f"{result_id}_dup.csv",
+    #         as_attachment=True,
+    #     )
+    # if mode == "MATCH":
+    #     match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
