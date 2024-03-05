@@ -127,13 +127,14 @@ class PropCat:
 
 
 class DupCat:
-    def __init__(self, output_dir, cycle_number=None):
+    def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.response = {}
         if not self.dup_fpath.exists() or not access(self.dup_fpath, R_OK):
             self.response = {
                 "value": "duplications.txt file not accessible for this cycle."
             }
+        self.celery_task_id = celery_task_id
 
     def parse_duplicates(self, dup_fpath):
         data = pd.read_csv(
@@ -259,7 +260,11 @@ def data_handler(celery_task_id, cycle_number, mode):
         )
         return prop_cat.get_prop_table()
     if mode == "DUP":
-        dup_cat = DupCat(output_dir=output_dir, cycle_number=cycle_number)
+        dup_cat = DupCat(
+            output_dir=output_dir,
+            cycle_number=cycle_number,
+            celery_task_id=celery_task_id,
+        )
         return dup_cat.get_for_cycle(cycle=cycle_number)
     if mode == "MATCH":
         match = MatchRev(output_dir=output_dir, cycle_number=cycle_number)
@@ -329,15 +334,19 @@ def download_data_as_csv(result_id):
             download_name=f"{result_id}_prop_cat.csv",
             as_attachment=True,
         )
-    # if mode == "DUP":
-    #     dup_cat = DupCat(output_dir=output_dir, cycle_number=options["cycle_number"])
-    #     dup_cat.generate_dup_response_csv()
-    #     return send_file(
-    #         Config.DOWNLOAD_FOLDER / f"{result_id}_dup.csv",
-    #         mimetype="text/csv",
-    #         download_name=f"{result_id}_dup.csv",
-    #         as_attachment=True,
-    #     )
+    if mode == "DUP":
+        dup_cat = DupCat(
+            output_dir=output_dir,
+            cycle_number=options["cycle_number"],
+            celery_task_id=result_id,
+        )
+        dup_cat.generate_dup_response_csv()
+        return send_file(
+            Config.DOWNLOAD_FOLDER / f"{result_id}_dup.csv",
+            mimetype="text/csv",
+            download_name=f"{result_id}_dup.csv",
+            as_attachment=True,
+        )
     # if mode == "MATCH":
     #     match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
 
