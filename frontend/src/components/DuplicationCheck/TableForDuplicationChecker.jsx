@@ -72,19 +72,21 @@ const TableForDuplicationChecker = ({
                 </tr>
               </thead>
               <tbody>
-                {dataToDisplay &&
-                  Object.entries(dataToDisplay).map(([key, value]) => (
-                    <tr
-                      onClick={() => handleHighlight(key)}
-                      className={highlighted === key ? "highlighted" : ""}
-                      key={key}
-                    >
-                      <td className="col-6 text-break" scope="row">
-                        {key}
-                      </td>
-                      <td className="col-6 text-break">{value.length}</td>
-                    </tr>
-                  ))}
+                {reformatData(dataToDisplay) &&
+                  Object.entries(reformatData(dataToDisplay)).map(
+                    ([key, value]) => (
+                      <tr
+                        onClick={() => handleHighlight(key)}
+                        className={highlighted === key ? "highlighted" : ""}
+                        key={key}
+                      >
+                        <td className="col-6 text-break" scope="row">
+                          {key}
+                        </td>
+                        <td className="col-6 text-break">{value.length}</td>
+                      </tr>
+                    )
+                  )}
               </tbody>
             </table>
           </div>
