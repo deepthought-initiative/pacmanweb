@@ -1,7 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import DefaultPfp from "../../assets/DefaultPfp.png";
-import QuestionMark from "../../assets/QuestionMark.png";
-import Settings from "../../assets/Settings.png";
 import "../../css/navbar.css";
 
 const Navbar = () => {
@@ -66,7 +64,7 @@ const Navbar = () => {
         </ul>
       </div>
       <div id="right-corner">
-        <div className="">
+        {/* <div className="">
           <a href="#">
             <img className="icon" src={Settings} />
           </a>
@@ -75,7 +73,7 @@ const Navbar = () => {
           <a href="#">
             <img className="icon" src={QuestionMark} />
           </a>
-        </div>
+        </div> */}
         <div>
           <a href="/logout">
             <img src={DefaultPfp} />
