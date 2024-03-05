@@ -60,7 +60,7 @@ const Navbar = () => {
             }`}
           >
             <Link className="nav-link text-dark" to="/upload">
-              Upload a Zip
+              Upload Cycles
             </Link>
           </li>
         </ul>
