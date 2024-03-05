@@ -251,6 +251,33 @@ const SinglePage = ({
   //     fetchLogs(currentId);
   //   }
   // }, [currentId, fetchLogs]);
+  const downloadCSV = async () => {
+    const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log(data);
+        const blob = new Blob([data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        const fileName = `downloaded_Report_${new Date()
+          .toLocaleDateString()
+          .replace(/\//g, "-")}.csv`;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
 
   return (
     <div className="mt-5" id="main-container">
@@ -286,10 +313,13 @@ const SinglePage = ({
       {showTable ? (
         renderTableComponent({
           currentId: currentId,
+          currentCycle: currentCycle,
           setShowTable: setShowTable,
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
+          downloadCSV: downloadCSV,
+          mode: mode,
         })
       ) : showLogs ? (
         <Logs
@@ -301,11 +331,13 @@ const SinglePage = ({
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
+          downloadCSV={downloadCSV}
         />
       ) : (
         <OtherConfigOptions
           button_label={button_label}
           handleClick={handleClick}
+          currentCycle={currentCycle}
           runName={runName}
           modalFile={modalFile}
           numberOfTopReviewers={numberOfTopReviewers}

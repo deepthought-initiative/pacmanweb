@@ -9,6 +9,7 @@ const Logs = ({
   logContainerRef,
   showTerminateProcess,
   dataToDisplay,
+  downloadCSV,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
@@ -64,7 +65,9 @@ const Logs = ({
           <button className="btn rounded-0" onClick={handleTable}>
             See Results
           </button>
-          <button className="btn rounded-0">Download As CSV</button>
+          <button onClick={downloadCSV} className="btn rounded-0">
+            Download As CSV
+          </button>
           <button className="btn rounded-0">View Logs</button>
         </div>
       ) : (

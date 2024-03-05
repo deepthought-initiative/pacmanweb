@@ -1,6 +1,3 @@
-/* eslint-disable react/no-unknown-property */
-/* eslint-disable react/jsx-key */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
@@ -11,7 +8,7 @@ const ProposalTable = ({
   setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
-  currentId,
+  downloadCSV,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -112,7 +109,7 @@ const ProposalTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        currentId={currentId}
+        downloadCSV={downloadCSV}
       />
     </>
   );
