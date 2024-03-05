@@ -21,6 +21,7 @@ const SinglePage = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
+  const [filteredCycles, setFilteredCycles] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -99,16 +100,17 @@ const SinglePage = ({
     setCloseCollaboratorTimeFrame(3);
   };
 
-  const filteredCycles = allCycles.filter((cycle) => {
-    return cycle !== currentCycle;
-  });
-
-  // const handlePastCycles = (event) => {
-  //   const options = Array.from(event.target.selectedOptions).map(
-  //     (option) => option.value
-  //   );
-  //   setPastCycle(options);
-  // };
+  const handleFilteringCycles = (newCurrentCycle) => {
+    const newCycles = allCycles.filter((cycle) => {
+      return cycle.cycleNumber !== newCurrentCycle;
+    });
+    const newPastCycles = pastCycle.filter((cycle) => {
+      return cycle !== newCurrentCycle;
+    });
+    setCurrentCycle(newCurrentCycle);
+    setPastCycle(newPastCycles);
+    setFilteredCycles(newCycles);
+  };
 
   const fetchStatus = useCallback(
     async (curId) => {
@@ -139,9 +141,19 @@ const SinglePage = ({
       if (!curId) {
         return;
       }
+      let tableCategory = "";
+      if (mode == "PROP") {
+        tableCategory = "proposal_cat_output";
+      }
+      if (mode == "DUP") {
+        tableCategory = "duplicates_output";
+      }
+      if (mode == "MATCH") {
+        tableCategory = "match_reviewers_output";
+      }
       try {
         const tableResponse = await fetch(
-          `/api/outputs/proposal_cat_output/${curId}?cycle_number=${currentCycle}`,
+          `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
           {
             method: "GET",
             credentials: "include",
@@ -156,12 +168,12 @@ const SinglePage = ({
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
         setDataToDisplay(tabularData);
-        console.log(tableData, code);
+        await fetchStatus(curId);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, setDataToDisplay]
+    [currentCycle, fetchStatus, mode]
   );
 
   const fetchLogs = useCallback(
@@ -169,7 +181,6 @@ const SinglePage = ({
       const eventSource = new EventSource(`/api/stream/${curId}`);
       eventSource.onopen = () => {
         setShowTerminateProcess(true);
-        console.log("open");
       };
       eventSource.onmessage = (event) => {
         const newLog = event.data;
@@ -179,7 +190,6 @@ const SinglePage = ({
           newLog.includes("run complete")
         ) {
           fetchTable(curId);
-          fetchStatus(curId);
           eventSource.close();
           setShowTerminateProcess(false);
         }
@@ -193,7 +203,7 @@ const SinglePage = ({
         setShowTerminateProcess(false);
       };
     },
-    [fetchStatus, fetchTable]
+    [fetchTable]
   );
 
   const handleClick = async (event) => {
@@ -231,6 +241,8 @@ const SinglePage = ({
       setSubmitButtonStatus(false);
       await fetchLogs(data["result_id"]);
     }
+    console.log(allCycles);
+    console.log(filteredCycles);
   };
 
   // // useEffect hook to fetch logs when component mounts or currentId changes
@@ -239,6 +251,31 @@ const SinglePage = ({
   //     fetchLogs(currentId);
   //   }
   // }, [currentId, fetchLogs]);
+  const downloadCSV = async () => {
+    const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.text();
+      })
+      .then((data) => {
+        console.log(data);
+        const blob = new Blob([data], { type: "text/csv" });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        const fileName = `${currentId}_${mode}.csv`;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
+  };
 
   return (
     <div className="mt-5" id="main-container">
@@ -251,41 +288,12 @@ const SinglePage = ({
             desc="Prefix used throughout script to match with cycle description"
             inputField={currentCycle}
             multiple={false}
-            setInputField={setCurrentCycle}
+            setInputField={handleFilteringCycles}
             disabled={showTable || showLogs}
             error={currentCycleError}
           />
         </div>
         {mode === "DUP" && (
-          // <div className="col-md-6 ms-auto">
-          //   <div className="option-header">
-          //     <label className="form-label">Selected Past Cycle</label>
-          //     {pastCycleError && <ErrorMessage message={pastCycleError} />}
-          //   </div>
-          //   <div>
-          //     <select
-          //       className="form-select rounded-0 border-2"
-          //       onChange={handlePastCycles}
-          //       size="2"
-          //       defaultValue={["DEFAULT"]}
-          //       multiple
-          //       disabled={showLogs || showTable}
-          //     >
-          //       <option disabled value={"DEFAULT"}>
-          //         Select a past cycle
-          //       </option>
-          //       {filteredCycles &&
-          //         filteredCycles.map((number) => (
-          //           <option key={number} value={number}>
-          //             {number}
-          //           </option>
-          //         ))}
-          //     </select>
-          //   </div>
-          //   <div className="form-text text-start mt-2">
-          //     Cycle prefixes of past cycles
-          //   </div>
-          // </div>
           <div className="row col-md-6 ms-auto">
             <NewDropdown
               data={filteredCycles}
@@ -302,10 +310,14 @@ const SinglePage = ({
       </div>
       {showTable ? (
         renderTableComponent({
+          currentId: currentId,
+          currentCycle: currentCycle,
           setShowTable: setShowTable,
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
+          downloadCSV: downloadCSV,
+          mode: mode,
         })
       ) : showLogs ? (
         <Logs
@@ -317,11 +329,13 @@ const SinglePage = ({
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
+          downloadCSV={downloadCSV}
         />
       ) : (
         <OtherConfigOptions
           button_label={button_label}
           handleClick={handleClick}
+          currentCycle={currentCycle}
           runName={runName}
           modalFile={modalFile}
           numberOfTopReviewers={numberOfTopReviewers}

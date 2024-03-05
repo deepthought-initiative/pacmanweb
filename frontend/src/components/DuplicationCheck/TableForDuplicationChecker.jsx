@@ -1,39 +1,18 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
 const TableForDuplicationChecker = ({
-  currentId,
   setShowTable,
   setShowLogs,
-  currentCycle,
+  dataToDisplay,
   onCategorizeAnotherCycle,
+  downloadCSV,
 }) => {
   const [highlighted, setHighlighted] = useState();
-  const [dataToDisplay, setDataToDisplay] = useState([]);
   const [currentRow, setCurrentRow] = useState();
-
-  useEffect(() => {
-    async function fetchTable() {
-      if (!currentId) {
-        return;
-      }
-      const tableResponse = await fetch(
-        `/api/outputs/duplicates_output/${currentId}?cycle_number=${currentCycle}`,
-        {
-          method: "GET",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        }
-      );
-      const tableData = await tableResponse.json();
-      const [resdata, code] = tableData;
-      setDataToDisplay(resdata);
-      setDataToDisplay(reformatData(tableData));
-    }
-    fetchTable();
-  }, [currentId, setShowTable]);
 
   const reformatData = (originalData) => {
     const reformattedData = {};
@@ -93,19 +72,21 @@ const TableForDuplicationChecker = ({
                 </tr>
               </thead>
               <tbody>
-                {dataToDisplay &&
-                  Object.entries(dataToDisplay).map(([key, value]) => (
-                    <tr
-                      onClick={() => handleHighlight(key)}
-                      className={highlighted === key ? "highlighted" : ""}
-                      key={key}
-                    >
-                      <td className="col-6 text-break" scope="row">
-                        {key}
-                      </td>
-                      <td className="col-6 text-break">{value.length}</td>
-                    </tr>
-                  ))}
+                {reformatData(dataToDisplay) &&
+                  Object.entries(reformatData(dataToDisplay)).map(
+                    ([key, value]) => (
+                      <tr
+                        onClick={() => handleHighlight(key)}
+                        className={highlighted === key ? "highlighted" : ""}
+                        key={key}
+                      >
+                        <td className="col-6 text-break" scope="row">
+                          {key}
+                        </td>
+                        <td className="col-6 text-break">{value.length}</td>
+                      </tr>
+                    )
+                  )}
               </tbody>
             </table>
           </div>
@@ -123,9 +104,9 @@ const TableForDuplicationChecker = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {dataToDisplay &&
-                    dataToDisplay[currentRow] &&
-                    dataToDisplay[currentRow].map((row) => (
+                  {reformatData(dataToDisplay) &&
+                    reformatData(dataToDisplay)[currentRow] &&
+                    reformatData(dataToDisplay)[currentRow].map((row) => (
                       <tr key={row["no"]}>
                         <td className="text-break">{row["Cycle 2"]}</td>
                         <td className="text-break">
@@ -145,7 +126,7 @@ const TableForDuplicationChecker = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadContent={dataToDisplay}
+        downloadCSV={downloadCSV}
       />
     </>
   );
