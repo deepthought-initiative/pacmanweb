@@ -135,25 +135,16 @@ const SinglePage = ({
   };
 
   const fetchStatus = useCallback(
-    async (curId) => {
-      try {
-        const statusResponse = await fetch(`/api/prev_runs/${curId}`);
-        if (!statusResponse.ok) {
-          throw new Error(
-            `Failed to fetch status: ${statusResponse.statusText}`
-          );
-        }
-        const activityStatus = await statusResponse.json();
-        const status = activityStatus["successful"];
-        console.log(status);
-        const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
-        setProcessStatus(status);
-        setLogs((prevLogs) => [...prevLogs, statusLog]);
-        logContainerRef.current.scrollTop =
-          logContainerRef.current.scrollHeight;
-      } catch (error) {
-        console.error("Error fetching status:", error);
+    async (code) => {
+      if (code !== 200) {
+        setProcessStatus(false);
+        setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
+        return;
       }
+      // If code is 200 then proceed here
+      setProcessStatus(true);
+      setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
     },
     [setProcessStatus, setLogs]
   );
@@ -190,7 +181,7 @@ const SinglePage = ({
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
         setDataToDisplay(tabularData);
-        await fetchStatus(curId);
+        fetchStatus(code);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
