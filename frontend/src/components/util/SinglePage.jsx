@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -48,6 +48,18 @@ const SinglePage = ({
   const logContainerRef = useRef(null);
 
   const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
+
+  useEffect(() => {
+    const handleBeforeUnload = async (event) => {
+      await terminateAllProcesses();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const validateFields = () => {
     let noError = true;
@@ -98,6 +110,16 @@ const SinglePage = ({
     setSubmitButtonStatus(true);
     setNumberOfTopReviewers(5);
     setCloseCollaboratorTimeFrame(3);
+  };
+
+  const terminateAllProcesses = async () => {
+    if (!currentId) {
+      return;
+    }
+    await fetch(`/api/terminate/${currentId}`, {
+      method: "POST",
+    });
+    onTerminate();
   };
 
   const handleFilteringCycles = (newCurrentCycle) => {
@@ -251,6 +273,7 @@ const SinglePage = ({
   //     fetchLogs(currentId);
   //   }
   // }, [currentId, fetchLogs]);
+
   const downloadCSV = async () => {
     const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
     fetch(url)
@@ -323,6 +346,7 @@ const SinglePage = ({
         <Logs
           currentId={currentId}
           setShowTable={setShowTable}
+          terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
           processStatus={processStatus}
