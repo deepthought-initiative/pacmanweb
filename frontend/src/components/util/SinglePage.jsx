@@ -21,7 +21,7 @@ const SinglePage = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState();
+  const [filteredCycles, setFilteredCycles] = useState(allCycles);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -257,13 +257,6 @@ const SinglePage = ({
     console.log(allCycles);
     console.log(filteredCycles);
   };
-
-  // // useEffect hook to fetch logs when component mounts or currentId changes
-  // useEffect(() => {
-  //   if (currentId) {
-  //     fetchLogs(currentId);
-  //   }
-  // }, [currentId, fetchLogs]);
 
   const downloadCSV = async () => {
     const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
