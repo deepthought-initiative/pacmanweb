@@ -43,7 +43,7 @@ def login():
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
     else:
-        login_user(user)
+        login_user(user, remember=True)
         next = request.args.get("next")
         return jsonify({"username": username, "password": password})
 
