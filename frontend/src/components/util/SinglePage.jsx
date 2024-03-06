@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "./NewDropdown.jsx";
@@ -21,7 +21,7 @@ const SinglePage = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState();
+  const [filteredCycles, setFilteredCycles] = useState(allCycles);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -48,6 +48,18 @@ const SinglePage = ({
   const logContainerRef = useRef(null);
 
   const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
+
+  useEffect(() => {
+    const handleBeforeUnload = async (event) => {
+      await terminateAllProcesses();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
 
   const validateFields = () => {
     let noError = true;
@@ -100,6 +112,16 @@ const SinglePage = ({
     setCloseCollaboratorTimeFrame(3);
   };
 
+  const terminateAllProcesses = async () => {
+    if (!currentId) {
+      return;
+    }
+    await fetch(`/api/terminate/${currentId}`, {
+      method: "POST",
+    });
+    onTerminate();
+  };
+
   const handleFilteringCycles = (newCurrentCycle) => {
     const newCycles = allCycles.filter((cycle) => {
       return cycle.cycleNumber !== newCurrentCycle;
@@ -113,25 +135,16 @@ const SinglePage = ({
   };
 
   const fetchStatus = useCallback(
-    async (curId) => {
-      try {
-        const statusResponse = await fetch(`/api/prev_runs/${curId}`);
-        if (!statusResponse.ok) {
-          throw new Error(
-            `Failed to fetch status: ${statusResponse.statusText}`
-          );
-        }
-        const activityStatus = await statusResponse.json();
-        const status = activityStatus["successful"];
-        console.log(status);
-        const statusLog = status ? "PROCESS SUCCESSFUL" : "PROCESS FAILED";
-        setProcessStatus(status);
-        setLogs((prevLogs) => [...prevLogs, statusLog]);
-        logContainerRef.current.scrollTop =
-          logContainerRef.current.scrollHeight;
-      } catch (error) {
-        console.error("Error fetching status:", error);
+    async (code) => {
+      if (code !== 200) {
+        setProcessStatus(false);
+        setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
+        return;
       }
+      // If code is 200 then proceed here
+      setProcessStatus(true);
+      setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
+      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
     },
     [setProcessStatus, setLogs]
   );
@@ -168,7 +181,7 @@ const SinglePage = ({
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
         setDataToDisplay(tabularData);
-        await fetchStatus(curId);
+        fetchStatus(code);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
@@ -245,12 +258,6 @@ const SinglePage = ({
     console.log(filteredCycles);
   };
 
-  // // useEffect hook to fetch logs when component mounts or currentId changes
-  // useEffect(() => {
-  //   if (currentId) {
-  //     fetchLogs(currentId);
-  //   }
-  // }, [currentId, fetchLogs]);
   const downloadCSV = async () => {
     const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
     fetch(url)
@@ -323,6 +330,7 @@ const SinglePage = ({
         <Logs
           currentId={currentId}
           setShowTable={setShowTable}
+          terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
           processStatus={processStatus}

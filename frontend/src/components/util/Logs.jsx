@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 
 const Logs = ({
-  currentId,
   setShowTable,
   onTerminate,
+  terminateAllProcesses,
   logs,
   processStatus,
   logContainerRef,
@@ -14,16 +14,6 @@ const Logs = ({
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
-  };
-
-  const handleTerminate = async () => {
-    if (!currentId) {
-      return;
-    }
-    await fetch(`/api/terminate/${currentId}`, {
-      method: "POST",
-    });
-    onTerminate();
   };
 
   return (
@@ -50,7 +40,7 @@ const Logs = ({
       </div>
       {showTerminateProcess ? (
         <div className="button-tray container-fluid p-0">
-          <button className="btn rounded-0" onClick={handleTerminate}>
+          <button className="btn rounded-0" onClick={terminateAllProcesses}>
             Terminate Process
           </button>
         </div>
