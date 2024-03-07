@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import limitsData from "../../../limits.json";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
@@ -53,6 +54,24 @@ const TableForDuplicationChecker = ({
   const viewLogs = () => {
     setShowLogs(true);
     setShowTable(false);
+  };
+
+  const applySimilarityScoreBgColor = (score) => {
+    const { upperLimit, lowerLimit } = limitsData;
+    const similarityScore = parseFloat(score);
+    console.log(similarityScore);
+    if (isNaN(similarityScore)) {
+      return "";
+    }
+    if (similarityScore >= upperLimit) {
+      return "score-high";
+    }
+    if (similarityScore < upperLimit && similarityScore >= lowerLimit) {
+      return "score-moderate";
+    }
+    if (similarityScore < lowerLimit) {
+      return "score-low";
+    }
   };
 
   return (
@@ -112,7 +131,13 @@ const TableForDuplicationChecker = ({
                         <td className="text-break">
                           {row["duplicateProposalNumber"]}
                         </td>
-                        <td className="text-break">{row["Similarity"]}</td>
+                        <td
+                          className={`text-break ${applySimilarityScoreBgColor(
+                            row["Similarity"]
+                          )}`}
+                        >
+                          {row["Similarity"]}
+                        </td>
                       </tr>
                     ))}
                 </tbody>
