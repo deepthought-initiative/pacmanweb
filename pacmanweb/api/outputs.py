@@ -4,7 +4,7 @@ import pathlib
 import re
 from collections import defaultdict
 from io import StringIO
-from os import R_OK, access
+from os import R_OK, access, stat
 
 import pandas as pd
 from flask import Blueprint, request, send_file
@@ -130,7 +130,11 @@ class DupCat:
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.response = {}
-        if not self.dup_fpath.exists() or not access(self.dup_fpath, R_OK):
+        if (
+            not self.dup_fpath.exists()
+            or not access(self.dup_fpath, R_OK)
+            or stat(self.dup_fpath).st_size == 0
+        ):
             self.response = {
                 "value": "duplications.txt file not accessible for this cycle."
             }
@@ -247,7 +251,7 @@ class MatchRev:
             "Main Table": self.make_main_table(),
             "Proposal Assignments": self.read_matches(),
             "Conflicts": self.read_conflicts(),
-        }
+        }, 200
 
 
 def data_handler(celery_task_id, cycle_number, mode):
