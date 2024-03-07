@@ -11,6 +11,9 @@ const TableForDuplicationChecker = ({
   dataToDisplay,
   onCategorizeAnotherCycle,
   downloadCSV,
+  currentId,
+  currentCycle,
+  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -46,9 +49,9 @@ const TableForDuplicationChecker = ({
     return reformattedData;
   };
 
-  const handleHighlight = (current_id) => {
-    setHighlighted((prevId) => (prevId === current_id ? null : current_id));
-    setCurrentRow(current_id);
+  const handleHighlight = (row_id) => {
+    setHighlighted((prevId) => (prevId === row_id ? null : row_id));
+    setCurrentRow(row_id);
   };
 
   const viewLogs = () => {
@@ -81,7 +84,7 @@ const TableForDuplicationChecker = ({
         className="container-fluid border border-1 border-black mt-5"
       >
         <div className="col-md-6">
-          <h6 className="my-3">Duplicate Proposals in cycle</h6>
+          <h6 className="my-3">{`Duplicate Proposals in cycle ${currentCycle}`}</h6>
           <div className="table-container">
             <table className="container-fluid">
               <thead>
@@ -111,7 +114,11 @@ const TableForDuplicationChecker = ({
           </div>
         </div>
         <div className="col-md-6">
-          <h6 className="my-3">Duplicates found for proposal</h6>
+          <h6 className="my-3">
+            {highlighted
+              ? ` Duplicates found for proposal ${highlighted} from ${currentCycle}`
+              : "--"}
+          </h6>
           {highlighted ? (
             <div className="table-container">
               <table className="container-fluid">
