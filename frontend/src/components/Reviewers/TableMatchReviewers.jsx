@@ -108,7 +108,7 @@ const TableMatchReviewers = ({
         <div className="col-3">
           <h6 className="my-3">Reviewer Conflicts for {currentRow}</h6>
           {highlighted ? (
-            <div className="scroll-table-container">
+            <div className="table-container">
               <table className="container-fluid">
                 <thead>
                   <tr>
