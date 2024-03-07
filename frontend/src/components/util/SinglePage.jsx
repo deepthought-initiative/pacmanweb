@@ -49,6 +49,16 @@ const SinglePage = ({
 
   const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
 
+  const terminateAllProcesses = useCallback(async () => {
+    if (!currentId) {
+      return;
+    }
+    await fetch(`/api/terminate/${currentId}`, {
+      method: "POST",
+    });
+    onTerminate();
+  }, [currentId]);
+
   useEffect(() => {
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
@@ -59,7 +69,7 @@ const SinglePage = ({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [terminateAllProcesses]);
 
   const validateFields = () => {
     let noError = true;
@@ -112,16 +122,6 @@ const SinglePage = ({
     setCloseCollaboratorTimeFrame(3);
   };
 
-  const terminateAllProcesses = async () => {
-    if (!currentId) {
-      return;
-    }
-    await fetch(`/api/terminate/${currentId}`, {
-      method: "POST",
-    });
-    onTerminate();
-  };
-
   const handleFilteringCycles = (newCurrentCycle) => {
     const newCycles = allCycles.filter((cycle) => {
       return cycle.cycleNumber !== newCurrentCycle;
@@ -133,21 +133,6 @@ const SinglePage = ({
     setPastCycle(newPastCycles);
     setFilteredCycles(newCycles);
   };
-
-  const fetchStatus = useCallback(
-    async (code) => {
-      if (code !== 200) {
-        setProcessStatus(false);
-        setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-        return;
-      }
-      // If code is 200 then proceed here
-      setProcessStatus(true);
-      setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
-      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
-    },
-    [setProcessStatus, setLogs]
-  );
 
   const fetchTable = useCallback(
     async (curId) => {
@@ -180,13 +165,23 @@ const SinglePage = ({
         }
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
+        console.log(tabularData, code);
         setDataToDisplay(tabularData);
-        fetchStatus(code);
+        if (code !== 200) {
+          setProcessStatus(false);
+          setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
+        } else {
+          setProcessStatus(true);
+          setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
+        }
+        logContainerRef.current.scrollTop =
+          logContainerRef.current.scrollHeight;
+        console.log(processStatus);
       } catch (error) {
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, fetchStatus, mode]
+    [currentCycle, mode, processStatus]
   );
 
   const fetchLogs = useCallback(
@@ -195,14 +190,14 @@ const SinglePage = ({
       eventSource.onopen = () => {
         setShowTerminateProcess(true);
       };
-      eventSource.onmessage = (event) => {
+      eventSource.onmessage = async (event) => {
         const newLog = event.data;
         console.log("message");
         if (
           newLog.includes("PROCESS COMPLETE") ||
           newLog.includes("run complete")
         ) {
-          fetchTable(curId);
+          await fetchTable(curId);
           eventSource.close();
           setShowTerminateProcess(false);
         }

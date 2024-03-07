@@ -8,14 +8,13 @@ const Logs = ({
   processStatus,
   logContainerRef,
   showTerminateProcess,
-  dataToDisplay,
   downloadCSV,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
   };
-
+  console.log("logs,", processStatus);
   return (
     <>
       <div
@@ -50,7 +49,7 @@ const Logs = ({
             Categorize Another Cycle
           </button>
         </div>
-      ) : dataToDisplay ? (
+      ) : (
         <div className="button-tray p-0 container-fluid">
           <button className="btn rounded-0" onClick={handleTable}>
             See Results
@@ -59,12 +58,6 @@ const Logs = ({
             Download As CSV
           </button>
           <button className="btn rounded-0">View Logs</button>
-        </div>
-      ) : (
-        <div className="button-tray container-fluid p-0">
-          <button className="btn rounded-0" onClick={onTerminate}>
-            Categorize Another Cycle
-          </button>
         </div>
       )}
     </>
