@@ -17,8 +17,8 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    ports:
-      - "6379:6379"
+    expose:
+      - 6379
   rabbitmq:
     restart: always
     expose:
@@ -60,6 +60,25 @@ services:
       - redis:redis
       - rabbitmq:rabbitmq
     command: flask --app pacmanweb run --port 8000 --host 0.0.0.0
+  flower:
+    restart: always
+    container_name: flower
+    command: celery -A pacmanweb.celery_app flower --basic-auth=default:barebones
+    build:
+      context: .
+      dockerfile: ./pacmanweb/Dockerfile
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - rabbitmq
+      - celery
+      - backend
+    links:
+      - redis:redis
+      - rabbitmq:rabbitmq
+    expose:
+      - 5555
   nginx:
     image: nginx:latest
     ports:
@@ -72,5 +91,6 @@ services:
       - frontend
       - celery
       - redis
+      - flower
 volumes:
   react_build:
