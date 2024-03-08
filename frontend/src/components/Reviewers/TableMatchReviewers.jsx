@@ -2,6 +2,7 @@
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import CustomTooltip from "../util/Tooltip";
 
 const TableMatchReviewers = ({
   setShowTable,
@@ -40,8 +41,7 @@ const TableMatchReviewers = ({
         <div className="col-6">
           <h6 className="my-3 d-flex">
             All Reviewers
-            <div className="custom-tooltip" data-tooltip="JGKSDKN"></div>
-            {/* <Ttip content={"hhhhhhhhhhh"} /> */}
+            <CustomTooltip content={"fffffffffffffffffffff"} />
           </h6>
           <div className="table-container">
             <table className="container-fluid">

@@ -1,36 +1,39 @@
 /* eslint-disable react/prop-types */
-import { useRef, useState } from "react";
+import { useState } from "react";
+import QuestionMark from "../../assets/QuestionMark.png";
+import closeimg from "../../assets/close.png";
 
-const Tooltip = ({ content }) => {
+const CustomTooltip = ({ content }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const tooltipRef = useRef(null);
 
-  const handleClick = () => {
-    setIsOpen(!isOpen);
+  const handleOpen = (event) => {
+    event.preventDefault(); // Added to prevent default behavior (optional)
+    setIsOpen(true);
   };
 
-  const handleDocumentClick = (event) => {
-    if (!tooltipRef.current?.contains(event.target)) {
-      setIsOpen(false);
-    }
+  const handleClose = (event) => {
+    event.preventDefault();
+    setIsOpen(false);
   };
 
   return (
-    <div
-      className="custom-tooltip"
-      data-tooltip={content}
-      onClick={handleClick}
-    >
-      {isOpen && (
-        <div ref={tooltipRef} className="tooltip-content">
-          {content}
+    <>
+      {isOpen ? (
+        <>
+          <div>{content}</div>
+          <img src={closeimg} onClick={handleClose} alt="Close tooltip" />
+        </>
+      ) : (
+        <div onClick={handleOpen}>
+          <img
+            className="custom-tooltip"
+            src={QuestionMark}
+            alt="Click for tooltip"
+          />
         </div>
       )}
-      {isOpen && (
-        <div onClick={handleDocumentClick} className="tooltip-overlay" />
-      )}
-    </div>
+    </>
   );
 };
 
-export default Tooltip;
+export default CustomTooltip;

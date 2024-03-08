@@ -393,12 +393,12 @@ h3{
 
 /*Tooltip*/
 .custom-tooltip{
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   margin-left: 5px;
-  background-image: url('assets/QuestionMark.png');
   background-size: cover;
   position: relative;
+  cursor: pointer;
   background-position: center;
 }
 
@@ -418,14 +418,9 @@ h3{
   color: white;
   border-radius: 0.3rem;
   text-align: center;
-  content: attr(data-tooltip);
   padding: 0.5rem;
   border-color:#858C94;
   width:max-content;
   max-width: 100%;
-  background-color: black;
-}
-
-.custom-tooltip:hover::before{
-  --scale: 1;
+  background-color: #C5FFBC;
 }
