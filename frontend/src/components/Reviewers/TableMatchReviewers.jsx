@@ -38,7 +38,11 @@ const TableMatchReviewers = ({
         className="container-fluid border border-1 border-black mt-5"
       >
         <div className="col-6">
-          <h6 className="my-3">All Reviewers</h6>
+          <h6 className="my-3 d-flex">
+            All Reviewers
+            <div className="custom-tooltip" data-tooltip="JGKSDKN"></div>
+            {/* <Ttip content={"hhhhhhhhhhh"} /> */}
+          </h6>
           <div className="table-container">
             <table className="container-fluid">
               <thead>
@@ -112,8 +116,10 @@ const TableMatchReviewers = ({
               <table className="container-fluid">
                 <thead>
                   <tr>
-                    <th className="col-md-2 col-sm-1">Cycle Number</th>
-                    <th className="col-md-2 col-sm-1">CS Score</th>
+                    <th className="col-md-2 col-sm-1">Reviewer</th>
+                    <th className="col-md-2 col-sm-1">
+                      Number of Records Found
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

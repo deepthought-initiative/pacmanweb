@@ -51,6 +51,7 @@ h6 {
   font-weight: bolder;
   white-space: nowrap;
   font-size: larger;
+  align-items: center;
 }
 
 .table-container {
@@ -387,4 +388,44 @@ h3{
 
 .score-low {
   background-color: #C5FFBC;
+}
+
+
+/*Tooltip*/
+.custom-tooltip{
+  width: 10px;
+  height: 10px;
+  margin-left: 5px;
+  background-image: url('assets/QuestionMark.png');
+  background-size: cover;
+  position: relative;
+  background-position: center;
+}
+
+.custom-tooltip::before,
+.custom-tooltip::after{
+  --scale: 0;
+  position: absolute;
+  top: -0.25rem;
+  transform: translateX(50%) scale(var(--scale));
+  transition: 0.1s transform;
+  left: 50%;
+  transform-origin: left center;
+}
+
+.custom-tooltip::before{
+  font-size: xx-small;
+  color: white;
+  border-radius: 0.3rem;
+  text-align: center;
+  content: attr(data-tooltip);
+  padding: 0.5rem;
+  border-color:#858C94;
+  width:max-content;
+  max-width: 100%;
+  background-color: black;
+}
+
+.custom-tooltip:hover::before{
+  --scale: 1;
 }
