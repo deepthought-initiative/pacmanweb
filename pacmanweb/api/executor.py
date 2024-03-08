@@ -145,6 +145,7 @@ class RunPACMan:
         # ! TODO: Get rid of shell=True
         env = os.environ.copy()
         env["ADS_DEV_KEY"] = self.TEST_ADS_API_KEY
+        stdout_str = ""
 
         self.proc = subprocess.Popen(
             self.commands,
@@ -166,6 +167,7 @@ class RunPACMan:
                 redis_instance.xadd(
                     f"process {self.celery_task_id} output", {"line": line}
                 )
+                stdout_str+=line.decode()
         redis_instance.xadd(
             f"process {self.celery_task_id} output", {"line": "PROCESS COMPLETE"}
         )
@@ -176,7 +178,7 @@ class RunPACMan:
 
         if self.proc_return_code != 0:
             raise subprocess.CalledProcessError(self.proc.returncode, self.proc.args)
-        return {"return_code": self.proc_return_code}
+        return {"return_code": self.proc_return_code, "std_out": stdout_str}
 
     @property
     def pacman_status(self):
