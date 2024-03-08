@@ -11,6 +11,7 @@ RUN python3 -m spacy download en_core_web_sm
 # RUN micromamba remove -n base --yes pillow
 # RUN micromamba install -n base --yes matplotlib matplotlib-base --channel conda-forge
 RUN pip install ads fingerprint
+RUN micromamba install conda-forge::flower
 COPY ../../../ /app
 WORKDIR /app
 USER root
