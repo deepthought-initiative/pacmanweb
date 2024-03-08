@@ -12,12 +12,12 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    expose:
-      - 6379
+    ports:
+      - '6379:6379'
   rabbitmq:
     restart: always
-    expose:
-      - 5672
+    ports:
+      - '5672:5672'
     hostname: pacmanweb-rabbit
     image:
       rabbitmq:3-management
