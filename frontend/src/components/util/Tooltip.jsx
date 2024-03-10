@@ -19,10 +19,12 @@ const CustomTooltip = ({ content }) => {
   return (
     <>
       {isOpen ? (
-        <>
-          <div>{content}</div>
-          <img src={closeimg} onClick={handleClose} alt="Close tooltip" />
-        </>
+        <div className={`content-box ${isOpen ? "open" : ""}`}>
+          <div className="tooltip-content">{content}</div>
+          <div className="img-container ms-auto">
+            <img src={closeimg} onClick={handleClose} alt="Close tooltip" />
+          </div>
+        </div>
       ) : (
         <div onClick={handleOpen}>
           <img

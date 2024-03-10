@@ -396,31 +396,41 @@ h3{
   width: 12px;
   height: 12px;
   margin-left: 5px;
-  background-size: cover;
   position: relative;
   cursor: pointer;
-  background-position: center;
 }
 
-.custom-tooltip::before,
-.custom-tooltip::after{
-  --scale: 0;
+.tooltip-content {
+  font-size: 15px;
+  color: black;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.content-box {
   position: absolute;
-  top: -0.25rem;
-  transform: translateX(50%) scale(var(--scale));
-  transition: 0.1s transform;
-  left: 50%;
-  transform-origin: left center;
+  border: 1px solid;
+  border-color: #858C94;
+  display: flex;
+  padding: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  left: 300px;
+  width: 10%;
+  background-color: white;
+  z-index: 10;
+  border-radius: 10px;
+  opacity: 0;
+  transition: 0.3s ease-in-out opacity;
+  /* Smooth fading transition */
 }
 
-.custom-tooltip::before{
-  font-size: xx-small;
-  color: white;
-  border-radius: 0.3rem;
-  text-align: center;
-  padding: 0.5rem;
-  border-color:#858C94;
-  width:max-content;
-  max-width: 100%;
-  background-color: #C5FFBC;
+.content-box.open {
+  opacity: 1;
+  transition-delay: 0.2s;
+}
+
+.img-container>img {
+  height: 24px;
+  width: 24px;
+  cursor: pointer;
 }
