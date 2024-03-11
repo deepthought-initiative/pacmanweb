@@ -2,8 +2,8 @@ import json
 import os
 import pathlib
 
-# or prod
-MODE = "prod"
+# or prod when in production or using docker
+MODE = "dev"
 
 
 class Config:
@@ -22,6 +22,7 @@ class Config:
     DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
+    USERS = CREDS["users"]
 
     if MODE == "prod":
         CELERY_RESULT_BACKEND = "redis://redis:6379/0"

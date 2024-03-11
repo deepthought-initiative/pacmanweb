@@ -1,8 +1,7 @@
 from flask_login import UserMixin
 from pacmanweb import Config
 
-credentials = {Config.DEFAULT_USERNAME: Config.DEFAULT_PASSWORD}
-
+credentials = Config.USERS
 
 class User(UserMixin):
     def __init__(self, username):
