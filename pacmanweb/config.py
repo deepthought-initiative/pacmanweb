@@ -2,8 +2,8 @@ import json
 import os
 import pathlib
 
-# or prod when in production or using docker
-MODE = "dev"
+# or prod
+MODE = "prod"
 
 
 class Config:
