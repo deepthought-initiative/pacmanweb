@@ -52,7 +52,12 @@ const TableMatchReviewers = ({
                   <th className="col">Reviewer</th>
                   <th className="col">Science Category</th>
                   <th className="col">Science Category Probability</th>
-                  <th className="col">Number of Records Found</th>
+                  <th className="col">
+                    <div className="d-flex">
+                      Number of Records Found
+                      <CustomTooltip content={tooltipInstruction1} />
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>

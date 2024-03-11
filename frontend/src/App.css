@@ -417,16 +417,14 @@ h3{
   left: 300px;
   width: 10%;
   background-color: white;
-  z-index: 10;
+  z-index: 100;
   border-radius: 10px;
-  opacity: 0;
-  transition: 0.3s ease-in-out opacity;
-  /* Smooth fading transition */
+  opacity: 1;
+  transition: 1s ease-in-out opacity;
 }
 
 .content-box.open {
-  opacity: 1;
-  transition-delay: 0.2s;
+  opacity: 1 !important;
 }
 
 .img-container>img {
