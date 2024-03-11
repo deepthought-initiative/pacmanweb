@@ -211,7 +211,6 @@ const SinglePage = ({
           };
           eventSource.onerror = (error) => {
             console.error("EventSource failed:", error);
-            eventSource.close();
             setShowTerminateProcess(false);
             reconnectFrequencySeconds = Math.min(
               reconnectFrequencySeconds * 2,
