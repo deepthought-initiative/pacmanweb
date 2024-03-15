@@ -232,11 +232,10 @@ class MatchRev:
             lambda row: row[row["model_classification"].replace(" ", "_") + "_prob"],
             axis=1,
         )
-        self.main_table_raw = data
+        return data
 
     def make_main_table(self):
-        self.read_panelists()
-        data = self.main_table_raw
+        data = self.read_panelists()
         if isinstance(data, dict):
             return {"value": f"panelist file not accessible for this cycle."}
         data = data.drop(
