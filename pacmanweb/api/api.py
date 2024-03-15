@@ -1,7 +1,7 @@
+import base64
 import pathlib
 import subprocess
 import time
-import base64
 
 import redis
 from celery import shared_task
@@ -12,20 +12,20 @@ from flask import (
     flash,
     g,
     json,
+    jsonify,
     redirect,
     request,
     stream_with_context,
-    jsonify,
 )
 from flask_login import login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
 from pacmanweb import Config
+from pacmanweb.tasks import pacman_task
 
 from .. import celery_app
-from pacmanweb.tasks import pacman_task
-from .util import MoveUploadedFiles, VerifyPACManDir
 from ..auth.models import *
+from .util import MoveUploadedFiles, VerifyPACManDir
 
 ALLOWED_EXTENSIONS = {"zip"}
 
@@ -110,23 +110,29 @@ def stream_task(result_id):
             stream_content = redis_instance.xread(
                 streams={f"process {result_id} output": 0}
             )
+            print("0")
             if not stream_content:
                 continue
             for streams in stream_content:
+                print("1")
                 stream_name, messages = streams
                 [redis_instance.xdel(stream_name, i[0]) for i in messages]
             data = ""
             for item in stream_content[0][1]:
+                print("2")
                 line = item[1].get(b"line")
                 data += line.decode("utf-8")
 
             for line in data.split("\n"):
+                print("3")
                 yield f"data: {line}\n"
             yield "\n\n"
             if "PROCESS COMPLETE" in data or "run complete" in data:
+                print("4")
                 # give the frontend a few seconds to disconnect cleanly
                 time.sleep(3)
                 break
+        print("5")
 
     return Response(stream_with_context(generate()), mimetype="text/event-stream")
 
