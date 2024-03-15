@@ -110,31 +110,30 @@ def stream_task(result_id):
             stream_content = redis_instance.xread(
                 streams={f"process {result_id} output": 0}
             )
-            print("0")
             if not stream_content:
                 continue
             for streams in stream_content:
-                print("1")
                 stream_name, messages = streams
                 [redis_instance.xdel(stream_name, i[0]) for i in messages]
             data = ""
             for item in stream_content[0][1]:
-                print("2")
                 line = item[1].get(b"line")
                 data += line.decode("utf-8")
 
             for line in data.split("\n"):
-                print("3")
                 yield f"data: {line}\n"
             yield "\n\n"
             if "PROCESS COMPLETE" in data or "run complete" in data:
-                print("4")
+                print(data)
                 # give the frontend a few seconds to disconnect cleanly
                 time.sleep(3)
                 break
-        print("5")
 
-    return Response(stream_with_context(generate()), mimetype="text/event-stream")
+    return Response(
+        stream_with_context(generate()),
+        mimetype="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 @api_bp.route("/terminate/<result_id>", methods=["POST"])
