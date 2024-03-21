@@ -169,6 +169,7 @@ const SinglePage = ({
         setDataToDisplay(tabularData);
         if (code !== 200) {
           setProcessStatus(false);
+          alert("Process failed! Please try again");
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
         } else {
           setProcessStatus(true);
