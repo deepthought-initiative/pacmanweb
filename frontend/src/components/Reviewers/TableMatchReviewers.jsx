@@ -2,6 +2,7 @@
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import ImgTooltip from "../util/Tooltip";
 
 const TableMatchReviewers = ({
   setShowTable,
@@ -38,7 +39,10 @@ const TableMatchReviewers = ({
         className="container-fluid border border-1 border-black mt-5"
       >
         <div className="col-6">
-          <h6 className="my-3">All Reviewers</h6>
+          <div className="heading-and-tooltip">
+            <h6 className="my-3">All Reviewers</h6>
+            <ImgTooltip />
+          </div>
           <div className="table-container">
             <table className="container-fluid">
               <thead>

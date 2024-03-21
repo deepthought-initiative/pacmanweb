@@ -388,3 +388,14 @@ h3{
 .score-low {
   background-color: #C5FFBC;
 }
+
+/*Tooltip Css*/
+.tooltip-icon{
+  height: 10px;
+  width: 10px;
+}
+
+.heading-and-tooltip{
+ display: flex;
+ align-items: center; 
+}
