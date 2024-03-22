@@ -26,6 +26,10 @@ img{
     width: 20px;
 }
 
+.me-auto{
+    align-items: center;
+}
+
 .nav{
     display: flex;
         flex-wrap: wrap;/
