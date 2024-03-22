@@ -13,6 +13,10 @@ const TableMatchReviewers = ({
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
+  const tooltipInstruction1 =
+    "Click on a reviewer to know top proposals assigned to them and their close collaborators";
+  const tooltipInstruction2 =
+    "PACMan looks up articles authored by reviewers. These are the number of articles found.";
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
@@ -41,7 +45,7 @@ const TableMatchReviewers = ({
         <div className="col-6">
           <div className="heading-and-tooltip">
             <h6 className="my-3">All Reviewers</h6>
-            <ImgTooltip />
+            <ImgTooltip content={tooltipInstruction1} />
           </div>
           <div className="table-container">
             <table className="container-fluid">
@@ -50,7 +54,12 @@ const TableMatchReviewers = ({
                   <th className="col">Reviewer</th>
                   <th className="col">Science Category</th>
                   <th className="col">Science Category Probability</th>
-                  <th className="col">Number of Records Found</th>
+                  <th className="col">
+                    <div className="header-tooltip">
+                      Number of Records Found{" "}
+                      <ImgTooltip content={tooltipInstruction2} />
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>

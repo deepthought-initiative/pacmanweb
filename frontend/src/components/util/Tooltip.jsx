@@ -1,9 +1,10 @@
+/* eslint-disable react/prop-types */
 import { useRef, useState } from "react";
 import Overlay from "react-bootstrap/Overlay";
 import Tooltip from "react-bootstrap/Tooltip";
 import QuestionMark from "../../assets/QuestionMark.png";
 
-const ImgTooltip = () => {
+const ImgTooltip = ({ content }) => {
   const [show, setShow] = useState(false);
   const target = useRef(null);
 
@@ -18,7 +19,7 @@ const ImgTooltip = () => {
       <Overlay target={target.current} show={show} placement="right">
         {(props) => (
           <Tooltip id="overlay-example" {...props}>
-            My Tooltip
+            {content}
           </Tooltip>
         )}
       </Overlay>

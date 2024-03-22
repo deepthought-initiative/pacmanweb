@@ -391,11 +391,17 @@ h3{
 
 /*Tooltip Css*/
 .tooltip-icon{
-  height: 10px;
-  width: 10px;
+  height: 14px;
+  width: 14px;
+  margin-left: 6px;
 }
 
 .heading-and-tooltip{
  display: flex;
- align-items: center; 
+ align-items:baseline;
+}
+
+.header-tooltip{
+  display: flex;
+  align-items: center;
 }
