@@ -7,7 +7,7 @@ import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
-import Navbar from "./components/util/Navbar";
+import MainNavbar from "./components/util/Navbar";
 import SinglePage from "./components/util/SinglePage";
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
   return loggedIn ? (
     <>
       <BrowserRouter>
-        <Navbar />
+        <MainNavbar />
         <Routes>
           <Route
             path="/categorize"
@@ -95,6 +95,7 @@ function App() {
             path="/logout"
             element={<Logout setLoggedIn={setLoggedIn} />}
           />
+          <Route path="/ssc" element={<TableMatchReviewers />} />
         </Routes>
       </BrowserRouter>
     </>
