@@ -56,7 +56,7 @@ const TableMatchReviewers = ({
                   <th className="col">Science Category Probability</th>
                   <th className="col">
                     <div className="header-tooltip">
-                      Number of Records Found{" "}
+                      Number of Records Found
                       <ImgTooltip content={tooltipInstruction2} />
                     </div>
                   </th>
@@ -125,8 +125,10 @@ const TableMatchReviewers = ({
               <table className="container-fluid">
                 <thead>
                   <tr>
-                    <th className="col-md-2 col-sm-1">Cycle Number</th>
-                    <th className="col-md-2 col-sm-1">CS Score</th>
+                    <th className="col-md-2 col-sm-1">Reviewer</th>
+                    <th className="col-md-2 col-sm-1">
+                      Number of Records Found
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -135,8 +137,8 @@ const TableMatchReviewers = ({
                     Object.entries(dataToDisplay["Conflicts"][currentRow]).map(
                       ([key, value]) => (
                         <tr key={key}>
-                          <td className="col-6 text-break">{key}</td>
-                          <td className="col-2 text-break">{value}</td>
+                          <td className="col-4 text-break">{key}</td>
+                          <td className="col-4 text-break">{value}</td>
                         </tr>
                       )
                     )}
