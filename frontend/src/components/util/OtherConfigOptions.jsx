@@ -32,44 +32,52 @@ const OtherConfigOptions = ({
     <form>
       <div className="separator">Other Options</div>
       <div className="all-options">
-        <div className="single-option">
-          <InputConfigOption
-            label="Enter Run name(optional)"
-            value={runName}
-            desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
-            setValue={setRunName}
-          />
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Enter Run name(optional)"
+              value={runName}
+              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+              setValue={setRunName}
+            />
+          </div>
         </div>
-        <div className="row single-option">
-          <NewDropdown
-            data={validModalFile}
-            multiple={false}
-            label="Select modal file to use"
-            desc="Name of modal file to use"
-            inputField={selectedModal}
-            setInputField={setSelectedModal}
-            placeholderText="Select a current cycle"
-            disabled={false}
-            error={selectedModalError}
-          />
+        <div className="row">
+          <div className="single-option col-12">
+            <NewDropdown
+              data={validModalFile}
+              multiple={false}
+              label="Select modal file to use"
+              desc="Name of modal file to use"
+              inputField={selectedModal}
+              setInputField={setSelectedModal}
+              placeholderText="Select a current cycle"
+              disabled={false}
+              error={selectedModalError}
+            />
+          </div>
         </div>
-        <div className="single-option">
-          <InputConfigOption
-            label="Assignment number top reviewers"
-            value={numberOfTopReviewers}
-            desc="Number of top recommended reviewers"
-            setValue={setNumberOfTopReviewers}
-            error={numberOfTopReviewersError}
-          />
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Assignment number top reviewers"
+              value={numberOfTopReviewers}
+              desc="Number of top recommended reviewers"
+              setValue={setNumberOfTopReviewers}
+              error={numberOfTopReviewersError}
+            />
+          </div>
         </div>
-        <div className="single-option">
-          <InputConfigOption
-            label="Close Collaborator Time Frame"
-            value={closeCollaboratorTimeFrame}
-            desc="Number of years over which to check close collaborators"
-            setValue={setCloseCollaboratorTimeFrame}
-            error={closeCollaboratorTimeFrameError}
-          />
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Close Collaborator Time Frame"
+              value={closeCollaboratorTimeFrame}
+              desc="Number of years over which to check close collaborators"
+              setValue={setCloseCollaboratorTimeFrame}
+              error={closeCollaboratorTimeFrameError}
+            />
+          </div>
         </div>
       </div>
       <div className="row mt-5">
