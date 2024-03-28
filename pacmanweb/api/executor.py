@@ -5,7 +5,6 @@ import subprocess
 import redis
 
 from pacmanweb import Config
-
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
 
@@ -23,6 +22,7 @@ class RunPACMan:
         modelfile="strolger_pacman_model_7cycles.joblib",
         assignment_number_top_reviewers=5,
         close_collaborator_time_frame=3,
+        current_user=None
     ):
         """Initialise RunPACMan Class.
 
@@ -73,6 +73,7 @@ class RunPACMan:
             assignment_number_top_reviewers=assignment_number_top_reviewers,
             close_collaborator_time_frame=close_collaborator_time_frame,
         )
+        self.mode = mode
 
         if mode == "PROP":
             mode_options = {
@@ -109,6 +110,7 @@ class RunPACMan:
         self.ENV_NAME = self.flask_config.ENV_NAME
         self.commands = self.flask_config.SUBPROCESS_COMMANDS
         self.verify_pacman_directory()
+        self.current_user = current_user
 
     def verify_pacman_directory(self, alternate_pacman_path=None):
         if alternate_pacman_path is not None:
@@ -175,6 +177,9 @@ class RunPACMan:
         self.proc.stdin.close()
         self.proc_return_code = self.proc.wait()
         self.outfile.close()
+        # since each user can run only one process for one mode
+        # once the process is complete, remove the key from redis
+        redis_instance.hdel(self.current_user, self.mode)
 
         if self.proc_return_code != 0:
             raise subprocess.CalledProcessError(self.proc.returncode, self.proc.args)
