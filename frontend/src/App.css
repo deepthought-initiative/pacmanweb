@@ -16,6 +16,20 @@ body {
   border-radius: 10px;
 }
 
+@media (max-width: 1200px) {
+  #outer-container {
+    gap: calc(52px - (viewport-width - 768px) * 0.1);
+  }
+}
+
+/* Media Query for Older Browsers (fixed gap) */
+
+@media only screen and (-webkit-min-device-pixel-ratio: 0) and (max-width: 1200px) {
+  #outer-container {
+    gap: 30px;
+  }
+}
+
 #log-container {
   height: 500px;
   background-color: black;
@@ -46,11 +60,11 @@ body {
 
 h6 {
   text-align: left;
-  padding-bottom: 10px;
+  padding-bottom: 0.1em;
   overflow-x: auto;
   font-weight: bolder;
   white-space: nowrap;
-  font-size: larger;
+  font-size: 1.1rem;
 }
 
 .table-container {
@@ -86,7 +100,7 @@ td {
 }
 
 th {
-  font-size: medium !important;
+  font-size: 1rem !important;
   background-color: #E7ECEF;
   z-index: 2;
 }
