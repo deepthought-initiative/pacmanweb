@@ -6,6 +6,11 @@
     justify-content: space-evenly;
 }
 
+.navbar-toggler{
+    border: 0px;
+    margin-left: 10px;
+}
+
 img{
     width: 40px;
     border-radius: 50%;
