@@ -152,8 +152,14 @@ def stream_task(result_id):
 @api_bp.route("/terminate/<result_id>", methods=["POST"])
 @login_required
 def stop_task(result_id):
+    options = request.args.to_dict(flat=True)
+    mode = options.get("mode", None)
+    if mode is None:
+        return {"output": "Mode is required."}
     task = AsyncResult(result_id, app=celery_app)
     task.revoke(terminate=True)
+    # delete this task from the task list so that new task can be added
+    redis_instance.hdel(current_user.username, mode)
     return f"Task {result_id} terminated"
 
 
