@@ -53,11 +53,11 @@ const SinglePage = ({
     if (!currentId) {
       return;
     }
-    await fetch(`/api/terminate/${currentId}`, {
+    await fetch(`/api/terminate/${currentId}?mode=${mode}`, {
       method: "POST",
     });
     onTerminate();
-  }, [currentId]);
+  }, [currentId, mode]);
 
   useEffect(() => {
     const handleBeforeUnload = async (event) => {
