@@ -32,6 +32,6 @@
 
 .single-option input,
 .single-option label {
-  display: block;
+  display: flex;
   border-color: #858C94;
 }

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import ImgTooltip from "../util/Tooltip";
 
 const TableMatchReviewers = ({
   setShowTable,
@@ -12,6 +13,10 @@ const TableMatchReviewers = ({
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
+  const tooltipInstruction1 =
+    "Click on a reviewer to know top proposals assigned to them and their close collaborators";
+  const tooltipInstruction2 =
+    "PACMan looks up articles authored by reviewers. These are the number of articles found.";
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
@@ -38,7 +43,10 @@ const TableMatchReviewers = ({
         className="container-fluid border border-1 border-black mt-5"
       >
         <div className="col-6">
-          <h6 className="my-3">All Reviewers</h6>
+          <div className="heading-and-tooltip">
+            <h6 className="my-3">All Reviewers</h6>
+            <ImgTooltip content={tooltipInstruction1} />
+          </div>
           <div className="table-container">
             <table className="container-fluid">
               <thead>
@@ -46,7 +54,12 @@ const TableMatchReviewers = ({
                   <th className="col">Reviewer</th>
                   <th className="col">Science Category</th>
                   <th className="col">Science Category Probability</th>
-                  <th className="col">Number of Records Found</th>
+                  <th className="col">
+                    <div className="header-tooltip">
+                      Number of Records Found
+                      <ImgTooltip content={tooltipInstruction2} />
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -112,8 +125,10 @@ const TableMatchReviewers = ({
               <table className="container-fluid">
                 <thead>
                   <tr>
-                    <th className="col-md-2 col-sm-1">Cycle Number</th>
-                    <th className="col-md-2 col-sm-1">CS Score</th>
+                    <th className="col-md-2 col-sm-1">Reviewer</th>
+                    <th className="col-md-2 col-sm-1">
+                      Number of Records Found
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -122,8 +137,8 @@ const TableMatchReviewers = ({
                     Object.entries(dataToDisplay["Conflicts"][currentRow]).map(
                       ([key, value]) => (
                         <tr key={key}>
-                          <td className="col-6 text-break">{key}</td>
-                          <td className="col-2 text-break">{value}</td>
+                          <td className="col-4 text-break">{key}</td>
+                          <td className="col-4 text-break">{value}</td>
                         </tr>
                       )
                     )}

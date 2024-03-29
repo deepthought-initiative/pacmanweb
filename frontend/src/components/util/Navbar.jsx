@@ -1,87 +1,108 @@
-import { Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import { useLocation } from "react-router-dom";
 import DefaultPfp from "../../assets/DefaultPfp.png";
 import "../../css/navbar.css";
 
-const Navbar = () => {
+const MainNavbar = () => {
   const location = useLocation();
+  // Update screen width state when the window is resized
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
 
-  // Function to determine if a navbar item should be highlighted
+    window.addEventListener("resize", handleResize);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
   const isItemActive = (path) => {
     return location.pathname === path;
   };
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-light border">
-      <button
-        className="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarNav"
-        aria-controls="navbarNav"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="nav">
-          <li
-            className={`nav-item ms-4${
-              isItemActive("/categorize") ? " active" : ""
-            }`}
-          >
-            <Link className="nav-link text-dark" to="/categorize">
+    <Navbar collapseOnSelect expand="xl" className="border bg-body-tertiary">
+      <Container className="mx-0 container-nav px-0">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
+            <Nav.Link
+              className={`nav-item ms-4${
+                isItemActive("/categorize") ? " active" : ""
+              }`}
+              href="/categorize"
+            >
               Proposals- Categorize
-            </Link>
-          </li>
-          <li
-            className={`nav-item ms-4${
-              isItemActive("/duplication") ? " active" : ""
-            }`}
-          >
-            <Link className="nav-link text-dark" to="/duplication">
+            </Nav.Link>
+            <Nav.Link
+              className={`nav-item ms-4${
+                isItemActive("/duplication") ? " active" : ""
+              }`}
+              href="/duplication"
+            >
               Proposals- Duplication Check
-            </Link>
-          </li>
-          <li
-            className={`nav-item ms-4${
-              isItemActive("/review") ? " active" : ""
-            }`}
-          >
-            <Link className="nav-link text-dark" to="/review">
+            </Nav.Link>
+            <Nav.Link
+              className={`nav-item ms-4${
+                isItemActive("/review") ? " active" : ""
+              }`}
+              href="/review"
+            >
               Match Reviewers
-            </Link>
-          </li>
-          <li
-            className={`nav-item ms-4${
-              isItemActive("/upload") ? " active" : ""
-            }`}
-          >
-            <Link className="nav-link text-dark" to="/upload">
+            </Nav.Link>
+            <Nav.Link
+              className={`nav-item ms-4${
+                isItemActive("/upload") ? " active" : ""
+              }`}
+              href="/upload"
+            >
               Upload Cycles
-            </Link>
-          </li>
-        </ul>
-      </div>
-      <div id="right-corner">
-        {/* <div className="">
-          <a href="#">
-            <img className="icon" src={Settings} />
-          </a>
-        </div>
-        <div className="">
-          <a href="#">
-            <img className="icon" src={QuestionMark} />
-          </a>
-        </div> */}
-        <div>
-          <a href="/logout">
-            <img src={DefaultPfp} />
-          </a>
-        </div>
-      </div>
-    </nav>
+            </Nav.Link>
+          </Nav>
+          <Nav className="">
+            <div id="right-corner">
+              {/* 
+                <div className="">
+                    <a href="#">
+                        <img className="icon" src={Settings} />
+                    </a>
+                    </div>
+                    <div className="">
+                    <a href="#">
+                        <img className="icon" src={QuestionMark} />
+                    </a>
+                </div> 
+                */}
+              {screenWidth < 1200 ? (
+                <div className="logout">
+                  <Nav.Link
+                    className={`nav-item ms-3${
+                      isItemActive("/logout") ? " active" : ""
+                    }`}
+                    href="/logout"
+                  >
+                    Profile
+                  </Nav.Link>
+                </div>
+              ) : (
+                <div className="logout">
+                  <a href="/logout">
+                    <img src={DefaultPfp} alt="Profile" />
+                  </a>
+                </div>
+              )}
+            </div>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 
-export default Navbar;
+export default MainNavbar;

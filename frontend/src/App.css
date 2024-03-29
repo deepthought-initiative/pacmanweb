@@ -16,6 +16,20 @@ body {
   border-radius: 10px;
 }
 
+@media (max-width: 1200px) {
+  #outer-container {
+    gap: calc(52px - (viewport-width - 768px) * 0.1);
+  }
+}
+
+/* Media Query for Older Browsers (fixed gap) */
+
+@media only screen and (-webkit-min-device-pixel-ratio: 0) and (max-width: 1200px) {
+  #outer-container {
+    gap: 30px;
+  }
+}
+
 #log-container {
   height: 500px;
   background-color: black;
@@ -46,15 +60,16 @@ body {
 
 h6 {
   text-align: left;
-  padding-bottom: 10px;
+  padding-bottom: 0.1em;
   overflow-x: auto;
   font-weight: bolder;
   white-space: nowrap;
-  font-size: larger;
+  font-size: 1rem;
 }
 
 .table-container {
   overflow-y: auto;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
   background-color:#E7ECEF;
   height: 400px;
   border-radius: 10px;
@@ -64,6 +79,16 @@ thead th {
   position: sticky;
   top: 0;
   z-index: 2;
+  border: none;
+  border-right: 2px solid white;
+}
+
+thead th:last-child {
+  border-right: none;
+}
+
+tbody tr td:last-child{
+  border-right: none;
 }
 
 td {
@@ -86,7 +111,7 @@ td {
 }
 
 th {
-  font-size: medium !important;
+  font-size: 0.9rem !important;
   background-color: #E7ECEF;
   z-index: 2;
 }
@@ -338,7 +363,7 @@ h3{
   100% {
     transform: scale(1);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      background-color: #7A8E99;
+    background-color: #7A8E99;
     color: white;
   }
 }
@@ -387,4 +412,21 @@ h3{
 
 .score-low {
   background-color: #C5FFBC;
+}
+
+/*Tooltip Css*/
+.tooltip-icon{
+  height: 14px;
+  width: 14px;
+  margin-left: 6px;
+}
+
+.heading-and-tooltip{
+ display: flex;
+ align-items:baseline;
+}
+
+.header-tooltip{
+  display: flex;
+  align-items: center;
 }
