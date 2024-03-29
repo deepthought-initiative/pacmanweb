@@ -169,6 +169,7 @@ const SinglePage = ({
         setDataToDisplay(tabularData);
         if (code !== 200) {
           setProcessStatus(false);
+          alert("Process failed! Please try again");
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
         } else {
           setProcessStatus(true);
@@ -183,35 +184,56 @@ const SinglePage = ({
     },
     [currentCycle, mode, processStatus]
   );
+  const startFetchingLogs = useCallback(
+    async (curId) => {
+      let reconnectFrequencySeconds = 1;
 
-  const fetchLogs = useCallback(
-    (curId) => {
-      const eventSource = new EventSource(`/api/stream/${curId}`);
-      eventSource.onopen = () => {
-        setShowTerminateProcess(true);
-      };
-      eventSource.onmessage = async (event) => {
-        const newLog = event.data;
-        console.log("message");
-        if (
-          newLog.includes("PROCESS COMPLETE") ||
-          newLog.includes("run complete")
-        ) {
-          await fetchTable(curId);
-          eventSource.close();
-          setShowTerminateProcess(false);
+      const fetchLogs = async () => {
+        try {
+          const eventSource = new EventSource(`/api/stream/${curId}`);
+          eventSource.onopen = () => {
+            setShowTerminateProcess(true);
+          };
+          eventSource.onmessage = async (event) => {
+            const newLog = event.data;
+            console.log("message");
+            if (
+              newLog.includes("PROCESS COMPLETE") ||
+              newLog.includes("run complete")
+            ) {
+              await fetchTable(curId);
+              eventSource.close();
+              setShowTerminateProcess(false);
+              return; // Exit after process completion
+            }
+            setLogs((prevLogs) => [...prevLogs, newLog]);
+            logContainerRef.current.scrollTop =
+              logContainerRef.current.scrollHeight;
+          };
+          eventSource.onerror = (error) => {
+            console.error("EventSource failed:", error);
+            setShowTerminateProcess(false);
+            reconnectFrequencySeconds = Math.min(
+              reconnectFrequencySeconds * 2,
+              64
+            );
+            setTimeout(
+              () => startFetchingLogs(curId),
+              reconnectFrequencySeconds * 1000
+            );
+          };
+        } catch (error) {
+          console.error("Error fetching logs:", error);
+          setTimeout(
+            () => startFetchingLogs(curId),
+            reconnectFrequencySeconds * 1000
+          );
         }
-        setLogs((prevLogs) => [...prevLogs, newLog]);
-        logContainerRef.current.scrollTop =
-          logContainerRef.current.scrollHeight;
       };
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-        eventSource.close();
-        setShowTerminateProcess(false);
-      };
+
+      await fetchLogs();
     },
-    [fetchTable]
+    [fetchTable, setShowTerminateProcess, setLogs, logContainerRef]
   );
 
   const handleClick = async (event) => {
@@ -247,7 +269,7 @@ const SinglePage = ({
       setCurrentId(data["result_id"]);
       setShowLogs(true);
       setSubmitButtonStatus(false);
-      await fetchLogs(data["result_id"]);
+      await startFetchingLogs(data["result_id"]);
     }
     console.log(allCycles);
     console.log(filteredCycles);

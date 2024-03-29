@@ -232,11 +232,10 @@ class MatchRev:
             lambda row: row[row["model_classification"].replace(" ", "_") + "_prob"],
             axis=1,
         )
-        self.main_table_raw = data
+        return data
 
     def make_main_table(self):
-        self.read_panelists()
-        data = self.main_table_raw
+        data = self.read_panelists()
         if isinstance(data, dict):
             return {"value": f"panelist file not accessible for this cycle."}
         data = data.drop(
@@ -252,6 +251,22 @@ class MatchRev:
             "Proposal Assignments": self.read_matches(),
             "Conflicts": self.read_conflicts(),
         }, 200
+
+    def get_complete_data_as_csv(self):
+        data = self.complete_response()
+        if any(value.get("value") for value in data.values()):
+            error_messages = [
+                value.get("value") for value in data.values() if value.get("value")
+            ]
+            return ",".join(error_messages)
+        main_table = pd.DataFrame(data["Main Table"]).T
+        matches = pd.DataFrame(data["Proposal Assignments"])
+        conflicts = pd.DataFrame(data["Conflicts"])
+        csv_output = pd.concat(
+            [main_table, matches, conflicts], ignore_index=True
+        ).to_csv(index=False)
+
+        return csv_output
 
 
 def data_handler(celery_task_id, cycle_number, mode):
@@ -351,8 +366,15 @@ def download_data_as_csv(result_id):
             download_name=f"{result_id}_dup.csv",
             as_attachment=True,
         )
-    # if mode == "MATCH":
-    #     match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
+    if mode == "MATCH":
+        match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
+        match.get_complete_data_as_csv()
+        return send_file(
+            Config.DOWNLOAD_FOLDER / f"{result_id}_rev.csv",
+            mimetype="text/csv",
+            download_name=f"{result_id}_rev.csv",
+            as_attachment=True,
+        )
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
