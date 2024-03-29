@@ -55,7 +55,7 @@ services:
     links:
       - redis:redis
       - rabbitmq:rabbitmq
-    command: gunicorn 'pacmanweb:create_app()' --access-logfile=- --bind 0.0.0.0:8000
+    command: gunicorn 'pacmanweb:create_app()' --access-logfile=- --bind 0.0.0.0:8000 --timeout 120 -w 17 --threads 4
   flower:
     restart: always
     container_name: flower
