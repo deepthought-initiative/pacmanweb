@@ -22,7 +22,7 @@ const SinglePage = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState(allCycles);
+  const [filteredCycles, setFilteredCycles] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -66,6 +66,7 @@ const SinglePage = ({
   }, [currentId, mode]);
 
   useEffect(() => {
+    setFilteredCycles(allCycles);
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
@@ -75,7 +76,7 @@ const SinglePage = ({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [terminateAllProcesses]);
+  }, [allCycles, terminateAllProcesses]);
 
   const validateFields = () => {
     let noError = true;
