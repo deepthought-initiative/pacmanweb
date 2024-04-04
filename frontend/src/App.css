@@ -267,13 +267,15 @@ th {
 .dropdown-list-container::after {
   content: "";
   position: absolute;
-  top: -8px;
+  top: -5px;
   left: 20px;
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #e9e9e9;
+  width: 11px;
+  height: 11px;
+  transform: rotate(225deg);
+  background: linear-gradient(to top left, white 0%, white 50%, transparent 50%);
+  border-right: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  z-index: 100;
 }
 
 .dropdown-list ul {
