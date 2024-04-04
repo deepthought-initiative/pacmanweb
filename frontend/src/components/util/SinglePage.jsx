@@ -220,6 +220,7 @@ const SinglePage = ({
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
+      setSubmitButtonStatus(false);
       if (mode == "DUP") {
         spawnResponse = await fetch(
           `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
@@ -246,7 +247,6 @@ const SinglePage = ({
       const data = await spawnResponse.json();
       setCurrentId(data["result_id"]);
       setShowLogs(true);
-      setSubmitButtonStatus(false);
       await fetchLogs(data["result_id"]);
     }
     console.log(allCycles);
