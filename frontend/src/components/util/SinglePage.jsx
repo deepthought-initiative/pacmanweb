@@ -15,6 +15,7 @@ const SinglePage = ({
   renderTableComponent,
   button_label,
 }) => {
+  const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -48,6 +49,11 @@ const SinglePage = ({
   const logContainerRef = useRef(null);
 
   const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
+
+  // Text description for alert modals
+  const multipleRequestAlertTitle = "Process Running Elsewhere";
+  const multipleRequestAlertDesc =
+    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
@@ -265,11 +271,16 @@ const SinglePage = ({
           }
         );
       }
-      const data = await spawnResponse.json();
-      setCurrentId(data["result_id"]);
-      setShowLogs(true);
-      setSubmitButtonStatus(false);
-      await startFetchingLogs(data["result_id"]);
+      console.log(spawnResponse.status);
+      if (spawnResponse.status === 429) {
+        setModalShow(true);
+      } else {
+        const data = await spawnResponse.json();
+        setCurrentId(data["result_id"]);
+        setShowLogs(true);
+        setSubmitButtonStatus(false);
+        await startFetchingLogs(data["result_id"]);
+      }
     }
     console.log(allCycles);
     console.log(filteredCycles);
@@ -359,6 +370,10 @@ const SinglePage = ({
       ) : (
         <OtherConfigOptions
           button_label={button_label}
+          modalShow={modalShow}
+          multipleRequestAlertTitle={multipleRequestAlertTitle}
+          multipleRequestAlertDesc={multipleRequestAlertDesc}
+          setModalShow={setModalShow}
           handleClick={handleClick}
           currentCycle={currentCycle}
           runName={runName}
