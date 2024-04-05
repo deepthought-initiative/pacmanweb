@@ -288,41 +288,45 @@ const SinglePage = ({
   };
 
   const downloadCSV = async () => {
-    const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .then((data) => {
-        console.log(data);
-        const blob = new Blob([data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        const fileName = `${currentId}_${mode}.csv`;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
+    const csvUrl = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
+    try {
+      const response = await fetch(csvUrl);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const fileName = response.headers
+        .get("content-disposition")
+        .split("=")[1];
+      const data = await response.text();
+      console.log(fileName);
+      const blob = new Blob([data], { type: "text/csv" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
   };
 
   const downloadZIP = async () => {
     const zipUrl = `/api/outputs/download/zip/${currentId}`;
     try {
       const response = await fetch(zipUrl);
-      console.log(response);
-      const blob = new Blob([response.data], { type: "application/zip" });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const fileName = response.headers
+        .get("content-disposition")
+        .split("=")[1];
+      const blob = await response.blob();
       const downloadURL = window.URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
       downloadLink.href = downloadURL;
-      downloadLink.setAttribute("download", "downloaded.zip"); // Set the name of the downloaded file
+      downloadLink.setAttribute("download", fileName);
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -386,6 +390,7 @@ const SinglePage = ({
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
           downloadCSV={downloadCSV}
+          downloadZIP={downloadZIP}
         />
       ) : (
         <OtherConfigOptions

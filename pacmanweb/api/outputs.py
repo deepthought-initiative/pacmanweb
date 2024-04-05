@@ -259,23 +259,43 @@ class MatchRev:
         main_table = pd.DataFrame(self.make_main_table()).T
         matches = pd.DataFrame(self.read_matches())
         conflicts = pd.DataFrame(self.read_conflicts())
+        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
+        destination_dir.mkdir(parents=True, exist_ok=True)
         matches.index.name = "Proposal Number"
         melted_matches = pd.melt(
             matches.reset_index(), id_vars="Proposal Number", value_name="CS Score"
         )
-        joined_df = pd.merge(
+        main_and_matches_df = pd.merge(
             main_table,
             melted_matches,
             left_on="fname",
             right_on="variable",
             how="outer",
         )
-        # Remove the 'variable' column
-        joined_df.drop(columns=["variable"], inplace=True)
-        csv_output = joined_df.to_csv(
-            Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_rev.csv"
+        conflicts.index.name = "Conflicts"
+        melted_conflicts = pd.melt(
+            conflicts.reset_index(),
+            id_vars="Conflicts",
+            value_name="#records",
         )
-        return csv_output
+        main_and_conflicts_df = pd.merge(
+            main_table,
+            melted_conflicts,
+            left_on="fname",
+            right_on="variable",
+            how="outer",
+        )
+        # Remove the 'variable' column
+        main_and_matches_df.drop(columns=["variable"], inplace=True)
+        main_and_conflicts_df.drop(columns=["variable"], inplace=True)
+        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
+        csv_matches_output = main_and_matches_df.to_csv(
+            destination_dir / f"{self.celery_task_id}_matches_rev.csv"
+        )
+        csv_conflicts_output = main_and_conflicts_df.to_csv(
+            destination_dir / f"{self.celery_task_id}_conflicts_rev.csv"
+        )
+        return csv_matches_output, csv_conflicts_output
 
 
 def data_handler(celery_task_id, cycle_number, mode):
@@ -363,7 +383,7 @@ def download_data_as_csv(result_id):
         )
         match.get_complete_data_as_csv()
         return send_file(
-            Config.DOWNLOAD_FOLDER / f"{result_id}_rev.csv",
+            Config.DOWNLOAD_FOLDER / result_id / f"{result_id}_matches_rev.csv",
             mimetype="text/csv",
             download_name=f"{result_id}_rev.csv",
             as_attachment=True,
@@ -375,7 +395,6 @@ def download_data_as_csv(result_id):
 def download_data_as_zip(result_id):
     zip_path = Config.PACMAN_PATH / "runs" / result_id
     if not zip_path.is_dir():
-        # Handle directory not found error
         return "Directory not found"
 
     local_zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
