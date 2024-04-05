@@ -4,7 +4,6 @@ const Logout = ({ setLoggedIn }) => {
     const response = await fetch(`/logout`, {
       method: "POST",
     });
-    console.log(response);
     localStorage.removeItem("loggedIn");
     setLoggedIn(false);
   };

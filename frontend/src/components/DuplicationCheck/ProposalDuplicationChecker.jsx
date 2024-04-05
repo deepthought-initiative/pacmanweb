@@ -51,7 +51,6 @@ const ProposalDuplicationChecker = ({ allCycles, modalFile, setModalFile }) => {
 
   const handlePastCycles = (event) => {
     setPastCycle(event.target.value);
-    console.log(pastCycle);
   };
 
   return (

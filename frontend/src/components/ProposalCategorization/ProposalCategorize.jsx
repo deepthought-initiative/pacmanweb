@@ -34,11 +34,6 @@ const ProposalCategorize = ({ allCycles, modalFile, setModalFile }) => {
         },
       }
     );
-    console.log(currentCycle);
-    console.log(closeCollaboratorTimeFrame);
-    console.log(numberOfTopReviewers);
-    console.log(modalFile);
-
     const data = await spawnResponse.json();
     setCurrentId(data["result_id"]);
     setShowLogs(true);

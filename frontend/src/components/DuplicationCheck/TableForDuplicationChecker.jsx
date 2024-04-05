@@ -63,7 +63,6 @@ const TableForDuplicationChecker = ({
   const applySimilarityScoreBgColor = (score) => {
     const { upperLimit, lowerLimit } = limitsData;
     const similarityScore = parseFloat(score);
-    console.log(similarityScore);
     if (isNaN(similarityScore)) {
       return "";
     }
