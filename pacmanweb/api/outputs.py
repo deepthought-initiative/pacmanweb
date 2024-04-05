@@ -184,9 +184,11 @@ class DupCat:
 
 
 class MatchRev:
-    def __init__(self, output_dir, cycle_number) -> None:
+
+    def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         self.output_dir = output_dir / "store"
         self.cycle_number = cycle_number
+        self.celery_task_id = celery_task_id
 
     def read_nrecords(self):
         fname_suffix = "panelists.pkl"
@@ -254,17 +256,18 @@ class MatchRev:
 
     def get_complete_data_as_csv(self):
         data = self.complete_response()
-        if any(value.get("value") for value in data.values()):
-            error_messages = [
-                value.get("value") for value in data.values() if value.get("value")
-            ]
-            return ",".join(error_messages)
-        main_table = pd.DataFrame(data["Main Table"]).T
-        matches = pd.DataFrame(data["Proposal Assignments"])
-        conflicts = pd.DataFrame(data["Conflicts"])
+        print(data[0]["Main Table"])
+        # if any(value.get("value") for value in data[0].values()):
+        #     error_messages = [
+        #         value.get("value") for value in data.values() if value.get("value")
+        #     ]
+        #     return ",".join(error_messages)
+        main_table = pd.DataFrame(data[0]["Main Table"]).T
+        matches = pd.DataFrame(data[0]["Proposal Assignments"])
+        conflicts = pd.DataFrame(data[0]["Conflicts"])
         csv_output = pd.concat(
             [main_table, matches, conflicts], ignore_index=True
-        ).to_csv(index=False)
+        ).to_csv(Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_rev.csv")
 
         return csv_output
 
@@ -367,7 +370,11 @@ def download_data_as_csv(result_id):
             as_attachment=True,
         )
     if mode == "MATCH":
-        match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
+        match = MatchRev(
+            output_dir=output_dir,
+            cycle_number=options["cycle_number"],
+            celery_task_id=result_id,
+        )
         match.get_complete_data_as_csv()
         return send_file(
             Config.DOWNLOAD_FOLDER / f"{result_id}_rev.csv",
