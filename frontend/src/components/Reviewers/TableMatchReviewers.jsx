@@ -91,7 +91,9 @@ const TableMatchReviewers = ({
           </div>
         </div>
         <div className="col-3">
-          <h6 className="my-3">Assigned Proposals for {currentRow}</h6>
+          <h6 className="my-3">
+            {highlighted ? `Assigned Proposals for ${currentRow}` : "-"}
+          </h6>
           {highlighted ? (
             <div className="table-container">
               <table className="container-fluid">
@@ -120,7 +122,9 @@ const TableMatchReviewers = ({
           )}
         </div>
         <div className="col-3">
-          <h6 className="my-3">Reviewer Conflicts for {currentRow}</h6>
+          <h6 className="my-3">
+            {highlighted ? `Reviewer Conflicts for ${currentRow}` : "-"}
+          </h6>
           {highlighted ? (
             <div className="table-container">
               <table className="container-fluid">
