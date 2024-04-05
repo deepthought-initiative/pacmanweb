@@ -13,6 +13,7 @@ const TableForDuplicationChecker = ({
   downloadCSV,
   currentId,
   currentCycle,
+  downloadZIP,
   mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
@@ -159,6 +160,7 @@ const TableForDuplicationChecker = ({
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
         downloadCSV={downloadCSV}
+        downloadZIP={downloadZIP}
       />
     </>
   );

@@ -8,6 +8,7 @@ const ProposalTable = ({
   setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
+  downloadZIP,
   downloadCSV,
 }) => {
   const [highlighted, setHighlighted] = useState();
@@ -110,6 +111,7 @@ const ProposalTable = ({
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
         downloadCSV={downloadCSV}
+        downloadZIP={downloadZIP}
       />
     </>
   );

@@ -2,8 +2,9 @@ import ast
 import json
 import pathlib
 import re
+import zipfile
 from collections import defaultdict
-from io import StringIO
+from io import BytesIO, StringIO
 from os import R_OK, access, stat
 
 import pandas as pd
@@ -271,7 +272,6 @@ class MatchRev:
         )
         # Remove the 'variable' column
         joined_df.drop(columns=["variable"], inplace=True)
-        print(joined_df)
         csv_output = joined_df.to_csv(
             Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_rev.csv"
         )
@@ -368,6 +368,30 @@ def download_data_as_csv(result_id):
             download_name=f"{result_id}_rev.csv",
             as_attachment=True,
         )
+
+
+@outputs_bp.route("/download/zip/<result_id>", methods=["GET"])
+@login_required
+def download_data_as_zip(result_id):
+    zip_path = Config.PACMAN_PATH / "runs" / result_id
+    if not zip_path.is_dir():
+        # Handle directory not found error
+        return "Directory not found"
+
+    local_zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
+
+    with zipfile.ZipFile(local_zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for item in zip_path.glob("**/*"):
+            if item.is_file():
+                relative_path = item.relative_to(zip_path)
+                zipf.write(item, arcname=str(relative_path))
+
+    return send_file(
+        local_zip_path,
+        mimetype="application/zip",
+        download_name=f"{result_id}.zip",
+        as_attachment=True,
+    )
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])

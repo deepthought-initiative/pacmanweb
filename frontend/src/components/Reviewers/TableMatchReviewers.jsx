@@ -10,6 +10,7 @@ const TableMatchReviewers = ({
   onCategorizeAnotherCycle,
   dataToDisplay,
   downloadCSV,
+  downloadZIP,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -154,6 +155,7 @@ const TableMatchReviewers = ({
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
         downloadCSV={downloadCSV}
+        downloadZIP={downloadZIP}
       />
     </>
   );

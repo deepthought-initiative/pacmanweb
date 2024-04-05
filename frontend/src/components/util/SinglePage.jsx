@@ -313,6 +313,24 @@ const SinglePage = ({
       });
   };
 
+  const downloadZIP = async () => {
+    const zipUrl = `/api/outputs/download/zip/${currentId}`;
+    try {
+      const response = await fetch(zipUrl);
+      console.log(response);
+      const blob = new Blob([response.data], { type: "application/zip" });
+      const downloadURL = window.URL.createObjectURL(blob);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = downloadURL;
+      downloadLink.setAttribute("download", "downloaded.zip"); // Set the name of the downloaded file
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (error) {
+      console.error("Error downloading ZIP file:", error);
+    }
+  };
+
   return (
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
@@ -354,6 +372,7 @@ const SinglePage = ({
           dataToDisplay: dataToDisplay,
           downloadCSV: downloadCSV,
           mode: mode,
+          downloadZIP: downloadZIP,
         })
       ) : showLogs ? (
         <Logs
