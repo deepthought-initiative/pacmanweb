@@ -255,20 +255,26 @@ class MatchRev:
         }, 200
 
     def get_complete_data_as_csv(self):
-        data = self.complete_response()
-        print(data[0]["Main Table"])
-        # if any(value.get("value") for value in data[0].values()):
-        #     error_messages = [
-        #         value.get("value") for value in data.values() if value.get("value")
-        #     ]
-        #     return ",".join(error_messages)
-        main_table = pd.DataFrame(data[0]["Main Table"]).T
-        matches = pd.DataFrame(data[0]["Proposal Assignments"])
-        conflicts = pd.DataFrame(data[0]["Conflicts"])
-        csv_output = pd.concat(
-            [main_table, matches, conflicts], ignore_index=True
-        ).to_csv(Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_rev.csv")
-
+        main_table = pd.DataFrame(self.make_main_table()).T
+        matches = pd.DataFrame(self.read_matches())
+        conflicts = pd.DataFrame(self.read_conflicts())
+        matches.index.name = "Proposal Number"
+        melted_matches = pd.melt(
+            matches.reset_index(), id_vars="Proposal Number", value_name="CS Score"
+        )
+        joined_df = pd.merge(
+            main_table,
+            melted_matches,
+            left_on="fname",
+            right_on="variable",
+            how="outer",
+        )
+        # Remove the 'variable' column
+        joined_df.drop(columns=["variable"], inplace=True)
+        print(joined_df)
+        csv_output = joined_df.to_csv(
+            Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_rev.csv"
+        )
         return csv_output
 
 
@@ -289,7 +295,11 @@ def data_handler(celery_task_id, cycle_number, mode):
         )
         return dup_cat.get_for_cycle(cycle=cycle_number)
     if mode == "MATCH":
-        match = MatchRev(output_dir=output_dir, cycle_number=cycle_number)
+        match = MatchRev(
+            output_dir=output_dir,
+            cycle_number=cycle_number,
+            celery_task_id=celery_task_id,
+        )
         return match.complete_response()
 
 
