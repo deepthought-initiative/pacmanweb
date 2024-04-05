@@ -47,7 +47,11 @@ const NewDropdown = ({
   return (
     <div className="dropdown-container" ref={dropdownRef}>
       <div className="option-header">
-        <label className="custom-form-label">{label}</label>
+        <label
+          className={`custom-form-label ${disabled ? "label-disabled" : ""} `}
+        >
+          {label}
+        </label>
       </div>
       <div
         className={`option-display ${error ? "required" : ""} ${
