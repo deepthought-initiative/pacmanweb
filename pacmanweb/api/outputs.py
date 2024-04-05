@@ -318,30 +318,6 @@ def proposal_cat_output(result_id):
     return json.dumps(response)
 
 
-@outputs_bp.route("/proposal_cat_output_download/<result_id>", methods=["GET"])
-@login_required
-def proposal_cat_output_download(result_id):
-    options = request.args.to_dict(flat=True)
-    if "cycle_number" not in options.keys():
-        return {
-            "value": "Please provide a cycle number to get the proposal categorisation output."
-        }, 500
-    output_dir = Config.PACMAN_PATH / "runs" / result_id
-    prop_cat = PropCat(
-        output_dir=output_dir,
-        cycle_number=options["cycle_number"],
-        celery_task_id=result_id,
-    )
-    prop_cat.get_prop_table()
-    prop_cat.generate_prop_response_csv()
-    return send_file(
-        Config.DOWNLOAD_FOLDER / f"{result_id}_prop_cat.csv",
-        mimetype="text/csv",
-        download_name=f"{result_id}_prop_cat.csv",
-        as_attachment=True,
-    )
-
-
 @outputs_bp.route("/download/<result_id>", methods=["GET"])
 @login_required
 def download_data_as_csv(result_id):
