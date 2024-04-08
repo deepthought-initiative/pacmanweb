@@ -101,7 +101,7 @@ const TableMatchReviewers = ({
               <table className="container-fluid">
                 <thead>
                   <tr>
-                    <th className="col-md-2 col-sm-1">Proposal Title</th>
+                    <th className="col-md-2 col-sm-1">Proposal Number</th>
                     <th className="col-md-2 col-sm-1">CS Score</th>
                   </tr>
                 </thead>
