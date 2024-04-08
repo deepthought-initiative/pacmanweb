@@ -4,6 +4,7 @@ import { useState } from "react";
 import limitsData from "../../../limits.json";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import ImgTooltip from "../util/Tooltip";
 
 const TableForDuplicationChecker = ({
   setShowTable,
@@ -13,11 +14,17 @@ const TableForDuplicationChecker = ({
   downloadCSV,
   currentId,
   currentCycle,
+  downloadZIP,
   mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
 
+  const toolTipCSScore = [
+    "Red (high similarity): 0.6 or higher",
+    "Yellow (moderate similarity): Between 0.2 and 0.59",
+    "Green (low similarity): Below 0.2 ",
+  ];
   const reformatData = (originalData) => {
     const reformattedData = {};
 
@@ -62,7 +69,6 @@ const TableForDuplicationChecker = ({
   const applySimilarityScoreBgColor = (score) => {
     const { upperLimit, lowerLimit } = limitsData;
     const similarityScore = parseFloat(score);
-    console.log(similarityScore);
     if (isNaN(similarityScore)) {
       return "";
     }
@@ -126,7 +132,9 @@ const TableForDuplicationChecker = ({
                   <tr>
                     <th className="col-md-4 col-sm-4">Cycle Number</th>
                     <th className="col-md-4 col-sm-4">Proposal Number</th>
-                    <th className="col-md-4 col-sm-4">CS Score</th>
+                    <th className="col-md-4 col-sm-4">
+                      CS Score <ImgTooltip content={toolTipCSScore} />
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -159,6 +167,7 @@ const TableForDuplicationChecker = ({
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
         downloadCSV={downloadCSV}
+        downloadZIP={downloadZIP}
       />
     </>
   );

@@ -15,13 +15,14 @@ const SinglePage = ({
   renderTableComponent,
   button_label,
 }) => {
+  const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState(allCycles);
+  const [filteredCycles, setFilteredCycles] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -49,6 +50,11 @@ const SinglePage = ({
 
   const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
 
+  // Text description for alert modals
+  const multipleRequestAlertTitle = "Process Running Elsewhere";
+  const multipleRequestAlertDesc =
+    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
+
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
       return;
@@ -60,6 +66,7 @@ const SinglePage = ({
   }, [currentId, mode]);
 
   useEffect(() => {
+    setFilteredCycles(allCycles);
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
@@ -69,7 +76,7 @@ const SinglePage = ({
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [terminateAllProcesses]);
+  }, [allCycles, terminateAllProcesses]);
 
   const validateFields = () => {
     let noError = true;
@@ -265,40 +272,71 @@ const SinglePage = ({
           }
         );
       }
-      const data = await spawnResponse.json();
-      setCurrentId(data["result_id"]);
-      setShowLogs(true);
-      setSubmitButtonStatus(false);
-      await startFetchingLogs(data["result_id"]);
+      console.log(spawnResponse.status);
+      if (spawnResponse.status === 429) {
+        setModalShow(true);
+      } else {
+        const data = await spawnResponse.json();
+        setCurrentId(data["result_id"]);
+        setShowLogs(true);
+        setSubmitButtonStatus(false);
+        await startFetchingLogs(data["result_id"]);
+      }
     }
     console.log(allCycles);
     console.log(filteredCycles);
   };
 
   const downloadCSV = async () => {
-    const url = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.text();
-      })
-      .then((data) => {
-        console.log(data);
-        const blob = new Blob([data], { type: "text/csv" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        const fileName = `${currentId}_${mode}.csv`;
-        link.setAttribute("download", fileName);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
+    const csvUrl = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
+    try {
+      const response = await fetch(csvUrl);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const fileName = response.headers
+        .get("content-disposition")
+        .split("=")[1];
+      let blob;
+      if (mode == "MATCH") {
+        blob = await response.blob();
+      } else {
+        const data = await response.text();
+        blob = new Blob([data], { type: "text/csv" });
+      }
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
+  const downloadZIP = async () => {
+    const zipUrl = `/api/outputs/download/zip/${currentId}`;
+    try {
+      const response = await fetch(zipUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const fileName = response.headers
+        .get("content-disposition")
+        .split("=")[1];
+      const blob = await response.blob();
+      const downloadURL = window.URL.createObjectURL(blob);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = downloadURL;
+      downloadLink.setAttribute("download", fileName);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } catch (error) {
+      console.error("Error downloading ZIP file:", error);
+    }
   };
 
   return (
@@ -342,6 +380,7 @@ const SinglePage = ({
           dataToDisplay: dataToDisplay,
           downloadCSV: downloadCSV,
           mode: mode,
+          downloadZIP: downloadZIP,
         })
       ) : showLogs ? (
         <Logs
@@ -355,10 +394,15 @@ const SinglePage = ({
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
           downloadCSV={downloadCSV}
+          downloadZIP={downloadZIP}
         />
       ) : (
         <OtherConfigOptions
           button_label={button_label}
+          modalShow={modalShow}
+          multipleRequestAlertTitle={multipleRequestAlertTitle}
+          multipleRequestAlertDesc={multipleRequestAlertDesc}
+          setModalShow={setModalShow}
           handleClick={handleClick}
           currentCycle={currentCycle}
           runName={runName}

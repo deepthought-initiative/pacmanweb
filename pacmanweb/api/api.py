@@ -17,7 +17,7 @@ from flask import (
     request,
     stream_with_context,
 )
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import current_user, login_required, login_user, logout_user
 from werkzeug.utils import secure_filename
 
 from pacmanweb import Config
@@ -82,21 +82,22 @@ def run_pacman():
     options["current_user"] = current_user.username
     # if task is already running don't run another
     existing_tasks = redis_instance.hgetall(current_user.username)
-    if options.get("mode").encode('ascii') not in existing_tasks.keys():
+    if options.get("mode").encode("ascii") not in existing_tasks.keys():
         result = pacman_task.delay(options=options)
         redis_instance.hset(current_user.username, options.get("mode"), result.id)
         return {
             "output": f"PACMan running with task id {result.id}",
             "result_id": f"{result.id}",
-        }
+        }, 200
     else:
         # if you get a result id here it means the task is still running
-        result_id = redis_instance.hget(current_user.username, options.get("mode")).decode("ascii")            
+        result_id = redis_instance.hget(
+            current_user.username, options.get("mode")
+        ).decode("ascii")
         return {
             "output": f"PACMan already running with task id {result_id}. New task not started.",
             "result_id": f"{result_id}",
-        }
-    
+        }, 429
 
 
 @api_bp.route("/prev_runs/<result_id>", methods=["GET"])

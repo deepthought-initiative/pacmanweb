@@ -1,5 +1,8 @@
 /* eslint-disable react/prop-types */
 
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
+
 const Logs = ({
   setShowTable,
   onTerminate,
@@ -9,12 +12,12 @@ const Logs = ({
   logContainerRef,
   showTerminateProcess,
   downloadCSV,
+  downloadZIP,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
   };
-  console.log("logs,", processStatus);
   return (
     <>
       <div
@@ -54,9 +57,14 @@ const Logs = ({
           <button className="btn rounded-0" onClick={handleTable}>
             See Results
           </button>
-          <button onClick={downloadCSV} className="btn rounded-0">
-            Download As CSV
-          </button>
+          <DropdownButton id="dropdown-basic-button" title="Download Data">
+            <Dropdown.Item className="download-option" onClick={downloadCSV}>
+              Download as CSV
+            </Dropdown.Item>
+            <Dropdown.Item className="download-option" onClick={downloadZIP}>
+              Download as Zip
+            </Dropdown.Item>
+          </DropdownButton>
           <button className="btn rounded-0">View Logs</button>
         </div>
       )}

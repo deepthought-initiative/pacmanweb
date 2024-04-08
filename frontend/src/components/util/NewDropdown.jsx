@@ -33,7 +33,6 @@ const NewDropdown = ({
       const updatedInputField = inputField.includes(value)
         ? inputField.filter((item) => item !== value)
         : [...inputField, value];
-      console.log(updatedInputField);
       setInputField(updatedInputField);
     } else {
       setInputField(value);
@@ -48,7 +47,11 @@ const NewDropdown = ({
   return (
     <div className="dropdown-container" ref={dropdownRef}>
       <div className="option-header">
-        <label className="custom-form-label">{label}</label>
+        <label
+          className={`custom-form-label ${disabled ? "label-disabled" : ""} `}
+        >
+          {label}
+        </label>
       </div>
       <div
         className={`option-display ${error ? "required" : ""} ${

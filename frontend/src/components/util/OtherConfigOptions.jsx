@@ -1,11 +1,16 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import "../../css/otherConfigOptions.css";
+import AlertModal from "./AlertBox.jsx";
 import InputConfigOption from "./InputConfigOption";
 import NewDropdown from "./NewDropdown.jsx";
 
 const OtherConfigOptions = ({
   button_label,
+  modalShow,
+  multipleRequestAlertTitle,
+  multipleRequestAlertDesc,
+  setModalShow,
   handleClick,
   runName,
   modalFile,
@@ -80,6 +85,14 @@ const OtherConfigOptions = ({
           </div>
         </div>
       </div>
+      {modalShow && (
+        <AlertModal
+          show={modalShow}
+          title={multipleRequestAlertTitle}
+          desc={multipleRequestAlertDesc}
+          onHide={() => setModalShow(false)}
+        />
+      )}
       <div className="row mt-5">
         <div className="col-md-6 text-start">
           <button

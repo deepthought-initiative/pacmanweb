@@ -2,8 +2,9 @@ import ast
 import json
 import pathlib
 import re
+import zipfile
 from collections import defaultdict
-from io import StringIO
+from io import BytesIO, StringIO
 from os import R_OK, access, stat
 
 import pandas as pd
@@ -121,7 +122,22 @@ class PropCat:
     def generate_prop_response_csv(self):
         if self.prop_response != {}:
             return self.prop_response, 500
-        self.prop_table.to_csv(
+
+        normal_table = self.prop_table
+        alternate_categories_df = pd.DataFrame(self.alternate_cat_dict)
+        alternate_categories_df.index.name = "PACMan Science Category"
+        melted_alternate_categories_df = pd.melt(
+            alternate_categories_df.reset_index(),
+            id_vars="PACMan Science Category",
+            value_name="PACMAN Probability",
+            var_name="Proposal Number",
+        )
+        melted_alternate_categories_df = melted_alternate_categories_df.merge(
+            normal_table[["Original Science Category"]],
+            on="Proposal Number",
+            how="left",
+        )
+        melted_alternate_categories_df.to_csv(
             Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_prop_cat.csv"
         )
 
@@ -184,9 +200,11 @@ class DupCat:
 
 
 class MatchRev:
-    def __init__(self, output_dir, cycle_number) -> None:
+
+    def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         self.output_dir = output_dir / "store"
         self.cycle_number = cycle_number
+        self.celery_task_id = celery_task_id
 
     def read_nrecords(self):
         fname_suffix = "panelists.pkl"
@@ -253,20 +271,46 @@ class MatchRev:
         }, 200
 
     def get_complete_data_as_csv(self):
-        data = self.complete_response()
-        if any(value.get("value") for value in data.values()):
-            error_messages = [
-                value.get("value") for value in data.values() if value.get("value")
-            ]
-            return ",".join(error_messages)
-        main_table = pd.DataFrame(data["Main Table"]).T
-        matches = pd.DataFrame(data["Proposal Assignments"])
-        conflicts = pd.DataFrame(data["Conflicts"])
-        csv_output = pd.concat(
-            [main_table, matches, conflicts], ignore_index=True
-        ).to_csv(index=False)
-
-        return csv_output
+        main_table = pd.DataFrame(self.make_main_table()).T
+        matches = pd.DataFrame(self.read_matches())
+        conflicts = pd.DataFrame(self.read_conflicts())
+        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
+        destination_dir.mkdir(parents=True, exist_ok=True)
+        matches.index.name = "Proposal Number"
+        melted_matches = pd.melt(
+            matches.reset_index(), id_vars="Proposal Number", value_name="CS Score"
+        )
+        main_and_matches_df = pd.merge(
+            main_table,
+            melted_matches,
+            left_on="fname",
+            right_on="variable",
+            how="outer",
+        )
+        conflicts.index.name = "Conflicts"
+        melted_conflicts = pd.melt(
+            conflicts.reset_index(),
+            id_vars="Conflicts",
+            value_name="#records",
+        )
+        main_and_conflicts_df = pd.merge(
+            main_table,
+            melted_conflicts,
+            left_on="fname",
+            right_on="variable",
+            how="outer",
+        )
+        # Remove the 'variable' column
+        main_and_matches_df.drop(columns=["variable"], inplace=True)
+        main_and_conflicts_df.drop(columns=["variable"], inplace=True)
+        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
+        csv_matches_output = main_and_matches_df.to_csv(
+            destination_dir / f"{self.celery_task_id}_matches_rev.csv"
+        )
+        csv_conflicts_output = main_and_conflicts_df.to_csv(
+            destination_dir / f"{self.celery_task_id}_conflicts_rev.csv"
+        )
+        return csv_matches_output, csv_conflicts_output
 
 
 def data_handler(celery_task_id, cycle_number, mode):
@@ -286,7 +330,11 @@ def data_handler(celery_task_id, cycle_number, mode):
         )
         return dup_cat.get_for_cycle(cycle=cycle_number)
     if mode == "MATCH":
-        match = MatchRev(output_dir=output_dir, cycle_number=cycle_number)
+        match = MatchRev(
+            output_dir=output_dir,
+            cycle_number=cycle_number,
+            celery_task_id=celery_task_id,
+        )
         return match.complete_response()
 
 
@@ -303,30 +351,6 @@ def proposal_cat_output(result_id):
     )
 
     return json.dumps(response)
-
-
-@outputs_bp.route("/proposal_cat_output_download/<result_id>", methods=["GET"])
-@login_required
-def proposal_cat_output_download(result_id):
-    options = request.args.to_dict(flat=True)
-    if "cycle_number" not in options.keys():
-        return {
-            "value": "Please provide a cycle number to get the proposal categorisation output."
-        }, 500
-    output_dir = Config.PACMAN_PATH / "runs" / result_id
-    prop_cat = PropCat(
-        output_dir=output_dir,
-        cycle_number=options["cycle_number"],
-        celery_task_id=result_id,
-    )
-    prop_cat.get_prop_table()
-    prop_cat.generate_prop_response_csv()
-    return send_file(
-        Config.DOWNLOAD_FOLDER / f"{result_id}_prop_cat.csv",
-        mimetype="text/csv",
-        download_name=f"{result_id}_prop_cat.csv",
-        as_attachment=True,
-    )
 
 
 @outputs_bp.route("/download/<result_id>", methods=["GET"])
@@ -367,14 +391,49 @@ def download_data_as_csv(result_id):
             as_attachment=True,
         )
     if mode == "MATCH":
-        match = MatchRev(output_dir=output_dir, cycle_number=options["cycle_number"])
+        match = MatchRev(
+            output_dir=output_dir,
+            cycle_number=options["cycle_number"],
+            celery_task_id=result_id,
+        )
         match.get_complete_data_as_csv()
+        local_match_rev_csv_path = Config.DOWNLOAD_FOLDER / result_id
+        zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for item in local_match_rev_csv_path.glob("**/*"):
+                if item.is_file():
+                    relative_path = item.relative_to(local_match_rev_csv_path)
+                    zipf.write(item, arcname=str(relative_path))
+
         return send_file(
-            Config.DOWNLOAD_FOLDER / f"{result_id}_rev.csv",
-            mimetype="text/csv",
-            download_name=f"{result_id}_rev.csv",
+            zip_path,
+            mimetype="application/zip",
+            download_name=f"{result_id}_rev.zip",
             as_attachment=True,
         )
+
+
+@outputs_bp.route("/download/zip/<result_id>", methods=["GET"])
+@login_required
+def download_data_as_zip(result_id):
+    zip_path = Config.PACMAN_PATH / "runs" / result_id
+    if not zip_path.is_dir():
+        return "Directory not found"
+
+    local_zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
+
+    with zipfile.ZipFile(local_zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+        for item in zip_path.glob("**/*"):
+            if item.is_file():
+                relative_path = item.relative_to(zip_path)
+                zipf.write(item, arcname=str(relative_path))
+
+    return send_file(
+        local_zip_path,
+        mimetype="application/zip",
+        download_name=f"{result_id}.zip",
+        as_attachment=True,
+    )
 
 
 @outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])

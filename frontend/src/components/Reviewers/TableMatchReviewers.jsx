@@ -10,13 +10,16 @@ const TableMatchReviewers = ({
   onCategorizeAnotherCycle,
   dataToDisplay,
   downloadCSV,
+  downloadZIP,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-  const tooltipInstruction1 =
-    "Click on a reviewer to know top proposals assigned to them and their close collaborators";
-  const tooltipInstruction2 =
-    "PACMan looks up articles authored by reviewers. These are the number of articles found.";
+  const tooltipInstruction1 = [
+    "Click on a reviewer to know top proposals assigned to them and their close collaborators",
+  ];
+  const tooltipInstruction2 = [
+    "PACMan looks up articles authored by reviewers. These are the number of articles found.",
+  ];
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
@@ -90,13 +93,15 @@ const TableMatchReviewers = ({
           </div>
         </div>
         <div className="col-3">
-          <h6 className="my-3">Assigned Proposals for {currentRow}</h6>
+          <h6 className="my-3">
+            {highlighted ? `Assigned Proposals for ${currentRow}` : "-"}
+          </h6>
           {highlighted ? (
             <div className="table-container">
               <table className="container-fluid">
                 <thead>
                   <tr>
-                    <th className="col-md-2 col-sm-1">Proposal Title</th>
+                    <th className="col-md-2 col-sm-1">Proposal Number</th>
                     <th className="col-md-2 col-sm-1">CS Score</th>
                   </tr>
                 </thead>
@@ -119,7 +124,9 @@ const TableMatchReviewers = ({
           )}
         </div>
         <div className="col-3">
-          <h6 className="my-3">Reviewer Conflicts for {currentRow}</h6>
+          <h6 className="my-3">
+            {highlighted ? `Reviewer Conflicts for ${currentRow}` : "-"}
+          </h6>
           {highlighted ? (
             <div className="table-container">
               <table className="container-fluid">
@@ -154,6 +161,7 @@ const TableMatchReviewers = ({
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
         downloadCSV={downloadCSV}
+        downloadZIP={downloadZIP}
       />
     </>
   );

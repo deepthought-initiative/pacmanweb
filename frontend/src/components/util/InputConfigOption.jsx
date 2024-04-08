@@ -4,7 +4,6 @@ import ErrorMessage from "../util/ErrorMessage.jsx";
 const InputConfigOption = ({ label, desc, setValue, value, error }) => {
   const handleOnChange = (event) => {
     setValue(event.target.value);
-    console.log(event.target.value);
   };
   return (
     <div className="dropdown-container">
