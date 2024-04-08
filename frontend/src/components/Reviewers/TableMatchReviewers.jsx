@@ -14,10 +14,12 @@ const TableMatchReviewers = ({
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-  const tooltipInstruction1 =
-    "Click on a reviewer to know top proposals assigned to them and their close collaborators";
-  const tooltipInstruction2 =
-    "PACMan looks up articles authored by reviewers. These are the number of articles found.";
+  const tooltipInstruction1 = [
+    "Click on a reviewer to know top proposals assigned to them and their close collaborators",
+  ];
+  const tooltipInstruction2 = [
+    "PACMan looks up articles authored by reviewers. These are the number of articles found.",
+  ];
 
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));

@@ -436,3 +436,28 @@ h3{
   display: flex;
   align-items: center;
 }
+
+.tooltip-body {
+  padding: 5px;
+  margin: 0;
+  border-radius: 7px;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  opacity: 1 !important;
+}
+
+.tooltip-inner {
+  background-color: inherit;
+  color: black;
+  font-size: 0.75rem;
+}
+
+.bs-tooltip-auto[data-popper-placement^="right"] .tooltip-arrow::before,
+.bs-tooltip-end .tooltip-arrow::before{
+  border-right-color: white;
+}
+
+.tooltip-body ul {
+list-style: none;
+padding-left: 0;
+}

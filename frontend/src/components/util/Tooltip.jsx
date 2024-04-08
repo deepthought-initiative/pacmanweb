@@ -18,8 +18,12 @@ const ImgTooltip = ({ content }) => {
       />
       <Overlay target={target.current} show={show} placement="right">
         {(props) => (
-          <Tooltip id="overlay-example" {...props}>
-            {content}
+          <Tooltip className="tooltip-body" {...props}>
+            <ul>
+              {content.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
           </Tooltip>
         )}
       </Overlay>
