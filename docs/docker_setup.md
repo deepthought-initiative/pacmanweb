@@ -29,11 +29,11 @@ docker compose -f docker-compose.yml up
 
 ### Common Errors
 ##### `EOF` Error
-This can typically look like-
+This usually indicates internet connectivity issues and can typically look like-
 ```
 failed to solve: node:21-alpine3.18: failed to do request: Head "https://registry-1.docker.io/v2/library/node/manifests/21-alpine3.18": EOF
 ```
-Can just be fixed by retrying.
+This is mostly fixed by retrying
 
 
 ##### `libmamba` timeout
