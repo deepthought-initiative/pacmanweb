@@ -297,9 +297,13 @@ const SinglePage = ({
       const fileName = response.headers
         .get("content-disposition")
         .split("=")[1];
-      const data = await response.text();
-      console.log(fileName);
-      const blob = new Blob([data], { type: "text/csv" });
+      let blob;
+      if (mode == "MATCH") {
+        blob = await response.blob();
+      } else {
+        const data = await response.text();
+        blob = new Blob([data], { type: "text/csv" });
+      }
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;

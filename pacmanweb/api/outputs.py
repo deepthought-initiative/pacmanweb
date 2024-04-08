@@ -382,10 +382,18 @@ def download_data_as_csv(result_id):
             celery_task_id=result_id,
         )
         match.get_complete_data_as_csv()
+        local_match_rev_csv_path = Config.DOWNLOAD_FOLDER / result_id
+        zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for item in local_match_rev_csv_path.glob("**/*"):
+                if item.is_file():
+                    relative_path = item.relative_to(local_match_rev_csv_path)
+                    zipf.write(item, arcname=str(relative_path))
+
         return send_file(
-            Config.DOWNLOAD_FOLDER / result_id / f"{result_id}_matches_rev.csv",
-            mimetype="text/csv",
-            download_name=f"{result_id}_rev.csv",
+            zip_path,
+            mimetype="application/zip",
+            download_name=f"{result_id}_rev.zip",
             as_attachment=True,
         )
 
