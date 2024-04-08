@@ -122,7 +122,22 @@ class PropCat:
     def generate_prop_response_csv(self):
         if self.prop_response != {}:
             return self.prop_response, 500
-        self.prop_table.to_csv(
+
+        normal_table = self.prop_table
+        alternate_categories_df = pd.DataFrame(self.alternate_cat_dict)
+        alternate_categories_df.index.name = "PACMan Science Category"
+        melted_alternate_categories_df = pd.melt(
+            alternate_categories_df.reset_index(),
+            id_vars="PACMan Science Category",
+            value_name="PACMAN Probability",
+            var_name="Proposal Number",
+        )
+        melted_alternate_categories_df = melted_alternate_categories_df.merge(
+            normal_table[["Original Science Category"]],
+            on="Proposal Number",
+            how="left",
+        )
+        melted_alternate_categories_df.to_csv(
             Config.DOWNLOAD_FOLDER / f"{self.celery_task_id}_prop_cat.csv"
         )
 
