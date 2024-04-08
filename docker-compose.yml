@@ -92,6 +92,7 @@ services:
     volumes:
       - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf
       - ./nginx/htpasswd:/etc/nginx/htpasswd:ro
+      - ./nginx/htpasswd_docs:/etc/nginx/htpasswd_docs:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
       - react_build:/var/www/frontend
       - docs_build:/usr/share/nginx/docs
