@@ -461,3 +461,14 @@ h3{
 list-style: none;
 padding-left: 0;
 }
+
+/*Download dropdowns*/
+
+#dropdown-basic-button{
+  background-color: #7A8E99;
+  border-radius: 0;
+}
+
+.download-option:active{
+  background-color: #7A8E99;
+}
