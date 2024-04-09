@@ -6,7 +6,7 @@ To try out the API yourself, we'd recommend using [Postman](https://www.postman.
 ```
 
 #### Spawning a new PACMan process 
-A new process can be spawned with this- \
+A new process can be spawned with- \
 [http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026](http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026) \
 This should get you the following response-
 ```json
@@ -15,6 +15,10 @@ This should get you the following response-
     "result_id": "2b87bfe7-eff2-43c2-a0ad-33ad93d3952a"
 }
 ```
+```{note}
+At the moment, to prevent spamming, each user can only run process of one mode at a time. If they try to spawn another process, the code will say that a process is already running and it'll return the task id of the existing process. 
+```
+
 #### Seeing the progress of the run 
 You can see the progress of the run in your Celery logs terminal or by sending another request-
 [http://127.0.0.1:5000/api/prev_runs/<result_id>](http://127.0.0.1:5000/api/prev_runs/<result_id>) \
@@ -37,7 +41,7 @@ If it completed, the response would include the traceback of the run.
 ```
 
 #### Terminating a task 
-To terminate a task, run- [http://127.0.0.1:5000/api/terminate/<result_id>](http://127.0.0.1:5000/api/terminate/<result_id>)
+To terminate a task, run- [http://127.0.0.1:5000/api/terminate/<result_id>](http://127.0.0.1:5000/api/terminate/<result_id>). Please ensure to provide the mode of the process as params too.
 
 #### Streaming Responses
 Unfortunately, you cannot test streaming APIs on PACMan, but you can try them in your web browser- \

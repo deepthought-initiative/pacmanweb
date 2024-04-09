@@ -1,5 +1,25 @@
 # Manual Installation
-## Frontend Installation
+
+### Manual Installation Specific Prerequisites
+Changes you need to do only when running the application manually. 
+#### Frontend Modifications
+Head over to `frontend/vite.config.js` and follow the instructions there(you will need to do this is the latest commit is from the main branch)
+You will need to comment the line
+```js
+const { REACT_APP_BASE_URL, REACT_APP_API_URL } = process.env;
+```
+and uncomment these lines
+```js
+const REACT_APP_BASE_URL = "http://127.0.0.1:8080";
+const REACT_APP_API_URL = "http://127.0.0.1:8000";
+```
+#### Backend Modifications
+The file `pacmanweb/config.py` has a variable called `MODE` which should be set to `dev` if using manual setup.
+```py
+MODE = "dev"
+```
+
+### Frontend Installation
 To install frontend dependencies, start by installing node and npm. Instructions to do so can be found here- https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-installer-to-install-nodejs-and-npm
 
 ```none
@@ -7,7 +27,7 @@ npm install
 npm run dev
 ```
 
-## Backend Installation
+### Backend Installation
 #### Install Conda Environments
 Head over to the PACManWeb directory. This environment installation has been done using Mamba and tested on Linux and Mac. Installing might work using Conda, but Mamba is recommended. To install mamba, head over too the [mamba installation page](https://mamba.readthedocs.io/en/latest/installation/mamba-installation.html).
 ```bash

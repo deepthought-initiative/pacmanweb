@@ -6,6 +6,7 @@ parts:
     - file: installation/prerequisites
     - file: installation/docker_setup
     - file: installation/manual_installation
-# - caption: Code Walkthrough
-#   chapters:
-#     - file: backend_walkthrough
+- caption: Code
+  chapters:
+    - file: api_run
+    - file: testing_building_docs

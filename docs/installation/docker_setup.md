@@ -3,7 +3,9 @@
 Please refer to the official website to install docker on your (virtual) machine.
 https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository 
 ```
-### Prerequisites
+### Docker Specific Prerequisites
+Edits to be done when running the application using docker compose.
+
 #### Frontend Modifications
 Head over to `frontend/vite.config.js` and follow the instructions there(only if you edited the file, should work by default on the `main` branch).
 You will need to uncomment the line
