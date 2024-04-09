@@ -58,7 +58,7 @@ python -c 'import secrets; print(secrets.token_hex())'
 The `user` key is a dictionary with key value pairs of users and their passwords. The default password is your password to access the application API. PACManWeb uses Basic Auth for secure transmission of files and execution of the application. `ADS_DEV_KEY` is the key that PACMan would use to access the ADS Database. `ENV_NAME` contains the name of the conda environment of PACMan.
 
 #### Setting up Celery
-PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis and backend and RabbitMQ as a message broker to run.
+PACMan web implements task queues in Celery to run PACMan tasks one by one. Celery requires Redis as backend and RabbitMQ as a message broker to run.
 - Redis installation instructions can be found on the redis website- https://redis.io/docs/install/install-redis/.
 - Redis can also be installed like so-
 ```bash

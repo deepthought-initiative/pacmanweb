@@ -54,7 +54,7 @@ You will have to replace the `output_mode` by one of the following- `proposal_ca
 
 
 #### Uploading files
-The API- http://127.0.0.1:5000/api/upload can be used to upload files to the PACMan repo. Unline other requests, this will be a `POST` request with the files as form data in the body of the URL. There are a few contraints though-
+The API- http://127.0.0.1:5000/api/upload can be used to upload files to the PACMan repo. Unlike other requests, this will be a `POST` request with the files as form data in the body of the URL. There are a few contraints though-
 - The file has to be a zip file, or it will be rejected by the API. 
 - Panelist and model files can be placed in the root of the zip folder or inside separate folders- but the folder names must contain words "panelist" and "model" respectively.
 - Proposal files **need** to be in a separate folder, each proposal file being inside it's cycle folder. For example, for proposal 1 of Cycle 221026, the file path will be `zip_file_root/221026/00001.txtx`
