@@ -60,7 +60,6 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'testing_building_docs';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Docker Compose Setup" href="docker_setup.html" />
     <link rel="prev" title="Trying out the API" href="api_run.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -176,12 +175,16 @@
                 </a>
             </li>
         </ul>
-        <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="installation_backend.html">Backend Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation_frontend.html">Frontend Installation</a></li>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">Installation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="installation/prerequisites.html">Installation Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/docker_setup.html">Docker Compose Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation/manual_installation.html">Manual Installation</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Code</span></p>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="api_run.html">Trying out the API</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Running Tests and Building Docs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="docker_setup.html">Docker Compose Setup</a></li>
 </ul>
 
     </div>
@@ -392,7 +395,7 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="running-tests-and-building-docs">
 <h1>Running Tests and Building Docs<a class="headerlink" href="#running-tests-and-building-docs" title="Link to this heading">#</a></h1>
-<p>Although tests run and docs are updated whenever someone pushes to the main branch, here are instructions to both run tests and build docs locally.</p>
+<p>Here are instructions to update docs and tests.</p>
 <section id="running-tests">
 <h2>Running tests<a class="headerlink" href="#running-tests" title="Link to this heading">#</a></h2>
 <p>A tests infrastructure is available inside <code class="docutils literal notranslate"><span class="pre">pacmanweb/pacmanweb/tests</span></code>. The data folder contains sample proposal files and panelist files for testing purposes and copies over the model files from the PACMan folder(assumes PACMan has model files in its models folder).
@@ -410,6 +413,10 @@ To run tests, move inside the tests and do-</p>
 <p>To build the documentation, move to the root of the application and do-</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter-book<span class="w"> </span>build<span class="w"> </span>--all<span class="w"> </span>docs
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Docs can also be updated on pull requests. Once you have opened the pull request, you can label it with the <code class="docutils literal notranslate"><span class="pre">docs</span></code> label to run the <code class="docutils literal notranslate"><span class="pre">docs</span></code> workflow. Updated docs will automatically be committed to the branch of the pull request and appear in files changed.</p>
 </div>
 </section>
 </section>
@@ -452,15 +459,6 @@ To run tests, move inside the tests and do-</p>
         <p class="prev-next-subtitle">previous</p>
         <p class="prev-next-title">Trying out the API</p>
       </div>
-    </a>
-    <a class="right-next"
-       href="docker_setup.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Docker Compose Setup</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
     </a>
 </div>
                 </footer>
