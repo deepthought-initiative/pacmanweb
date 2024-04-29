@@ -1,0 +1,21 @@
+proposal_categorise:
+  necessary:
+  - main_test_cycle
+  optional:
+    log_level: info
+duplication_check:
+  necessary:
+  - main_test_cycle
+  - past_cycles
+  optional:
+    log_level: info
+    duplication_checker_newcycles: "true"
+    duplication_checker_need_new_texts: "true"
+match_reviewer:
+  necessary:
+  - main_test_cycle
+  optional:
+    log_level: info
+    close_collaborator_time_frame: 3
+    assignment_number_top_reviewers: 5
+    modelfile: "strolger_pacman_model_7cycles.joblib"
