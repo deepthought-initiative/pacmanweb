@@ -23,6 +23,7 @@ const SinglePage = ({
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
+  const [progressPercentage, setProgressPercentage] = useState(0);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -117,6 +118,7 @@ const SinglePage = ({
     setCurrentId();
     setShowLogs(false);
     setShowTable(false);
+    setProgressPercentage(0);
     setLogs([]);
     setShowTerminateProcess(true);
     setProcessStatus(false);
@@ -176,16 +178,19 @@ const SinglePage = ({
         setDataToDisplay(tabularData);
         if (code !== 200) {
           setProcessStatus(false);
+          setProgressPercentage(100);
           alert("Process failed! Please try again");
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
         } else {
           setProcessStatus(true);
+          setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
         console.log(processStatus);
       } catch (error) {
+        setProgressPercentage(100);
         console.error("Error fetching table data:", error);
       }
     },
@@ -204,6 +209,9 @@ const SinglePage = ({
           eventSource.onmessage = async (event) => {
             const newLog = event.data;
             console.log("message");
+            if (newLog.includes("STARTING RUN")) {
+              setProgressPercentage(10);
+            }
             if (
               newLog.includes("PROCESS COMPLETE") ||
               newLog.includes("run complete")
@@ -389,6 +397,7 @@ const SinglePage = ({
           terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
+          progressPercentage={progressPercentage}
           processStatus={processStatus}
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
