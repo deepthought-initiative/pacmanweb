@@ -383,6 +383,9 @@ h3{
   }
 }
 
+.form-page-button{
+    width: 220px;
+}
 .input-group input {
   height: 50px;
   font-size: 16px;

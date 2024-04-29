@@ -3,6 +3,7 @@
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import Spinner from "react-bootstrap/Spinner";
 
 const Logs = ({
   setShowTable,
@@ -15,6 +16,8 @@ const Logs = ({
   showTerminateProcess,
   downloadCSV,
   downloadZIP,
+  loading,
+  preventClick,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
@@ -53,8 +56,19 @@ const Logs = ({
       </div>
       {showTerminateProcess ? (
         <div className="button-tray container-fluid p-0">
-          <button className="btn rounded-0" onClick={terminateAllProcesses}>
-            Terminate Process
+          <button
+            className="btn form-page-button rounded-0"
+            onClick={loading ? preventClick : terminateAllProcesses}
+          >
+            {loading ? (
+              <>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </>
+            ) : (
+              "Terminate Process"
+            )}
           </button>
         </div>
       ) : !processStatus ? (

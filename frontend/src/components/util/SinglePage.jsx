@@ -49,7 +49,8 @@ const SinglePage = ({
   const [processStatus, setProcessStatus] = useState(false);
   const logContainerRef = useRef(null);
 
-  const [submitButtonStatus, setSubmitButtonStatus] = useState(true);
+  //loading
+  const [loading, setLoading] = useState(false);
 
   // Text description for alert modals
   const multipleRequestAlertTitle = "Process Running Elsewhere";
@@ -126,7 +127,7 @@ const SinglePage = ({
     setPastCycle([]);
     setRunName("");
     setSelectedModal("strolger_pacman_model_7cycles.joblib");
-    setSubmitButtonStatus(true);
+    setLoading(false);
     setNumberOfTopReviewers(5);
     setCloseCollaboratorTimeFrame(3);
   };
@@ -168,6 +169,7 @@ const SinglePage = ({
           }
         );
         if (!tableResponse.ok) {
+          setProgressPercentage(100);
           throw new Error(
             `Failed to fetch table data: ${tableResponse.statusText}`
           );
@@ -196,6 +198,7 @@ const SinglePage = ({
     },
     [currentCycle, mode, processStatus]
   );
+
   const startFetchingLogs = useCallback(
     async (curId) => {
       let reconnectFrequencySeconds = 1;
@@ -211,6 +214,9 @@ const SinglePage = ({
             console.log("message");
             if (newLog.includes("STARTING RUN")) {
               setProgressPercentage(10);
+            }
+            if (newLog.includes("Log file can be found")) {
+              setProgressPercentage(50);
             }
             if (
               newLog.includes("PROCESS COMPLETE") ||
@@ -257,6 +263,7 @@ const SinglePage = ({
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
+      setLoading(true);
       if (mode == "DUP") {
         spawnResponse = await fetch(
           `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
@@ -280,19 +287,21 @@ const SinglePage = ({
           }
         );
       }
-      console.log(spawnResponse.status);
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
         const data = await spawnResponse.json();
         setCurrentId(data["result_id"]);
         setShowLogs(true);
-        setSubmitButtonStatus(false);
+        setLoading(false);
         await startFetchingLogs(data["result_id"]);
       }
     }
-    console.log(allCycles);
-    console.log(filteredCycles);
+  };
+
+  const preventClick = (event) => {
+    event.preventDefault();
+    return false;
   };
 
   const downloadCSV = async () => {
@@ -397,6 +406,8 @@ const SinglePage = ({
           terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
+          preventClick={preventClick}
+          loading={loading}
           progressPercentage={progressPercentage}
           processStatus={processStatus}
           logContainerRef={logContainerRef}
@@ -413,6 +424,7 @@ const SinglePage = ({
           multipleRequestAlertDesc={multipleRequestAlertDesc}
           setModalShow={setModalShow}
           handleClick={handleClick}
+          preventClick={preventClick}
           currentCycle={currentCycle}
           runName={runName}
           modalFile={modalFile}
@@ -426,7 +438,7 @@ const SinglePage = ({
           selectedModalError={selectedModalError}
           numberOfTopReviewersError={numberOfTopReviewersError}
           closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
-          submitButtonStatus={submitButtonStatus}
+          loading={loading}
         />
       )}
     </div>
