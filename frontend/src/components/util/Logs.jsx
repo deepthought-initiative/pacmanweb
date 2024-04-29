@@ -2,12 +2,14 @@
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import ProgressBar from "react-bootstrap/ProgressBar";
 
 const Logs = ({
   setShowTable,
   onTerminate,
   terminateAllProcesses,
   logs,
+  progressPercentage,
   processStatus,
   logContainerRef,
   showTerminateProcess,
@@ -18,12 +20,21 @@ const Logs = ({
     event.preventDefault();
     setShowTable(true);
   };
+
+  const variant =
+    progressPercentage < 100 ? "" : processStatus ? "success" : "danger";
+
   return (
     <>
+      <ProgressBar
+        variant={variant}
+        animated={progressPercentage < 100}
+        now={progressPercentage}
+      />
       <div
         ref={logContainerRef}
         id="log-container"
-        className="container-fluid mt-5"
+        className="container-fluid mt-4"
       >
         {logs.map((log, index) => (
           <div
