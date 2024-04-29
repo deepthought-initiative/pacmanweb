@@ -27,12 +27,20 @@ const Logs = ({
   const variant =
     progressPercentage < 100 ? "" : processStatus ? "success" : "danger";
 
+  const progressBarLabel =
+    progressPercentage < 100
+      ? ""
+      : processStatus
+      ? "Process Successful!"
+      : "Process Failed!";
+
   return (
     <>
       <ProgressBar
         variant={variant}
         animated={progressPercentage < 100}
         now={progressPercentage}
+        label={progressBarLabel}
       />
       <div
         ref={logContainerRef}

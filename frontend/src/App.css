@@ -61,7 +61,9 @@ body {
 .progress{
   margin-top: 20px;
   margin-bottom: 20px;
+  font-size: 1.5rem;
   color: green !important;
+  height: 48px;
 }
 .progress-bar{
   background-color: #7A8E99;

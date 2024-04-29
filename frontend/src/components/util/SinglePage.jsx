@@ -211,7 +211,6 @@ const SinglePage = ({
           };
           eventSource.onmessage = async (event) => {
             const newLog = event.data;
-            console.log("message");
             if (newLog.includes("STARTING RUN")) {
               setProgressPercentage(10);
             }
