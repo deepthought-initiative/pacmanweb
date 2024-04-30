@@ -58,6 +58,15 @@ body {
   font-style: normal !important;
 }
 
+.progress{
+  margin-top: 20px;
+  font-size: 1.5rem;
+  height: 48px;
+}
+.progress-bar{
+  background-color: #7A8E99;
+}
+
 h6 {
   text-align: left;
   padding-bottom: 0.1em;
@@ -374,6 +383,9 @@ h3{
   }
 }
 
+.form-page-button{
+    width: 220px;
+}
 .input-group input {
   height: 50px;
   font-size: 16px;

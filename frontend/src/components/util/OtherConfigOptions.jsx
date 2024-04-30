@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import Spinner from "react-bootstrap/Spinner";
 import "../../css/otherConfigOptions.css";
 import AlertModal from "./AlertBox.jsx";
 import InputConfigOption from "./InputConfigOption";
@@ -12,6 +13,7 @@ const OtherConfigOptions = ({
   multipleRequestAlertDesc,
   setModalShow,
   handleClick,
+  preventClick,
   runName,
   modalFile,
   numberOfTopReviewers,
@@ -24,7 +26,7 @@ const OtherConfigOptions = ({
   selectedModalError,
   numberOfTopReviewersError,
   closeCollaboratorTimeFrameError,
-  submitButtonStatus,
+  loading,
 }) => {
   const validModalFile = modalFile.map((modal) => ({
     cycleNumber: modal,
@@ -33,6 +35,7 @@ const OtherConfigOptions = ({
       backgroundColor: "",
     },
   }));
+
   return (
     <form>
       <div className="separator">Other Options</div>
@@ -96,11 +99,18 @@ const OtherConfigOptions = ({
       <div className="row mt-5">
         <div className="col-md-6 text-start">
           <button
-            className="btn rounded-0"
-            onClick={handleClick}
-            disabled={!submitButtonStatus}
+            className="btn form-page-button rounded-0"
+            onClick={loading ? preventClick : handleClick}
           >
-            {button_label}
+            {loading ? (
+              <>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </>
+            ) : (
+              button_label
+            )}
           </button>
         </div>
       </div>

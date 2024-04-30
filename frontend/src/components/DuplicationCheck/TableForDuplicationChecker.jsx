@@ -25,6 +25,7 @@ const TableForDuplicationChecker = ({
     "Yellow (moderate similarity): Between 0.2 and 0.59",
     "Green (low similarity): Below 0.2 ",
   ];
+
   const reformatData = (originalData) => {
     const reformattedData = {};
 
@@ -38,17 +39,8 @@ const TableForDuplicationChecker = ({
         reformattedData[firstNo] = [];
       }
 
-      if (!reformattedData[secondNo]) {
-        reformattedData[secondNo] = [];
-      }
-
       reformattedData[firstNo].push({
         duplicateProposalNumber: secondNo.toString(),
-        ...originalData[key],
-      });
-
-      reformattedData[secondNo].push({
-        duplicateProposalNumber: firstNo.toString(),
         ...originalData[key],
       });
     }
@@ -102,11 +94,11 @@ const TableForDuplicationChecker = ({
               <tbody>
                 {reformatData(dataToDisplay) &&
                   Object.entries(reformatData(dataToDisplay)).map(
-                    ([key, value]) => (
+                    ([key, value], index) => (
                       <tr
                         onClick={() => handleHighlight(key)}
                         className={highlighted === key ? "highlighted" : ""}
-                        key={key}
+                        key={index}
                       >
                         <td className="col-6 text-break" scope="row">
                           {key}
@@ -140,21 +132,23 @@ const TableForDuplicationChecker = ({
                 <tbody>
                   {reformatData(dataToDisplay) &&
                     reformatData(dataToDisplay)[currentRow] &&
-                    reformatData(dataToDisplay)[currentRow].map((row) => (
-                      <tr key={row["no"]}>
-                        <td className="text-break">{row["Cycle 2"]}</td>
-                        <td className="text-break">
-                          {row["duplicateProposalNumber"]}
-                        </td>
-                        <td
-                          className={`text-break ${applySimilarityScoreBgColor(
-                            row["Similarity"]
-                          )}`}
-                        >
-                          {row["Similarity"]}
-                        </td>
-                      </tr>
-                    ))}
+                    reformatData(dataToDisplay)[currentRow].map(
+                      (row, index) => (
+                        <tr key={index}>
+                          <td className="text-break">{row["Cycle 2"]}</td>
+                          <td className="text-break">
+                            {row["duplicateProposalNumber"]}
+                          </td>
+                          <td
+                            className={`text-break ${applySimilarityScoreBgColor(
+                              row["Similarity"]
+                            )}`}
+                          >
+                            {row["Similarity"]}
+                          </td>
+                        </tr>
+                      )
+                    )}
                 </tbody>
               </table>
             </div>
