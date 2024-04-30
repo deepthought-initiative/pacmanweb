@@ -163,12 +163,12 @@ class DupCat:
             names=["Proposal 1", "Proposal 2", "Similarity"],
             delimiter=" ",
         )
-        data["Proposal Set"] = data.apply(
-            lambda row: frozenset([row["Proposal 1"], row["Proposal 2"]]), axis=1
-        )
-        data["Sorted Set"] = data["Proposal Set"].apply(lambda s: tuple(sorted(s)))
-        data = data.drop_duplicates(subset="Sorted Set")
-        data = data.drop(columns=["Proposal Set", "Sorted Set"])
+        # data["Proposal Set"] = data.apply(
+        #     lambda row: frozenset([row["Proposal 1"], row["Proposal 2"]]), axis=1
+        # )
+        # data["Sorted Set"] = data["Proposal Set"].apply(lambda s: tuple(sorted(s)))
+        # data = data.drop_duplicates(subset="Sorted Set")
+        # data = data.drop(columns=["Proposal Set", "Sorted Set"])
         data[["Proposal 1", "Proposal 2"]] = data[["Proposal 1", "Proposal 2"]].astype(
             str
         )
@@ -184,8 +184,8 @@ class DupCat:
         if self.response != {}:
             return self.response, 500
         self.data = self.parse_duplicates(self.dup_fpath)
-        cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
-        cycle_data = cycle_data.droplevel(0).T.to_dict()
+        self.data = self.data.set_index("Cycle 2", append=True)
+        cycle_data = self.data.droplevel(0).T.to_dict()        
         cycle_data = {str(key): value for key, value in cycle_data.items()}
         return cycle_data, 200
 
