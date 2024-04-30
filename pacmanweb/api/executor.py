@@ -14,14 +14,17 @@ class RunPACMan:
     def __init__(
         self,
         run_name=None,
+        log_level=None,
         celery_task_id=None,
         main_test_cycle="",
         past_cycles=[],
         mode=None,
         runs_dir="",
-        modelfile="strolger_pacman_model_7cycles.joblib",
-        assignment_number_top_reviewers=5,
-        close_collaborator_time_frame=3,
+        modelfile=None,
+        assignment_number_top_reviewers=None,
+        close_collaborator_time_frame=None,
+        duplication_checker_newcycles=None,
+        duplication_checker_need_new_texts=None,
         current_user=None
     ):
         """Initialise RunPACMan Class.
@@ -50,8 +53,8 @@ class RunPACMan:
 
         if runs_dir == "":
             runs_dir = "./runs"
-
-        proc_options = [
+        
+        all_mode_options = [
             "categorize_one_cycle",
             "get_science_categories",
             "compare_results_real",
@@ -59,21 +62,7 @@ class RunPACMan:
             "categorize_ads_reviewers",
             "cross_validate",
         ]
-        options = {item: "false" for item in proc_options}
-        assignment_number_top_reviewers = int(assignment_number_top_reviewers)
-        close_collaborator_time_frame = int(close_collaborator_time_frame)
-
-        options = options | dict(
-            run_name=run_name,
-            reuse_run=reuse_run,
-            main_test_cycle=main_test_cycle,
-            past_cycles=past_cycles,
-            runs_dir=runs_dir,
-            modelfile=modelfile,
-            assignment_number_top_reviewers=assignment_number_top_reviewers,
-            close_collaborator_time_frame=close_collaborator_time_frame,
-        )
-        self.mode = mode
+        all_mode_options = {item: "false" for item in all_mode_options}
 
         if mode == "PROP":
             mode_options = {
@@ -84,6 +73,7 @@ class RunPACMan:
 
         if mode == "DUP":
             mode_options = {"duplication_checker": "true"}
+            
 
         if mode == "MATCH":
             mode_options = {
@@ -92,12 +82,43 @@ class RunPACMan:
                 "get_science_categories": "true",
                 "compare_results_real": "true",
             }
+            if assignment_number_top_reviewers:
+                assignment_number_top_reviewers = int(assignment_number_top_reviewers)
+            if close_collaborator_time_frame:
+                close_collaborator_time_frame = int(close_collaborator_time_frame)
 
         if mode == "ALL":
-            mode_options = {item: "true" for item in proc_options}
+            mode_options = {item: "true" for item in all_mode_options}
+
+        # get the defaults from options.yaml file
+        pacman_options_file = Config.section_options
+        defaults = {}
+        [defaults.update(item['optional']) for item in pacman_options_file.values()]
+
+        # update the current run options
+        mode_options = all_mode_options | mode_options
+        # add default values from the options file
+        mode_options = mode_options | defaults
+
+        options = dict(
+            run_name=run_name, # celery task id by default
+            reuse_run=reuse_run,
+            main_test_cycle=main_test_cycle,
+            past_cycles=past_cycles,
+            runs_dir=runs_dir,
+            modelfile=modelfile,
+            assignment_number_top_reviewers=assignment_number_top_reviewers,
+            close_collaborator_time_frame=close_collaborator_time_frame,
+            duplication_checker_newcycles=duplication_checker_newcycles,
+            duplication_checker_need_new_texts=duplication_checker_need_new_texts,
+        )
+        # update options dict with defaults in provided arguments
+        options.update((key, value) for key, value in options.items() if value is not None)
+        self.mode = mode
 
         options = options | mode_options
         self.options = options
+        print(options)
 
         self.flask_config = Config()
         self.pacman_path = self.flask_config.PACMAN_PATH
