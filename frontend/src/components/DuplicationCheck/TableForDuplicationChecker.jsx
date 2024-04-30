@@ -37,6 +37,10 @@ const TableForDuplicationChecker = ({
         reformattedData[firstNo] = [];
       }
 
+      if (!reformattedData[secondNo]) {
+        reformattedData[secondNo] = [];
+      }
+
       reformattedData[firstNo].push({
         duplicateProposalNumber: secondNo,
         Cycle2: cycleNumber,
@@ -137,21 +141,23 @@ const TableForDuplicationChecker = ({
                 <tbody>
                   {reformatData(dataToDisplay) &&
                     reformatData(dataToDisplay)[currentRow] &&
-                    reformatData(dataToDisplay)[currentRow].map((row) => (
-                      <tr key={row["no"]}>
-                        <td className="text-break">{row["Cycle2"]}</td>
-                        <td className="text-break">
-                          {row["duplicateProposalNumber"]}
-                        </td>
-                        <td
-                          className={`text-break ${applySimilarityScoreBgColor(
-                            row["Similarity"]
-                          )}`}
-                        >
-                          {row["Similarity"]}
-                        </td>
-                      </tr>
-                    ))}
+                    reformatData(dataToDisplay)[currentRow].map(
+                      (row, index) => (
+                        <tr key={index}>
+                          <td className="text-break">{row["Cycle2"]}</td>
+                          <td className="text-break">
+                            {row["duplicateProposalNumber"]}
+                          </td>
+                          <td
+                            className={`text-break ${applySimilarityScoreBgColor(
+                              row["Similarity"]
+                            )}`}
+                          >
+                            {row["Similarity"]}
+                          </td>
+                        </tr>
+                      )
+                    )}
                 </tbody>
               </table>
             </div>
