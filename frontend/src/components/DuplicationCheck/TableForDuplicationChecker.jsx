@@ -46,12 +46,6 @@ const TableForDuplicationChecker = ({
         Cycle2: cycleNumber,
         ...originalData[key],
       });
-
-      reformattedData[secondNo].push({
-        duplicateProposalNumber: firstNo,
-        Cycle2: cycleNumber,
-        ...originalData[key],
-      });
     }
 
     return reformattedData;
