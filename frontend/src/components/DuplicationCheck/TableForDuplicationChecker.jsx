@@ -30,17 +30,22 @@ const TableForDuplicationChecker = ({
     const reformattedData = {};
 
     for (const key in originalData) {
-      const [firstNo, secondNo] = key
-        .replace(/[()]/g, "")
-        .split(", ")
-        .map(Number);
+      const [firstNo, secondNo, cycle] = key.replace(/[()']/g, "").split(", ");
+      const cycleNumber = parseInt(cycle, 10);
 
       if (!reformattedData[firstNo]) {
         reformattedData[firstNo] = [];
       }
 
       reformattedData[firstNo].push({
-        duplicateProposalNumber: secondNo.toString(),
+        duplicateProposalNumber: secondNo,
+        Cycle2: cycleNumber,
+        ...originalData[key],
+      });
+
+      reformattedData[secondNo].push({
+        duplicateProposalNumber: firstNo,
+        Cycle2: cycleNumber,
         ...originalData[key],
       });
     }
@@ -132,23 +137,21 @@ const TableForDuplicationChecker = ({
                 <tbody>
                   {reformatData(dataToDisplay) &&
                     reformatData(dataToDisplay)[currentRow] &&
-                    reformatData(dataToDisplay)[currentRow].map(
-                      (row, index) => (
-                        <tr key={index}>
-                          <td className="text-break">{row["Cycle 2"]}</td>
-                          <td className="text-break">
-                            {row["duplicateProposalNumber"]}
-                          </td>
-                          <td
-                            className={`text-break ${applySimilarityScoreBgColor(
-                              row["Similarity"]
-                            )}`}
-                          >
-                            {row["Similarity"]}
-                          </td>
-                        </tr>
-                      )
-                    )}
+                    reformatData(dataToDisplay)[currentRow].map((row) => (
+                      <tr key={row["no"]}>
+                        <td className="text-break">{row["Cycle2"]}</td>
+                        <td className="text-break">
+                          {row["duplicateProposalNumber"]}
+                        </td>
+                        <td
+                          className={`text-break ${applySimilarityScoreBgColor(
+                            row["Similarity"]
+                          )}`}
+                        >
+                          {row["Similarity"]}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
