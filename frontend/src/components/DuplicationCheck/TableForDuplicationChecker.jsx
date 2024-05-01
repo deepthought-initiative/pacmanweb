@@ -37,17 +37,12 @@ const TableForDuplicationChecker = ({
         reformattedData[firstNo] = [];
       }
 
-      if (!reformattedData[secondNo]) {
-        reformattedData[secondNo] = [];
-      }
-
       reformattedData[firstNo].push({
         duplicateProposalNumber: secondNo,
         Cycle2: cycleNumber,
         ...originalData[key],
       });
     }
-
     return reformattedData;
   };
 
