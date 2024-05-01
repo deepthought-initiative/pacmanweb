@@ -25,12 +25,16 @@ const Logs = ({
   };
 
   const variant =
-    progressPercentage < 100 ? "" : processStatus ? "success" : "danger";
+    progressPercentage < 100
+      ? ""
+      : processStatus === 200 || processStatus === 204
+      ? "success"
+      : "danger";
 
   const progressBarLabel =
     progressPercentage < 100
       ? ""
-      : processStatus
+      : processStatus === 200 || processStatus === 204
       ? "Process Successful!"
       : "Process Failed!";
 
@@ -52,7 +56,7 @@ const Logs = ({
             key={index}
             className={
               !showTerminateProcess && index === logs.length - 1
-                ? processStatus
+                ? processStatus === 200 || processStatus === 204
                   ? "success"
                   : "failed"
                 : ""
@@ -79,7 +83,7 @@ const Logs = ({
             )}
           </button>
         </div>
-      ) : !processStatus ? (
+      ) : processStatus !== 200 ? (
         <div className="button-tray container-fluid p-0">
           <button className="btn rounded-0" onClick={onTerminate}>
             Categorize Another Cycle

@@ -46,7 +46,7 @@ const SinglePage = ({
   const [pastCycleError, setPastCycleError] = useState("");
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
-  const [processStatus, setProcessStatus] = useState(false);
+  const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
 
   //loading
@@ -122,7 +122,7 @@ const SinglePage = ({
     setProgressPercentage(0);
     setLogs([]);
     setShowTerminateProcess(true);
-    setProcessStatus(false);
+    setProcessStatus();
     setCurrentCycle("");
     setPastCycle([]);
     setRunName("");
@@ -176,17 +176,18 @@ const SinglePage = ({
         }
         const tableData = await tableResponse.json();
         const [tabularData, code] = tableData;
-        console.log(tabularData, code);
         setDataToDisplay(tabularData);
-        if (code !== 200) {
-          setProcessStatus(false);
+        setProcessStatus(code);
+        if (code === 200) {
+          setProgressPercentage(100);
+          setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
+        } else if (code === 204) {
+          setProgressPercentage(100);
+          setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
+        } else {
           setProgressPercentage(100);
           alert("Process failed! Please try again");
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-        } else {
-          setProcessStatus(true);
-          setProgressPercentage(100);
-          setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
