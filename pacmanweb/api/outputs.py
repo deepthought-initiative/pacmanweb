@@ -146,14 +146,20 @@ class DupCat:
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
         self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.response = {}
+        self.response_code = 200
         if (
             not self.dup_fpath.exists()
             or not access(self.dup_fpath, R_OK)
-            or stat(self.dup_fpath).st_size == 0
         ):
             self.response = {
                 "value": "duplications.txt file not accessible for this cycle."
             }
+            self.response_code = 500
+        elif stat(self.dup_fpath).st_size == 0:
+            self.response = {
+                "value": "duplications.txt file is empty."
+            }
+            self.response_code = 204
         self.celery_task_id = celery_task_id
 
     def parse_duplicates(self, dup_fpath):
@@ -182,7 +188,7 @@ class DupCat:
 
     def get_for_cycle(self, cycle=None):
         if self.response != {}:
-            return self.response, 500
+            return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
         self.data = self.data.set_index("Cycle 2", append=True)
         cycle_data = self.data.droplevel(0).T.to_dict()        
@@ -191,7 +197,7 @@ class DupCat:
 
     def generate_dup_response_csv(self, cycle=None):
         if self.response != {}:
-            return self.response, 500
+            return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
         cycle_data = self.data[self.data.index.get_level_values("Cycle 1") == cycle]
         cycle_data.droplevel(0).to_csv(
