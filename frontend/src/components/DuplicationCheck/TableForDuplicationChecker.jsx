@@ -42,14 +42,7 @@ const TableForDuplicationChecker = ({
         Cycle2: cycleNumber,
         ...originalData[key],
       });
-
-      reformattedData[secondNo].push({
-        duplicateProposalNumber: firstNo,
-        Cycle2: cycleNumber,
-        ...originalData[key],
-      });
     }
-
     return reformattedData;
   };
 
@@ -137,21 +130,23 @@ const TableForDuplicationChecker = ({
                 <tbody>
                   {reformatData(dataToDisplay) &&
                     reformatData(dataToDisplay)[currentRow] &&
-                    reformatData(dataToDisplay)[currentRow].map((row) => (
-                      <tr key={row["no"]}>
-                        <td className="text-break">{row["Cycle2"]}</td>
-                        <td className="text-break">
-                          {row["duplicateProposalNumber"]}
-                        </td>
-                        <td
-                          className={`text-break ${applySimilarityScoreBgColor(
-                            row["Similarity"]
-                          )}`}
-                        >
-                          {row["Similarity"]}
-                        </td>
-                      </tr>
-                    ))}
+                    reformatData(dataToDisplay)[currentRow].map(
+                      (row, index) => (
+                        <tr key={index}>
+                          <td className="text-break">{row["Cycle2"]}</td>
+                          <td className="text-break">
+                            {row["duplicateProposalNumber"]}
+                          </td>
+                          <td
+                            className={`text-break ${applySimilarityScoreBgColor(
+                              row["Similarity"]
+                            )}`}
+                          >
+                            {row["Similarity"]}
+                          </td>
+                        </tr>
+                      )
+                    )}
                 </tbody>
               </table>
             </div>
