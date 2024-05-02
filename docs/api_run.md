@@ -7,7 +7,7 @@ To try out the API yourself, we'd recommend using [Postman](https://www.postman.
 
 #### Spawning a new PACMan process 
 A new process can be spawned with- \
-[http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026](http://127.0.0.1:5000/api/run_pacman?mode=DUP&past_cycles=221026,231026) \
+[http://127.0.0.1:8000/api/run_pacman?mode=DUP&past_cycles=221026,231026](http://127.0.0.1:8000/api/run_pacman?mode=DUP&past_cycles=221026,231026) \
 This should get you the following response-
 ```json
 {
@@ -21,7 +21,7 @@ At the moment, to prevent spamming, each user can only run process of one mode a
 
 #### Seeing the progress of the run 
 You can see the progress of the run in your Celery logs terminal or by sending another request-
-[http://127.0.0.1:5000/api/prev_runs/<result_id>](http://127.0.0.1:5000/api/prev_runs/<result_id>) \
+[http://127.0.0.1:8000/api/prev_runs/<result_id>](http://127.0.0.1:8000/api/prev_runs/<result_id>) \
 Replace the `result_id` above with the hash you got in the previous response. If the process is still going on, it would send you a response like this-
 ```json
 {
@@ -41,24 +41,24 @@ If it completed, the response would include the traceback of the run.
 ```
 
 #### Terminating a task 
-To terminate a task, run- [http://127.0.0.1:5000/api/terminate/<result_id>](http://127.0.0.1:5000/api/terminate/<result_id>). Please ensure to provide the mode of the process as params too.
+To terminate a task, run- [http://127.0.0.1:8000/api/terminate/<result_id>](http://127.0.0.1:8000/api/terminate/<result_id>). Please ensure to provide the mode of the process as params too.
 
 #### Streaming Responses
 Unfortunately, you cannot test streaming APIs on PACMan, but you can try them in your web browser- \
-[http://127.0.0.1:5000/api/stream/<result_id>](http://127.0.0.1:5000/api/stream/<result_id>)
+[http://127.0.0.1:8000/api/stream/<result_id>](http://127.0.0.1:8000/api/stream/<result_id>)
 
 #### Getting Results 
-To get results you can do [http://127.0.0.1:5000/api/outputs/<output_mode>/<result_id>?cycle_number=221026](http://127.0.0.1:5000/api/outputs/<output_mode>/<result_id>?cycle_number=221026) 
+To get results you can do [http://127.0.0.1:8000/api/outputs/<output_mode>/<result_id>?cycle_number=221026](http://127.0.0.1:8000/api/outputs/<output_mode>/<result_id>?cycle_number=221026) 
 
 You will have to replace the `output_mode` by one of the following- `proposal_cat_output`, `duplicates_output` or `match_reviewers_output`. `result_id` will be the hash from the output. Cycle number here is 221026 but that can be changed to something else.
 
 
 #### Uploading files
-The API- http://127.0.0.1:5000/api/upload can be used to upload files to the PACMan repo. Unlike other requests, this will be a `POST` request with the files as form data in the body of the URL. There are a few contraints though-
+The API- http://127.0.0.1:8000/api/upload can be used to upload files to the PACMan repo. Unlike other requests, this will be a `POST` request with the files as form data in the body of the URL. There are a few contraints though-
 - The file has to be a zip file, or it will be rejected by the API. 
 - Panelist and model files can be placed in the root of the zip folder or inside separate folders- but the folder names must contain words "panelist" and "model" respectively.
 - Proposal files **need** to be in a separate folder, each proposal file being inside it's cycle folder. For example, for proposal 1 of Cycle 221026, the file path will be `zip_file_root/221026/00001.txtx`
 
 #### Getting available cycles and models
-The API- http://127.0.0.1:5000/api/get_cycles will return available cycles in panelist and proposal folders and the models present in the models folder. 
+The API- http://127.0.0.1:8000/api/get_cycles will return available cycles in panelist and proposal folders and the models present in the models folder. 
 

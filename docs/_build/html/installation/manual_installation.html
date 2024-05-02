@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Manual Installation &#8212; PACManWeb Docs</title>
+    <title>Without Docker Installation &#8212; PACManWeb Docs</title>
   
   
   
@@ -42,7 +42,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -180,7 +180,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Installation Prerequisites</a></li>
 <li class="toctree-l1"><a class="reference internal" href="docker_setup.html">Docker Compose Setup</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Manual Installation</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Without Docker Installation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Code</span></p>
 <ul class="nav bd-sidenav">
@@ -371,7 +371,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Manual Installation</h1>
+    <h1>Without Docker Installation</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -381,7 +381,7 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-installation-specific-prerequisites">Manual Installation Specific Prerequisites</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#frontend-modifications">Frontend Modifications</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-modifications">Backend Modifications</a></li>
 </ul>
@@ -389,7 +389,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frontend-installation">Frontend Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-installation">Backend Installation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
 </ul>
@@ -405,11 +404,11 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="manual-installation">
-<h1>Manual Installation<a class="headerlink" href="#manual-installation" title="Link to this heading">#</a></h1>
-<section id="manual-installation-specific-prerequisites">
-<h2>Manual Installation Specific Prerequisites<a class="headerlink" href="#manual-installation-specific-prerequisites" title="Link to this heading">#</a></h2>
-<p>Changes you need to do only when running the application manually.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="without-docker-installation">
+<h1>Without Docker Installation<a class="headerlink" href="#without-docker-installation" title="Link to this heading">#</a></h1>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">#</a></h2>
+<p>Changes you need to do only when running the application without docker.</p>
 <section id="frontend-modifications">
 <h3>Frontend Modifications<a class="headerlink" href="#frontend-modifications" title="Link to this heading">#</a></h3>
 <p>Head over to <code class="docutils literal notranslate"><span class="pre">frontend/vite.config.js</span></code> and follow the instructions there(you will need to do this is the latest commit is from the main branch)
@@ -434,8 +433,8 @@ You will need to comment the line</p>
 <section id="frontend-installation">
 <h2>Frontend Installation<a class="headerlink" href="#frontend-installation" title="Link to this heading">#</a></h2>
 <p>To install frontend dependencies, start by installing node and npm. Instructions to do so can be found here- <a class="reference external" href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-installer-to-install-nodejs-and-npm">https://docs.npmjs.com/downloading-and-installing-node-js-and-npm#using-a-node-installer-to-install-nodejs-and-npm</a></p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>npm install
-npm run dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+npm<span class="w"> </span>run<span class="w"> </span>dev
 </pre></div>
 </div>
 </section>
@@ -447,29 +446,6 @@ npm run dev
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mamba<span class="w"> </span>env<span class="w"> </span>create<span class="w"> </span>--file<span class="w"> </span>env.yml<span class="w"> </span>--name<span class="w"> </span>pacmanweb
 </pre></div>
 </div>
-<p>Instructions to install the PACMan environment are listed here- <a class="github reference external" href="https://github.com/spacetelescope/PACMan?tab=readme-ov-file#installation">spacetelescope/PACMan</a>.</p>
-</section>
-<section id="config-variables">
-<h3>Config Variables<a class="headerlink" href="#config-variables" title="Link to this heading">#</a></h3>
-<p>PACManWeb needs access to a <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file to work, this needs to be present in the root of the PACManWeb repository.
-The <code class="docutils literal notranslate"><span class="pre">secrets.json</span></code> file will be like this-</p>
-<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-<span class="w">    </span><span class="nt">&quot;secret_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;default_password&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ADS_DEV_KEY&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;ENV_NAME&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">    </span><span class="nt">&quot;users&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nt">&quot;user1&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;password1&quot;</span><span class="err">;</span>
-<span class="w">        </span><span class="nt">&quot;user2&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;password2&quot;</span>
-<span class="w">    </span><span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p>The secret key is a hash and can be generated by</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;import secrets; print(secrets.token_hex())&#39;</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">user</span></code> key is a dictionary with key value pairs of users and their passwords. The default password is your password to access the application API. PACManWeb uses Basic Auth for secure transmission of files and execution of the application. <code class="docutils literal notranslate"><span class="pre">ADS_DEV_KEY</span></code> is the key that PACMan would use to access the ADS Database. <code class="docutils literal notranslate"><span class="pre">ENV_NAME</span></code> contains the name of the conda environment of PACMan.</p>
 </section>
 <section id="setting-up-celery">
 <h3>Setting up Celery<a class="headerlink" href="#setting-up-celery" title="Link to this heading">#</a></h3>
@@ -485,14 +461,14 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
 <li><p>RabbitMQ instructions can be found here- <a class="reference external" href="https://www.rabbitmq.com/download.html">https://www.rabbitmq.com/download.html</a>. Once installed, RabbitMQ will need to be setup with these commands- <a class="reference external" href="https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq">https://docs.celeryq.dev/en/stable/getting-started/backends-and-brokers/rabbitmq.html#setting-up-rabbitmq</a>.</p></li>
 </ul>
 <p>Once Redis and RabbitMQ are setup, you can start running celery.</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>celery -A pacmanweb.celery_app worker --loglevel=info
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>celery<span class="w"> </span>-A<span class="w"> </span>pacmanweb.celery_app<span class="w"> </span>worker<span class="w"> </span>--loglevel<span class="o">=</span>info<span class="w"> </span>-c<span class="w"> </span><span class="m">10</span><span class="w"> </span>-E
 </pre></div>
 </div>
 </section>
 <section id="starting-flask-application">
 <h3>Starting Flask Application<a class="headerlink" href="#starting-flask-application" title="Link to this heading">#</a></h3>
 <p>To start Flask in developement mode-</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask<span class="w"> </span>run
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>flask<span class="w"> </span>--app<span class="w"> </span>pacmanweb<span class="w"> </span>run<span class="w"> </span>--port<span class="w"> </span><span class="m">8000</span><span class="w"> </span>--debug
 </pre></div>
 </div>
 </section>
@@ -563,7 +539,7 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-installation-specific-prerequisites">Manual Installation Specific Prerequisites</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisites">Prerequisites</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#frontend-modifications">Frontend Modifications</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-modifications">Backend Modifications</a></li>
 </ul>
@@ -571,7 +547,6 @@ The <code class="docutils literal notranslate"><span class="pre">secrets.json</s
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#frontend-installation">Frontend Installation</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#backend-installation">Backend Installation</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#install-conda-environments">Install Conda Environments</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#config-variables">Config Variables</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#setting-up-celery">Setting up Celery</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#starting-flask-application">Starting Flask Application</a></li>
 </ul>
