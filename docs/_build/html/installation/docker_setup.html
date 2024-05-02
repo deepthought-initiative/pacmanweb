@@ -42,7 +42,7 @@
   <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -60,7 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'installation/docker_setup';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Manual Installation" href="manual_installation.html" />
+    <link rel="next" title="Without Docker Installation" href="manual_installation.html" />
     <link rel="prev" title="Installation Prerequisites" href="prerequisites.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -180,7 +180,7 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Installation Prerequisites</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Docker Compose Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="manual_installation.html">Manual Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manual_installation.html">Without Docker Installation</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Code</span></p>
 <ul class="nav bd-sidenav">
@@ -415,10 +415,10 @@ document.write(`
 </div>
 <section id="docker-specific-prerequisites">
 <h2>Docker Specific Prerequisites<a class="headerlink" href="#docker-specific-prerequisites" title="Link to this heading">#</a></h2>
-<p>Edits to be done when running the application using docker compose.</p>
+<p>Edits to be done when running the application using docker compose. Usually, if you are on the latest commit on main, you won’t need to do this.</p>
 <section id="frontend-modifications">
 <h3>Frontend Modifications<a class="headerlink" href="#frontend-modifications" title="Link to this heading">#</a></h3>
-<p>Head over to <code class="docutils literal notranslate"><span class="pre">frontend/vite.config.js</span></code> and follow the instructions there(only if you edited the file, should work by default on the <code class="docutils literal notranslate"><span class="pre">main</span></code> branch).
+<p>Head over to <code class="docutils literal notranslate"><span class="pre">frontend/vite.config.js</span></code> and follow the instructions there.
 You will need to uncomment the line</p>
 <div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">REACT_APP_BASE_URL</span><span class="p">,</span><span class="w"> </span><span class="nx">REACT_APP_API_URL</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">;</span>
 </pre></div>
@@ -444,7 +444,7 @@ You will need to uncomment the line</p>
 docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.yml<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span><span class="c1"># starts the containers in detached mode</span>
 </pre></div>
 </div>
-<p>For shutting them down and removing them and attached volumes</p>
+<p>For shutting them down, removing them and attached volumes</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> </span>docker-compose.yml<span class="w"> </span>down<span class="w"> </span>-v
 </pre></div>
 </div>
@@ -455,10 +455,6 @@ docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> 
 <section id="no-space-left-on-device">
 <h3>No space left on device<a class="headerlink" href="#no-space-left-on-device" title="Link to this heading">#</a></h3>
 <p>This usually occurs in virtual machines. Ensure that there is appropriate space remaining in the virtual machine using <code class="docutils literal notranslate"><span class="pre">df</span> <span class="pre">-h</span></code>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>You can also clean all the space and do a fresh start with <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">system</span> <span class="pre">prune</span> <span class="pre">-a</span> <span class="pre">--volumes</span></code> but you need to careful with it. This will <strong>remove</strong> all containers and attached volumes.</p>
-</div>
 </section>
 <section id="eof-error">
 <h3><code class="docutils literal notranslate"><span class="pre">EOF</span></code> Error<a class="headerlink" href="#eof-error" title="Link to this heading">#</a></h3>
@@ -535,7 +531,7 @@ docker<span class="w"> </span>compose<span class="w"> </span>-f<span class="w"> 
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Manual Installation</p>
+        <p class="prev-next-title">Without Docker Installation</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
