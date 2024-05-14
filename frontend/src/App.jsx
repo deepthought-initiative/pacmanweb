@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
+import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
+import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
-import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
+import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
 import MainNavbar from "./components/util/Navbar";
-import SinglePage from "./components/util/SinglePage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -47,7 +47,7 @@ function App() {
           <Route
             path="/categorize"
             element={
-              <SinglePage
+              <CategorizationForm
                 key="PROP"
                 mode="PROP"
                 allCycles={allCycles}
@@ -58,44 +58,13 @@ function App() {
               />
             }
           />
-          <Route
-            path="/duplication"
-            element={
-              <SinglePage
-                key="DUP"
-                mode="DUP"
-                allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
-                renderTableComponent={(props) => (
-                  <TableForDuplicationChecker {...props} />
-                )}
-                button_label="Duplication Check"
-              />
-            }
-          />
-          <Route
-            path="/review"
-            element={
-              <SinglePage
-                key="MATCH"
-                mode="MATCH"
-                allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
-                renderTableComponent={(props) => (
-                  <TableMatchReviewers {...props} />
-                )}
-                button_label="Match Reviewers"
-              />
-            }
-          />
+          <Route path="/duplication" element={<DuplicationForm />} />
+          <Route path="/review" element={<MatchReviewersForm />} />
           <Route path="/upload" element={<UploadZipForm />} />
           <Route
             path="/logout"
             element={<Logout setLoggedIn={setLoggedIn} />}
           />
-          <Route path="/ssc" element={<TableMatchReviewers />} />
         </Routes>
       </BrowserRouter>
     </>
