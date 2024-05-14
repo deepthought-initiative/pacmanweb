@@ -31,6 +31,7 @@ const CategorizationForm = ({
     "strolger_pacman_model_7cycles.joblib"
   );
   const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
+  const [logLevel, setLogLevel] = useState("info");
   const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
     useState(3);
   const [pastCycle, setPastCycle] = useState([]);
@@ -41,6 +42,7 @@ const CategorizationForm = ({
   const [selectedModalError, setSelectedModalError] = useState("");
   const [numberOfTopReviewersError, setNumberOfTopReviewersError] =
     useState("");
+  const [logLevelError, setLogLevelError] = useState("");
   const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
     useState("");
   const [pastCycleError, setPastCycleError] = useState("");
@@ -113,10 +115,12 @@ const CategorizationForm = ({
     setNumberOfTopReviewersError("");
     setCloseCollaboratorTimeFrameError("");
     setPastCycleError("");
+    setLogLevelError("");
   };
 
   const onTerminate = () => {
     setCurrentId();
+    setLogLevelError("");
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
@@ -419,6 +423,7 @@ const CategorizationForm = ({
       ) : (
         <OtherConfigOptions
           button_label={button_label}
+          logLevelError={logLevelError}
           modalShow={modalShow}
           multipleRequestAlertTitle={multipleRequestAlertTitle}
           multipleRequestAlertDesc={multipleRequestAlertDesc}
@@ -428,6 +433,8 @@ const CategorizationForm = ({
           currentCycle={currentCycle}
           runName={runName}
           modalFile={modalFile}
+          logLevel={logLevel}
+          setLogLevel={setLogLevel}
           numberOfTopReviewers={numberOfTopReviewers}
           closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
           selectedModal={selectedModal}
