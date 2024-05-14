@@ -6,7 +6,7 @@ import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
 // import DropdownConfigOption from "./DropdownConfigOption.jsx";
-import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
+import OtherConfigOptionsCategorize from "../util/OtherConfigOptionsCategorize.jsx";
 
 const CategorizationForm = ({
   allCycles,
@@ -421,7 +421,7 @@ const CategorizationForm = ({
           downloadZIP={downloadZIP}
         />
       ) : (
-        <OtherConfigOptions
+        <OtherConfigOptionsCategorize
           button_label={button_label}
           logLevelError={logLevelError}
           modalShow={modalShow}
