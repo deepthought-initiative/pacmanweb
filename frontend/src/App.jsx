@@ -5,6 +5,7 @@ import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
+import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
@@ -59,7 +60,22 @@ function App() {
             }
           />
           <Route path="/duplication" element={<DuplicationForm />} />
-          <Route path="/review" element={<MatchReviewersForm />} />
+          <Route
+            path="/review"
+            element={
+              <MatchReviewersForm
+                key="MATCH"
+                mode="MATCH"
+                allCycles={allCycles}
+                modalFile={modalFile}
+                setModalFile={setModalFile}
+                renderTableComponent={(props) => (
+                  <TableMatchReviewers {...props} />
+                )}
+                button_label="Match Reviewers"
+              />
+            }
+          />
           <Route path="/upload" element={<UploadZipForm />} />
           <Route
             path="/logout"
