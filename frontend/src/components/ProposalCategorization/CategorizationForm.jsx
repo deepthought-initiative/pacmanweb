@@ -3,12 +3,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
-import Logs from "../util/Logs";
-import NewDropdown from "./NewDropdown.jsx";
+import Logs from "../util/Logs.jsx";
+import NewDropdown from "../util/NewDropdown.jsx";
 // import DropdownConfigOption from "./DropdownConfigOption.jsx";
-import OtherConfigOptions from "./OtherConfigOptions";
+import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
 
-const SinglePage = ({
+const CategorizationForm = ({
   allCycles,
   modalFile,
   mode,
@@ -445,4 +445,4 @@ const SinglePage = ({
   );
 };
 
-export default SinglePage;
+export default CategorizationForm;
