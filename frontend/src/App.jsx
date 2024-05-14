@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
+import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
@@ -59,7 +60,22 @@ function App() {
               />
             }
           />
-          <Route path="/duplication" element={<DuplicationForm />} />
+          <Route
+            path="/duplication"
+            element={
+              <DuplicationForm
+                key="DUP"
+                mode="DUP"
+                allCycles={allCycles}
+                modalFile={modalFile}
+                setModalFile={setModalFile}
+                renderTableComponent={(props) => (
+                  <TableForDuplicationChecker {...props} />
+                )}
+                button_label="Categorize Proposals"
+              />
+            }
+          />
           <Route
             path="/review"
             element={
