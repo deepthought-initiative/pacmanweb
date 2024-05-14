@@ -103,6 +103,7 @@ class RunPACMan:
         options = dict(
             run_name=run_name, # celery task id by default
             reuse_run=reuse_run,
+            log_level=log_level,
             main_test_cycle=main_test_cycle,
             past_cycles=past_cycles,
             runs_dir=runs_dir,
