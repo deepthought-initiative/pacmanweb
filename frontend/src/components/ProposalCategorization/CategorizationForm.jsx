@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
-// import DropdownConfigOption from "./DropdownConfigOption.jsx";
 import OtherConfigOptionsCategorize from "../util/OtherConfigOptionsCategorize.jsx";
 
 const CategorizationForm = ({
@@ -22,7 +21,6 @@ const CategorizationForm = ({
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
   const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
 
   // state variables for other config options
@@ -30,22 +28,12 @@ const CategorizationForm = ({
   const [selectedModal, setSelectedModal] = useState(
     "strolger_pacman_model_7cycles.joblib"
   );
-  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
   const [logLevel, setLogLevel] = useState("info");
-  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
-    useState(3);
-  const [pastCycle, setPastCycle] = useState([]);
-  const bothPastandCurrentCycles = [...pastCycle, currentCycle];
 
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [selectedModalError, setSelectedModalError] = useState("");
-  const [numberOfTopReviewersError, setNumberOfTopReviewersError] =
-    useState("");
   const [logLevelError, setLogLevelError] = useState("");
-  const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
-    useState("");
-  const [pastCycleError, setPastCycleError] = useState("");
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
@@ -70,7 +58,6 @@ const CategorizationForm = ({
   }, [currentId, mode]);
 
   useEffect(() => {
-    setFilteredCycles(allCycles);
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
@@ -92,18 +79,8 @@ const CategorizationForm = ({
       setSelectedModalError("Required");
       noError = false;
     }
-    if (!numberOfTopReviewers) {
-      setNumberOfTopReviewersError("Required");
-      noError = false;
-    }
-    if (!closeCollaboratorTimeFrame) {
-      setCloseCollaboratorTimeFrameError("Required");
-      noError = false;
-    }
-
-    // Validate pastCycle only if mode is "DUP"
-    if (mode === "DUP" && pastCycle.length === 0) {
-      setPastCycleError("Select at least one");
+    if (!logLevel) {
+      setLogLevelError("Required");
       noError = false;
     }
     return noError;
@@ -112,9 +89,6 @@ const CategorizationForm = ({
   const resetErrors = () => {
     setCurrentCycleError("");
     setSelectedModalError("");
-    setNumberOfTopReviewersError("");
-    setCloseCollaboratorTimeFrameError("");
-    setPastCycleError("");
     setLogLevelError("");
   };
 
@@ -128,24 +102,16 @@ const CategorizationForm = ({
     setShowTerminateProcess(true);
     setProcessStatus();
     setCurrentCycle("");
-    setPastCycle([]);
     setRunName("");
     setSelectedModal("strolger_pacman_model_7cycles.joblib");
     setLoading(false);
-    setNumberOfTopReviewers(5);
-    setCloseCollaboratorTimeFrame(3);
   };
 
   const handleFilteringCycles = (newCurrentCycle) => {
     const newCycles = allCycles.filter((cycle) => {
       return cycle.cycleNumber !== newCurrentCycle;
     });
-    const newPastCycles = pastCycle.filter((cycle) => {
-      return cycle !== newCurrentCycle;
-    });
     setCurrentCycle(newCurrentCycle);
-    setPastCycle(newPastCycles);
-    setFilteredCycles(newCycles);
   };
 
   const fetchTable = useCallback(
@@ -156,12 +122,6 @@ const CategorizationForm = ({
       let tableCategory = "";
       if (mode == "PROP") {
         tableCategory = "proposal_cat_output";
-      }
-      if (mode == "DUP") {
-        tableCategory = "duplicates_output";
-      }
-      if (mode == "MATCH") {
-        tableCategory = "match_reviewers_output";
       }
       try {
         const tableResponse = await fetch(
@@ -268,29 +228,16 @@ const CategorizationForm = ({
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      if (mode == "DUP") {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
+      spawnResponse = await fetch(
+        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&log_level=${logLevel}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Basic " + btoa("default:barebones"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -376,20 +323,6 @@ const CategorizationForm = ({
             error={currentCycleError}
           />
         </div>
-        {mode === "DUP" && (
-          <div className="row col-md-6 ms-auto">
-            <NewDropdown
-              data={filteredCycles}
-              label="Selected Past Cycle(Multiple)"
-              desc="Cycle prefixes of past cycles"
-              inputField={pastCycle}
-              multiple={true}
-              setInputField={setPastCycle}
-              disabled={showTable || showLogs}
-              error={pastCycleError}
-            />
-          </div>
-        )}
       </div>
       {showTable ? (
         renderTableComponent({
@@ -435,16 +368,10 @@ const CategorizationForm = ({
           modalFile={modalFile}
           logLevel={logLevel}
           setLogLevel={setLogLevel}
-          numberOfTopReviewers={numberOfTopReviewers}
-          closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
           selectedModal={selectedModal}
           setSelectedModal={setSelectedModal}
           setRunName={setRunName}
-          setNumberOfTopReviewers={setNumberOfTopReviewers}
-          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
           selectedModalError={selectedModalError}
-          numberOfTopReviewersError={numberOfTopReviewersError}
-          closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
           loading={loading}
         />
       )}
