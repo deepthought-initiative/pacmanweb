@@ -72,7 +72,7 @@ function App() {
                 renderTableComponent={(props) => (
                   <TableForDuplicationChecker {...props} />
                 )}
-                button_label="Categorize Proposals"
+                button_label="Find Duplicates"
               />
             }
           />
