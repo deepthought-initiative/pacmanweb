@@ -94,7 +94,7 @@ const CategorizationForm = ({
 
   const onTerminate = () => {
     setCurrentId();
-    setLogLevelError("");
+    setLogLevel("info");
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
