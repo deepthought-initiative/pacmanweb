@@ -4,7 +4,6 @@ import { useState } from "react";
 import limitsData from "../../../limits.json";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
-import ImgTooltip from "../util/Tooltip";
 
 const TableForDuplicationChecker = ({
   setShowTable,
@@ -122,9 +121,7 @@ const TableForDuplicationChecker = ({
                   <tr>
                     <th className="col-md-4 col-sm-4">Cycle Number</th>
                     <th className="col-md-4 col-sm-4">Proposal Number</th>
-                    <th className="col-md-4 col-sm-4">
-                      CS Score <ImgTooltip content={toolTipCSScore} />
-                    </th>
+                    <th className="col-md-4 col-sm-4">CS Score</th>
                   </tr>
                 </thead>
                 <tbody>
