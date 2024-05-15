@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
+import InputConfigOption from "../util/InputConfigOption.jsx";
 import Logs from "../util/Logs.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
 import OtherConfigOptionsDuplication from "../util/OtherConfigOptionsDuplication.jsx";
@@ -23,6 +24,8 @@ const DuplicationForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [upperLimit, setUpperLimit] = useState();
+  const [lowerLimit, setLowerLimit] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -80,8 +83,7 @@ const DuplicationForm = ({
       setLogLevelError("Required");
       noError = false;
     }
-    // Validate pastCycle only if mode is "DUP"
-    if (mode === "DUP" && pastCycle.length === 0) {
+    if (pastCycle.length === 0) {
       setPastCycleError("Select at least one");
       noError = false;
     }
@@ -317,21 +319,23 @@ const DuplicationForm = ({
   return (
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
-      <div className={`${mode === "DUP" && "d-flex"}`}>
-        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
-          <NewDropdown
-            data={allCycles}
-            label="Selected Current Cycle"
-            desc="Prefix used throughout script to match with cycle description"
-            inputField={currentCycle}
-            multiple={false}
-            setInputField={handleFilteringCycles}
-            disabled={showTable || showLogs}
-            error={currentCycleError}
-          />
+      <div className="all-options">
+        <div className="row">
+          <div className="single-option col-12">
+            <NewDropdown
+              data={allCycles}
+              label="Selected Current Cycle"
+              desc="Prefix used throughout script to match with cycle description"
+              inputField={currentCycle}
+              multiple={false}
+              setInputField={handleFilteringCycles}
+              disabled={showTable || showLogs}
+              error={currentCycleError}
+            />
+          </div>
         </div>
-        {mode === "DUP" && (
-          <div className="row col-md-6 ms-auto">
+        <div className="row">
+          <div className="single-option col-12">
             <NewDropdown
               data={filteredCycles}
               label="Selected Past Cycle(Multiple)"
@@ -343,7 +347,27 @@ const DuplicationForm = ({
               error={pastCycleError}
             />
           </div>
-        )}
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Lower Limit for CS Score"
+              value={lowerLimit}
+              desc="Scores below this will be marked green"
+              setValue={setLowerLimit}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Upper Limit for CS Score"
+              value={upperLimit}
+              desc="Scores above this will be marked red"
+              setValue={setUpperLimit}
+            />
+          </div>
+        </div>
       </div>
       {showTable ? (
         renderTableComponent({
@@ -356,6 +380,10 @@ const DuplicationForm = ({
           downloadCSV: downloadCSV,
           mode: mode,
           downloadZIP: downloadZIP,
+          lowerLimit: lowerLimit,
+          setLowerLimit: setLowerLimit,
+          upperLimit: upperLimit,
+          setUpperLimit: setUpperLimit,
         })
       ) : showLogs ? (
         <Logs
@@ -379,6 +407,10 @@ const DuplicationForm = ({
           button_label={button_label}
           logLevelError={logLevelError}
           modalShow={modalShow}
+          lowerLimit={lowerLimit}
+          setLowerLimit={setLowerLimit}
+          upperLimit={upperLimit}
+          setUpperLimit={setUpperLimit}
           multipleRequestAlertTitle={multipleRequestAlertTitle}
           multipleRequestAlertDesc={multipleRequestAlertDesc}
           setModalShow={setModalShow}
