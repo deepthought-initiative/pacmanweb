@@ -33,5 +33,5 @@
 .single-option input,
 .single-option label {
   display: flex;
-  border-color: #858C94;
+  border-color: #858C94 !important;;
 }
