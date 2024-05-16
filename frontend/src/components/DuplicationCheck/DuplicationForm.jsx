@@ -24,8 +24,8 @@ const DuplicationForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [upperLimit, setUpperLimit] = useState(null);
-  const [lowerLimit, setLowerLimit] = useState(null);
+  const [upperLimit, setUpperLimit] = useState("");
+  const [lowerLimit, setLowerLimit] = useState("");
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -37,7 +37,7 @@ const DuplicationForm = ({
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
   const [pastCycleError, setPastCycleError] = useState("");
-  //
+
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
@@ -109,8 +109,8 @@ const DuplicationForm = ({
     setPastCycle([]);
     setRunName("");
     setLoading(false);
-    setUpperLimit(null);
-    setLowerLimit(null);
+    setUpperLimit("");
+    setLowerLimit("");
   };
 
   const handleFilteringCycles = (newCurrentCycle) => {
@@ -359,6 +359,7 @@ const DuplicationForm = ({
               value={lowerLimit}
               desc="Scores below this will be marked green"
               setValue={setLowerLimit}
+              disabled={showLogs}
             />
           </div>
         </div>
@@ -369,6 +370,7 @@ const DuplicationForm = ({
               value={upperLimit}
               desc="Scores above this will be marked red"
               setValue={setUpperLimit}
+              disabled={showLogs}
             />
           </div>
         </div>
@@ -393,6 +395,7 @@ const DuplicationForm = ({
         <Logs
           currentId={currentId}
           setShowTable={setShowTable}
+          setShowLogs={setShowLogs}
           terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
