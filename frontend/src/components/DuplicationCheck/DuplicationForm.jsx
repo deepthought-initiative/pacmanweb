@@ -24,8 +24,8 @@ const DuplicationForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [upperLimit, setUpperLimit] = useState();
-  const [lowerLimit, setLowerLimit] = useState();
+  const [upperLimit, setUpperLimit] = useState(null);
+  const [lowerLimit, setLowerLimit] = useState(null);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -109,6 +109,8 @@ const DuplicationForm = ({
     setPastCycle([]);
     setRunName("");
     setLoading(false);
+    setUpperLimit(null);
+    setLowerLimit(null);
   };
 
   const handleFilteringCycles = (newCurrentCycle) => {
@@ -232,6 +234,8 @@ const DuplicationForm = ({
 
   const handleClick = async (event) => {
     event.preventDefault();
+    console.log("lower", lowerLimit);
+    console.log("upper", upperLimit);
     resetErrors();
     const checkErrors = validateFields();
     if (checkErrors) {

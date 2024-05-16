@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import limitsData from "../../../limits.json";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
@@ -11,19 +10,13 @@ const TableForDuplicationChecker = ({
   dataToDisplay,
   onCategorizeAnotherCycle,
   downloadCSV,
-  currentId,
+  lowerLimit,
+  upperLimit,
   currentCycle,
   downloadZIP,
-  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-
-  const toolTipCSScore = [
-    "Red (high similarity): 0.6 or higher",
-    "Yellow (moderate similarity): Between 0.2 and 0.59",
-    "Green (low similarity): Below 0.2 ",
-  ];
 
   const reformatData = (originalData) => {
     const reformattedData = {};
@@ -56,20 +49,49 @@ const TableForDuplicationChecker = ({
   };
 
   const applySimilarityScoreBgColor = (score) => {
-    const { upperLimit, lowerLimit } = limitsData;
     const similarityScore = parseFloat(score);
     if (isNaN(similarityScore)) {
       return "";
     }
-    if (similarityScore >= upperLimit) {
-      return "score-high";
+
+    if (upperLimit === 0 && lowerLimit === 0) {
+      return "";
     }
-    if (similarityScore < upperLimit && similarityScore >= lowerLimit) {
-      return "score-moderate";
+
+    if (upperLimit && !lowerLimit) {
+      if (similarityScore >= upperLimit) {
+        return "score-high";
+      } else {
+        return "score-low";
+      }
     }
-    if (similarityScore < lowerLimit) {
-      return "score-low";
+
+    if (!upperLimit && lowerLimit) {
+      if (similarityScore < lowerLimit) {
+        return "score-low";
+      } else {
+        return "score-high";
+      }
     }
+
+    if (upperLimit && lowerLimit) {
+      if (upperLimit <= lowerLimit) {
+        console.error("Upper limit should be greater than lower limit.");
+        return "";
+      }
+
+      if (similarityScore >= upperLimit) {
+        return "score-high";
+      }
+      if (similarityScore < upperLimit && similarityScore >= lowerLimit) {
+        return "score-moderate";
+      }
+      if (similarityScore < lowerLimit) {
+        return "score-low";
+      }
+    }
+
+    return "";
   };
 
   return (
