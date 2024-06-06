@@ -6,14 +6,10 @@ import InputGroup from "react-bootstrap/InputGroup";
 const TextArea = ({ setValue }) => {
   const handleOnChange = (event) => {
     setTextEntered(event.target.value);
-    setTextEntered(event.target.value);
-
-    let listOfPanelists = textEntered
+    let listOfPanelists = event.target.value
       .trim()
       .split(/\n+/)
       .map((panelist) => panelist.trim());
-
-    console.log(listOfPanelists);
     setValue(listOfPanelists);
   };
   const [textEntered, setTextEntered] = useState("");
