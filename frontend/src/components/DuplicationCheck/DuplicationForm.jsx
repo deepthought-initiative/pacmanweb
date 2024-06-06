@@ -234,8 +234,6 @@ const DuplicationForm = ({
 
   const handleClick = async (event) => {
     event.preventDefault();
-    console.log("lower", lowerLimit);
-    console.log("upper", upperLimit);
     resetErrors();
     const checkErrors = validateFields();
     if (checkErrors) {
@@ -352,28 +350,34 @@ const DuplicationForm = ({
             />
           </div>
         </div>
-        <div className="row">
-          <div className="single-option col-12">
-            <InputConfigOption
-              label="Lower Limit for CS Score"
-              value={lowerLimit}
-              desc="Scores below this will be marked green"
-              setValue={setLowerLimit}
-              disabled={showLogs}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="single-option col-12">
-            <InputConfigOption
-              label="Upper Limit for CS Score"
-              value={upperLimit}
-              desc="Scores above this will be marked red"
-              setValue={setUpperLimit}
-              disabled={showLogs}
-            />
-          </div>
-        </div>
+        {showTable ? (
+          <>
+            <div className="row">
+              <div className="single-option col-12">
+                <InputConfigOption
+                  label="Lower Limit for CS Score"
+                  value={lowerLimit}
+                  desc="Scores below this will be marked green"
+                  setValue={setLowerLimit}
+                  disabled={showLogs}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="single-option col-12">
+                <InputConfigOption
+                  label="Upper Limit for CS Score"
+                  value={upperLimit}
+                  desc="Scores above this will be marked red"
+                  setValue={setUpperLimit}
+                  disabled={showLogs}
+                />
+              </div>
+            </div>
+          </>
+        ) : (
+          <></>
+        )}
       </div>
       {showTable ? (
         renderTableComponent({
