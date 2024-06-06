@@ -3,11 +3,12 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
-import Logs from "../util/Logs.jsx";
-import NewDropdown from "../util/NewDropdown.jsx";
-import OtherConfigOptionsDuplication from "../util/OtherConfigOptionsDuplication.jsx";
+import Logs from "../util/Logs";
+import NewDropdown from "./NewDropdown.jsx";
+// import DropdownConfigOption from "./DropdownConfigOption.jsx";
+import OtherConfigOptions from "./OtherConfigOptions";
 
-const DuplicationForm = ({
+const SinglePage = ({
   allCycles,
   modalFile,
   mode,
@@ -26,13 +27,22 @@ const DuplicationForm = ({
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
-  const [logLevel, setLogLevel] = useState("info");
+  const [selectedModal, setSelectedModal] = useState(
+    "strolger_pacman_model_7cycles.joblib"
+  );
+  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
+  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
+    useState(3);
   const [pastCycle, setPastCycle] = useState([]);
   const bothPastandCurrentCycles = [...pastCycle, currentCycle];
 
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
-  const [logLevelError, setLogLevelError] = useState("");
+  const [selectedModalError, setSelectedModalError] = useState("");
+  const [numberOfTopReviewersError, setNumberOfTopReviewersError] =
+    useState("");
+  const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
+    useState("");
   const [pastCycleError, setPastCycleError] = useState("");
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
@@ -76,10 +86,19 @@ const DuplicationForm = ({
       setCurrentCycleError("Required");
       noError = false;
     }
-    if (!logLevel) {
-      setLogLevelError("Required");
+    if (!selectedModal) {
+      setSelectedModalError("Required");
       noError = false;
     }
+    if (!numberOfTopReviewers) {
+      setNumberOfTopReviewersError("Required");
+      noError = false;
+    }
+    if (!closeCollaboratorTimeFrame) {
+      setCloseCollaboratorTimeFrameError("Required");
+      noError = false;
+    }
+
     // Validate pastCycle only if mode is "DUP"
     if (mode === "DUP" && pastCycle.length === 0) {
       setPastCycleError("Select at least one");
@@ -90,13 +109,14 @@ const DuplicationForm = ({
 
   const resetErrors = () => {
     setCurrentCycleError("");
+    setSelectedModalError("");
+    setNumberOfTopReviewersError("");
+    setCloseCollaboratorTimeFrameError("");
     setPastCycleError("");
-    setLogLevelError("");
   };
 
   const onTerminate = () => {
     setCurrentId();
-    setLogLevel("info");
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
@@ -106,7 +126,10 @@ const DuplicationForm = ({
     setCurrentCycle("");
     setPastCycle([]);
     setRunName("");
+    setSelectedModal("strolger_pacman_model_7cycles.joblib");
     setLoading(false);
+    setNumberOfTopReviewers(5);
+    setCloseCollaboratorTimeFrame(3);
   };
 
   const handleFilteringCycles = (newCurrentCycle) => {
@@ -127,8 +150,14 @@ const DuplicationForm = ({
         return;
       }
       let tableCategory = "";
+      if (mode == "PROP") {
+        tableCategory = "proposal_cat_output";
+      }
       if (mode == "DUP") {
         tableCategory = "duplicates_output";
+      }
+      if (mode == "MATCH") {
+        tableCategory = "match_reviewers_output";
       }
       try {
         const tableResponse = await fetch(
@@ -235,16 +264,29 @@ const DuplicationForm = ({
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&log_level=${logLevel}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      if (mode == "DUP") {
+        spawnResponse = await fetch(
+          `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Basic " + btoa("default:barebones"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else {
+        spawnResponse = await fetch(
+          `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Basic " + btoa("default:barebones"),
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -375,9 +417,8 @@ const DuplicationForm = ({
           downloadZIP={downloadZIP}
         />
       ) : (
-        <OtherConfigOptionsDuplication
+        <OtherConfigOptions
           button_label={button_label}
-          logLevelError={logLevelError}
           modalShow={modalShow}
           multipleRequestAlertTitle={multipleRequestAlertTitle}
           multipleRequestAlertDesc={multipleRequestAlertDesc}
@@ -387,9 +428,16 @@ const DuplicationForm = ({
           currentCycle={currentCycle}
           runName={runName}
           modalFile={modalFile}
-          logLevel={logLevel}
-          setLogLevel={setLogLevel}
+          numberOfTopReviewers={numberOfTopReviewers}
+          closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
+          selectedModal={selectedModal}
+          setSelectedModal={setSelectedModal}
           setRunName={setRunName}
+          setNumberOfTopReviewers={setNumberOfTopReviewers}
+          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
+          selectedModalError={selectedModalError}
+          numberOfTopReviewersError={numberOfTopReviewersError}
+          closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
           loading={loading}
         />
       )}
@@ -397,4 +445,4 @@ const DuplicationForm = ({
   );
 };
 
-export default DuplicationForm;
+export default SinglePage;
