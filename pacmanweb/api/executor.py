@@ -25,9 +25,7 @@ class RunPACMan:
         close_collaborator_time_frame=None,
         duplication_checker_newcycles=None,
         duplication_checker_need_new_texts=None,
-        current_user=None,
-        panelist_names=[],
-        panelist_names_mode=None
+        current_user=None
     ):
         """Initialise RunPACMan Class.
 
@@ -114,8 +112,6 @@ class RunPACMan:
             close_collaborator_time_frame=close_collaborator_time_frame,
             duplication_checker_newcycles=duplication_checker_newcycles,
             duplication_checker_need_new_texts=duplication_checker_need_new_texts,
-            panelist_names=panelist_names,
-            panelist_names_mode=panelist_names_mode
         )
         # update options dict with defaults in provided arguments
         options.update((key, value) for key, value in options.items() if value is not None)
