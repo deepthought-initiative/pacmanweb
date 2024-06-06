@@ -2,6 +2,7 @@ import base64
 import pathlib
 import subprocess
 import time
+import pandas as pd
 
 import redis
 from celery import shared_task
@@ -69,6 +70,7 @@ def get_available_cycles():
 @login_required
 def run_pacman():
     options = request.args.to_dict(flat=True)
+    panelist_names_mode = options.pop("panelist_names_mode", "")
     if options.get("mode", None):
         pass
     else:
@@ -79,6 +81,18 @@ def run_pacman():
         return {
             "output": "DUP mode needs past cycles with the same cycle included.",
         }
+    
+    if options["mode"] == "MATCH" and panelist_names_mode == "append": 
+        panelist_names = options.pop('panelist_names', []).split(',')
+        panelist_file_name = f"{options['main_test_cycle']}_panelists.csv"
+        complete_panelist_file_path =Config.PANELISTS_DATA / panelist_file_name
+        panelists_data = pd.read_csv(complete_panelist_file_path)
+        if len(panelist_names) != 0:
+            new_panelists_df = pd.DataFrame(panelist_names, columns=['name'])
+            merged_panelists_data = pd.concat([panelists_data, new_panelists_df], ignore_index=True)
+            updated_panelists_data = merged_panelists_data.drop_duplicates(subset='name', keep='first')
+            updated_panelists_data.to_csv(complete_panelist_file_path, index=False)
+
     options["current_user"] = current_user.username
     # if task is already running don't run another
     existing_tasks = redis_instance.hgetall(current_user.username)
