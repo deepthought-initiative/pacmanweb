@@ -9,7 +9,7 @@ const TextArea = ({ setValue }) => {
     let listOfPanelists = event.target.value
       .trim()
       .split(/\n+/)
-      .map((panelist) => panelist.trim());
+      .map((panelist) => panelist.toLowerCase().trim());
     setValue(listOfPanelists);
   };
   const [textEntered, setTextEntered] = useState("");
