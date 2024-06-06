@@ -153,12 +153,6 @@ const MatchReviewersForm = ({
         return;
       }
       let tableCategory = "";
-      if (mode == "PROP") {
-        tableCategory = "proposal_cat_output";
-      }
-      if (mode == "DUP") {
-        tableCategory = "duplicates_output";
-      }
       if (mode == "MATCH") {
         tableCategory = "match_reviewers_output";
       }
@@ -267,29 +261,16 @@ const MatchReviewersForm = ({
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      if (mode == "DUP") {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
+      spawnResponse = await fetch(
+        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Basic " + btoa("default:barebones"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -379,7 +360,7 @@ const MatchReviewersForm = ({
       {!showLogs ? (
         <>
           <div className="my-3">
-            <TextArea value={panelistNames} setValue={setPanelistNames} />
+            <TextArea setValue={setPanelistNames} />
           </div>
         </>
       ) : (
