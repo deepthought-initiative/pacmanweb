@@ -133,7 +133,7 @@ const TableForDuplicationChecker = ({
         <div className="col-md-6">
           <h6 className="my-3">
             {highlighted
-              ? ` Duplicates found for proposal ${highlighted} from ${currentCycle}`
+              ? ` Duplicates found for proposal ${highlighted}`
               : "--"}
           </h6>
           {highlighted ? (
