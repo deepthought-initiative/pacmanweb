@@ -24,7 +24,7 @@ const MatchReviewersForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
-  const [panelistNames, setPanelistNames] = useState();
+  const [panelistNames, setPanelistNames] = useState([]);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -257,6 +257,7 @@ const MatchReviewersForm = ({
   const handleClick = async (event) => {
     event.preventDefault();
     resetErrors();
+    console.log(panelistNames);
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
