@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "../util/NewDropdown.jsx";
-// import DropdownConfigOption from "./DropdownConfigOption.jsx";
 import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
+import TextArea from "../util/TextArea.jsx";
 
 const MatchReviewersForm = ({
   allCycles,
@@ -359,8 +359,8 @@ const MatchReviewersForm = ({
   return (
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
-      <div className={`${mode === "DUP" && "d-flex"}`}>
-        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
+      <div>
+        <div className="row">
           <NewDropdown
             data={allCycles}
             label="Selected Current Cycle"
@@ -372,20 +372,9 @@ const MatchReviewersForm = ({
             error={currentCycleError}
           />
         </div>
-        {mode === "DUP" && (
-          <div className="row col-md-6 ms-auto">
-            <NewDropdown
-              data={filteredCycles}
-              label="Selected Past Cycle(Multiple)"
-              desc="Cycle prefixes of past cycles"
-              inputField={pastCycle}
-              multiple={true}
-              setInputField={setPastCycle}
-              disabled={showTable || showLogs}
-              error={pastCycleError}
-            />
-          </div>
-        )}
+      </div>
+      <div className="my-3">
+        <TextArea />
       </div>
       {showTable ? (
         renderTableComponent({
