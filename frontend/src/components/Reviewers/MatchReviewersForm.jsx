@@ -262,7 +262,7 @@ const MatchReviewersForm = ({
       let spawnResponse;
       setLoading(true);
       spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}`,
+        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}&panelist_names=${panelistNames}&panelist_names_mode=append`,
         {
           method: "GET",
           headers: {
