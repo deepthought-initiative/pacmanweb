@@ -23,6 +23,10 @@ const OtherConfigOptions = ({
   logLevelError,
   loading,
   logLevel,
+  numberOfTopReviewers,
+  closeCollaboratorTimeFrame,
+  setNumberOfTopReviewers,
+  setCloseCollaboratorTimeFrame,
   setLogLevel,
 }) => {
   const createDropdownObjects = (dataList) => {
@@ -60,6 +64,26 @@ const OtherConfigOptions = ({
               setInputField={setSelectedModal}
               disabled={false}
               error={selectedModalError}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Assignment Number Top Reviewers"
+              value={numberOfTopReviewers}
+              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+              setValue={setNumberOfTopReviewers}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Close Collaborator Time Frame"
+              value={closeCollaboratorTimeFrame}
+              desc="Number of years over which to check close collaborators"
+              setValue={setCloseCollaboratorTimeFrame}
             />
           </div>
         </div>

@@ -24,6 +24,7 @@ const MatchReviewersForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [panelistNames, setPanelistNames] = useState();
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -35,6 +36,7 @@ const MatchReviewersForm = ({
     useState(3);
   const [pastCycle, setPastCycle] = useState([]);
   const bothPastandCurrentCycles = [...pastCycle, currentCycle];
+  const [logLevel, setLogLevel] = useState("info");
 
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
@@ -44,6 +46,7 @@ const MatchReviewersForm = ({
   const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
     useState("");
   const [pastCycleError, setPastCycleError] = useState("");
+  const [logLevelError, setLogLevelError] = useState("");
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
@@ -373,9 +376,15 @@ const MatchReviewersForm = ({
           />
         </div>
       </div>
-      <div className="my-3">
-        <TextArea />
-      </div>
+      {!showLogs ? (
+        <>
+          <div className="my-3">
+            <TextArea value={panelistNames} setValue={setPanelistNames} />
+          </div>
+        </>
+      ) : (
+        <></>
+      )}
       {showTable ? (
         renderTableComponent({
           currentId: currentId,
@@ -428,6 +437,9 @@ const MatchReviewersForm = ({
           numberOfTopReviewersError={numberOfTopReviewersError}
           closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
           loading={loading}
+          logLevelError={logLevelError}
+          logLevel={logLevel}
+          setLogLevel={setLogLevel}
         />
       )}
     </div>
