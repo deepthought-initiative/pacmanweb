@@ -357,16 +357,14 @@ const MatchReviewersForm = ({
             error={currentCycleError}
           />
         </div>
-      </div>
-      {!showLogs ? (
-        <>
+        {!showLogs ? (
           <div className="my-3">
             <TextArea setValue={setPanelistNames} />
           </div>
-        </>
-      ) : (
-        <></>
-      )}
+        ) : (
+          <></>
+        )}
+      </div>
       {showTable ? (
         renderTableComponent({
           currentId: currentId,

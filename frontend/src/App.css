@@ -397,6 +397,15 @@ h3{
   font-weight: 900;
 }
 
+.form-control{
+  border-color: #858C94;
+  border-radius: 0%;
+}
+
+.input-group:focus{
+  outline: none;
+}
+
 .input-group .disabled{
   background-color: #E7ECEF !important;
 }
