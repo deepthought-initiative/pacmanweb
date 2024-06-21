@@ -1,0 +1,33 @@
+name: Send Docs
+
+# Run this when the master or main branch changes
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    # If your git repository has the Jupyter Book within some-subfolder next to
+    # unrelated files, you can make this run only if a file within that specific
+    # folder has been modified.
+    #
+    # paths:
+    # - some-subfolder/**
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Push results to results repository
+              uses: cpina/github-action-push-to-another-repository@main
+              env:
+                API_TOKEN_GITHUB: ${{ secrets.SECRET_TOKEN }}
+              with:
+                 source-directory: docs
+                 destination-github-username: deepthought-initiative
+                 destination-repository-name: pacmanweb-docs
+                 user-email: tardis.sn.bot@gmail.com
+                 target-branch: main
+                 target-directory: docs
