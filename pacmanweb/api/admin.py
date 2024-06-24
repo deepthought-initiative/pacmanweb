@@ -43,7 +43,15 @@ def register_update_user():
     secrets_file = secrets.read_secrets()
     secrets_file["users"][username] = encoded_pass
     secrets.update_secrets(secrets_file)
-    
+
+@admin_bp.route("/edit_users", methods=["POST"])
+@login_required
+def delete_user():
+    username = request.form["username"]
+    secrets = UpdateSecrets()
+    secrets_data = secrets.read_secrets()
+    del secrets_data["users"][username]
+    secrets.update_secrets(secrets_data)
 
     
 
