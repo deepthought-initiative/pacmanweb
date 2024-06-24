@@ -28,7 +28,7 @@ const OtherConfigOptionsCategorize = ({
   const createDropdownObjects = (dataList) => {
     return dataList.map((item) => ({
       cycleNumber: item,
-      label: item.toString(), // Assuming items have a toString method
+      label: item.toString(),
       style: {
         backgroundColor: "",
       },

@@ -1,21 +1,35 @@
 /* eslint-disable react/prop-types */
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
-const InputConfigOption = ({ label, desc, setValue, value, error }) => {
+const InputConfigOption = ({
+  label,
+  desc,
+  setValue,
+  value,
+  error,
+  disabled,
+}) => {
   const handleOnChange = (event) => {
     setValue(event.target.value);
   };
   return (
     <div className="dropdown-container">
       <div className="option-header">
-        <label className="custom-input-form-label">{label}</label>
+        <label
+          className={`custom-input-form-label ${
+            disabled ? "label-disabled" : ""
+          } `}
+        >
+          {label}
+        </label>
       </div>
       <div className={`input-group ${error ? "required" : ""}`}>
         <input
           value={value}
           onChange={handleOnChange}
           type="text"
-          className="rounded-0"
+          className={`rounded-0 ${disabled ? "disabled" : ""}`}
+          disabled={disabled}
         />
       </div>
       <div className="option-header">

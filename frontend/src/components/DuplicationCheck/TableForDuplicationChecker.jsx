@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import limitsData from "../../../limits.json";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
-import ImgTooltip from "../util/Tooltip";
 
 const TableForDuplicationChecker = ({
   setShowTable,
@@ -12,19 +10,13 @@ const TableForDuplicationChecker = ({
   dataToDisplay,
   onCategorizeAnotherCycle,
   downloadCSV,
-  currentId,
+  lowerLimit,
+  upperLimit,
   currentCycle,
   downloadZIP,
-  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-
-  const toolTipCSScore = [
-    "Red (high similarity): 0.6 or higher",
-    "Yellow (moderate similarity): Between 0.2 and 0.59",
-    "Green (low similarity): Below 0.2 ",
-  ];
 
   const reformatData = (originalData) => {
     const reformattedData = {};
@@ -57,20 +49,49 @@ const TableForDuplicationChecker = ({
   };
 
   const applySimilarityScoreBgColor = (score) => {
-    const { upperLimit, lowerLimit } = limitsData;
     const similarityScore = parseFloat(score);
     if (isNaN(similarityScore)) {
       return "";
     }
-    if (similarityScore >= upperLimit) {
-      return "score-high";
+
+    if (upperLimit === 0 && lowerLimit === 0) {
+      return "";
     }
-    if (similarityScore < upperLimit && similarityScore >= lowerLimit) {
-      return "score-moderate";
+
+    if (upperLimit && !lowerLimit) {
+      if (similarityScore >= upperLimit) {
+        return "score-high";
+      } else {
+        return "score-low";
+      }
     }
-    if (similarityScore < lowerLimit) {
-      return "score-low";
+
+    if (!upperLimit && lowerLimit) {
+      if (similarityScore < lowerLimit) {
+        return "score-low";
+      } else {
+        return "score-high";
+      }
     }
+
+    if (upperLimit && lowerLimit) {
+      if (upperLimit <= lowerLimit) {
+        console.error("Upper limit should be greater than lower limit.");
+        return "";
+      }
+
+      if (similarityScore >= upperLimit) {
+        return "score-high";
+      }
+      if (similarityScore < upperLimit && similarityScore >= lowerLimit) {
+        return "score-moderate";
+      }
+      if (similarityScore < lowerLimit) {
+        return "score-low";
+      }
+    }
+
+    return "";
   };
 
   return (
@@ -112,7 +133,7 @@ const TableForDuplicationChecker = ({
         <div className="col-md-6">
           <h6 className="my-3">
             {highlighted
-              ? ` Duplicates found for proposal ${highlighted} from ${currentCycle}`
+              ? ` Duplicates found for proposal ${highlighted}`
               : "--"}
           </h6>
           {highlighted ? (
@@ -122,9 +143,7 @@ const TableForDuplicationChecker = ({
                   <tr>
                     <th className="col-md-4 col-sm-4">Cycle Number</th>
                     <th className="col-md-4 col-sm-4">Proposal Number</th>
-                    <th className="col-md-4 col-sm-4">
-                      CS Score <ImgTooltip content={toolTipCSScore} />
-                    </th>
+                    <th className="col-md-4 col-sm-4">CS Score</th>
                   </tr>
                 </thead>
                 <tbody>

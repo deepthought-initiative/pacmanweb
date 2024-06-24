@@ -18,10 +18,12 @@ const Logs = ({
   downloadZIP,
   loading,
   preventClick,
+  setShowLogs,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
+    setShowLogs(false);
   };
 
   const variant =

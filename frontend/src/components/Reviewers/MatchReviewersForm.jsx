@@ -5,8 +5,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
 import NewDropdown from "../util/NewDropdown.jsx";
-// import DropdownConfigOption from "./DropdownConfigOption.jsx";
 import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
+import TextArea from "../util/TextArea.jsx";
 
 const MatchReviewersForm = ({
   allCycles,
@@ -24,6 +24,7 @@ const MatchReviewersForm = ({
   const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
+  const [panelistNames, setPanelistNames] = useState([]);
 
   // state variables for other config options
   const [runName, setRunName] = useState("");
@@ -35,6 +36,7 @@ const MatchReviewersForm = ({
     useState(3);
   const [pastCycle, setPastCycle] = useState([]);
   const bothPastandCurrentCycles = [...pastCycle, currentCycle];
+  const [logLevel, setLogLevel] = useState("info");
 
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
@@ -44,6 +46,7 @@ const MatchReviewersForm = ({
   const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
     useState("");
   const [pastCycleError, setPastCycleError] = useState("");
+  const [logLevelError, setLogLevelError] = useState("");
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
@@ -150,12 +153,6 @@ const MatchReviewersForm = ({
         return;
       }
       let tableCategory = "";
-      if (mode == "PROP") {
-        tableCategory = "proposal_cat_output";
-      }
-      if (mode == "DUP") {
-        tableCategory = "duplicates_output";
-      }
       if (mode == "MATCH") {
         tableCategory = "match_reviewers_output";
       }
@@ -260,33 +257,21 @@ const MatchReviewersForm = ({
   const handleClick = async (event) => {
     event.preventDefault();
     resetErrors();
+    console.log(panelistNames);
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      if (mode == "DUP") {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      } else {
-        spawnResponse = await fetch(
-          `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: "Basic " + btoa("default:barebones"),
-              "Content-Type": "application/json",
-            },
-          }
-        );
-      }
+      spawnResponse = await fetch(
+        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}&panelist_names=${panelistNames}&panelist_names_mode=append`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Basic " + btoa("default:barebones"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -359,8 +344,8 @@ const MatchReviewersForm = ({
   return (
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
-      <div className={`${mode === "DUP" && "d-flex"}`}>
-        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
+      <div>
+        <div className="row">
           <NewDropdown
             data={allCycles}
             label="Selected Current Cycle"
@@ -372,19 +357,12 @@ const MatchReviewersForm = ({
             error={currentCycleError}
           />
         </div>
-        {mode === "DUP" && (
-          <div className="row col-md-6 ms-auto">
-            <NewDropdown
-              data={filteredCycles}
-              label="Selected Past Cycle(Multiple)"
-              desc="Cycle prefixes of past cycles"
-              inputField={pastCycle}
-              multiple={true}
-              setInputField={setPastCycle}
-              disabled={showTable || showLogs}
-              error={pastCycleError}
-            />
+        {!showLogs ? (
+          <div className="my-3">
+            <TextArea setValue={setPanelistNames} />
           </div>
+        ) : (
+          <></>
         )}
       </div>
       {showTable ? (
@@ -439,6 +417,9 @@ const MatchReviewersForm = ({
           numberOfTopReviewersError={numberOfTopReviewersError}
           closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
           loading={loading}
+          logLevelError={logLevelError}
+          logLevel={logLevel}
+          setLogLevel={setLogLevel}
         />
       )}
     </div>

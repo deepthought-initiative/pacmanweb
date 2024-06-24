@@ -71,14 +71,16 @@ const TableMatchReviewers = ({
                   Object.entries(dataToDisplay["Main Table"]).map(
                     ([key, value]) => (
                       <tr
-                        onClick={() => handleHighlight(value["fname"])}
+                        onClick={() =>
+                          handleHighlight(value["fname"].toUpperCase())
+                        }
                         className={
                           highlighted === value["fname"] ? "highlighted" : ""
                         }
                         key={key}
                       >
                         <td className="text-break" scope="row">
-                          {value["fname"]}
+                          {value["fname"].toUpperCase()}
                         </td>
                         <td className="text-break">
                           {value["model_classification"]}

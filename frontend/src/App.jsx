@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
@@ -93,6 +94,7 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route
             path="/logout"
             element={<Logout setLoggedIn={setLoggedIn} />}
