@@ -60,8 +60,9 @@ def create_app(config_class=Config):
         # finally, return None if both methods did not login the user
         return None
 
-    from .api import api, outputs
+    from .api import api, outputs, admin
 
     api.api_bp.register_blueprint(outputs.outputs_bp)
+    api.api_bp.register_blueprint(admin.admin_bp)
     app.register_blueprint(api.api_bp)
     return app
