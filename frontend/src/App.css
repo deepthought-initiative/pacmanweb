@@ -520,3 +520,9 @@ padding-left: 0;
   border-color: #858C94 !important;
 }
 
+
+/*Admin Dashboard*/
+
+.user-list-container{
+  margin-top: 50px;
+}
