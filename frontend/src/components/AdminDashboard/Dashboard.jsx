@@ -10,6 +10,8 @@ const Dashboard = () => {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
+  const [passwords, setPasswordStates] = useState({});
+
   const handleShow = (newMode, user) => {
     if (newMode.toLowerCase() == "delete") {
       setDeleteModal(true);
@@ -17,6 +19,13 @@ const Dashboard = () => {
       setShow(true);
       setMode(newMode.toLowerCase());
     }
+  };
+
+  const togglePasswordVisibility = (userId) => {
+    setPasswordStates((prevStates) => ({
+      ...prevStates,
+      [userId]: !prevStates[userId], // Toggle visibility for the clicked user
+    }));
   };
 
   const deleteUserAlertTitle = "Delete a User";
@@ -81,18 +90,31 @@ const Dashboard = () => {
               <tr key={user["UID"]}>
                 <td>{index}</td>
                 <td>{user["Username"]}</td>
-                <td>{user["Password"]}</td>
+                <td>
+                  <div className="password-container">
+                    <div>
+                      {passwords[user.UID]
+                        ? user["Password"]
+                        : "****************"}
+                    </div>
+                    <div>
+                      <button
+                        className="mx-2 password-toggle-btn"
+                        onClick={() => togglePasswordVisibility(user.UID)}
+                      >
+                        {passwords[user.UID] ? "Hide" : "Show"}
+                      </button>
+                    </div>
+                  </div>
+                </td>
                 <td>{user["Status"]}</td>
                 <td>
                   <div className="user-edit-options">
                     <img
                       src={UserEdit}
-                      onClick={() => handleShow("EDIT", user)}
+                      onClick={() => handleShow("edit", user)}
                     />
-                    <img
-                      src={UserDelete}
-                      onClick={() => handleShow("DELETE", user)}
-                    />
+                    <img src={UserDelete} />
                   </div>
                 </td>
               </tr>
