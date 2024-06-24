@@ -53,6 +53,45 @@ def delete_user():
     del secrets_data["users"][username]
     secrets.update_secrets(secrets_data)
 
-    
+@admin_bp.route("/make_admin", methods=["POST"])
+@login_required
+def make_admin():
+    # user to make admin
+    username = request.form["username"]
 
+    secrets = UpdateSecrets()
+    secrets_data = secrets.read_secrets()
+    if username not in secrets_data["admins"]:
+        secrets_data["admins"].append(username)
+    secrets.update_secrets(secrets_data)
 
+@admin_bp.route("/revoke_admin", methods=["POST"])
+@login_required
+def revoke_admin():
+    # revoke admin privileges
+    username = request.form["username"]
+
+    secrets = UpdateSecrets()
+    secrets_data = secrets.read_secrets()
+    if username not in secrets_data["admins"]:
+        secrets_data["admins"].remove(username)
+    secrets.update_secrets(secrets_data)
+
+@admin_bp.route("/return_users", methods=["GET"])
+@login_required
+def return_user_data():
+    secrets = UpdateSecrets()
+    secrets_data = secrets.read_secrets()
+    users = secrets_data["users"].keys()
+    admins = secrets_data["users"].keys()
+    res_total = []
+    # TODO: make this computation simpler
+    for index, item in enumerate(users.keys()):
+        res = {}
+        res["UID"] = index
+        res["username"] = item
+        res["isadmin"] = False
+        if item in admins:
+            res["isadmin"] = True
+        res_total.append(res)
+    return res_total
