@@ -526,3 +526,13 @@ padding-left: 0;
 .user-list-container{
   margin-top: 50px;
 }
+
+.user-edit-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.user-edit-options img{
+  max-width: 30px;
+}
