@@ -38,7 +38,9 @@ const Dashboard = () => {
   return (
     <div className="user-list-container">
       <h2>All Users</h2>
-      <div className="row"></div>
+      <div className="row">
+        <div className="col">hi</div>
+      </div>
       <div>
         <Table striped bordered hover>
           <thead>
