@@ -540,3 +540,32 @@ padding-left: 0;
     transform: scale(1.1);
   }
 }
+
+.password-container{
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-btn {
+  font-weight: bolder;
+  padding: 10px 20px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #7A8E99;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.password-toggle-btn:hover {
+  background-color: #7A8E99 !important;
+  color: white !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.password-toggle-btn:active {
+  animation: clickanimation 0.3s ease;
+  background-color: #7A8E99 !important;
+  color: white !important;
+}
