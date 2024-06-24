@@ -64,6 +64,14 @@ const MainNavbar = () => {
             >
               Upload Cycles
             </Nav.Link>
+            <Nav.Link
+              className={`nav-item ms-4${
+                isItemActive("/dashboard") ? " active" : ""
+              }`}
+              href="/dashboard"
+            >
+              Admin Dashboard
+            </Nav.Link>
           </Nav>
           <Nav className="">
             <div id="right-corner">
