@@ -16,26 +16,29 @@ const OtherConfigOptions = ({
   preventClick,
   runName,
   modalFile,
-  numberOfTopReviewers,
-  closeCollaboratorTimeFrame,
-  setNumberOfTopReviewers,
   selectedModal,
   setSelectedModal,
   setRunName,
-  setCloseCollaboratorTimeFrame,
   selectedModalError,
-  numberOfTopReviewersError,
-  closeCollaboratorTimeFrameError,
+  logLevelError,
   loading,
+  logLevel,
+  numberOfTopReviewers,
+  closeCollaboratorTimeFrame,
+  setNumberOfTopReviewers,
+  setCloseCollaboratorTimeFrame,
+  setLogLevel,
 }) => {
-  const validModalFile = modalFile.map((modal) => ({
-    cycleNumber: modal,
-    label: modal.toString(),
-    style: {
-      backgroundColor: "",
-    },
-  }));
-
+  const createDropdownObjects = (dataList) => {
+    return dataList.map((item) => ({
+      cycleNumber: item,
+      label: item.toString(), // Assuming items have a toString method
+      style: {
+        backgroundColor: "",
+      },
+    }));
+  };
+  const logLevelOptions = ["info", "debug", "warning", "critical"];
   return (
     <form>
       <div className="separator">Other Options</div>
@@ -53,13 +56,12 @@ const OtherConfigOptions = ({
         <div className="row">
           <div className="single-option col-12">
             <NewDropdown
-              data={validModalFile}
+              data={createDropdownObjects(modalFile)}
               multiple={false}
               label="Select modal file to use"
               desc="Name of modal file to use"
               inputField={selectedModal}
               setInputField={setSelectedModal}
-              placeholderText="Select a current cycle"
               disabled={false}
               error={selectedModalError}
             />
@@ -68,11 +70,10 @@ const OtherConfigOptions = ({
         <div className="row">
           <div className="single-option col-12">
             <InputConfigOption
-              label="Assignment number top reviewers"
+              label="Assignment Number Top Reviewers"
               value={numberOfTopReviewers}
-              desc="Number of top recommended reviewers"
+              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
               setValue={setNumberOfTopReviewers}
-              error={numberOfTopReviewersError}
             />
           </div>
         </div>
@@ -83,7 +84,20 @@ const OtherConfigOptions = ({
               value={closeCollaboratorTimeFrame}
               desc="Number of years over which to check close collaborators"
               setValue={setCloseCollaboratorTimeFrame}
-              error={closeCollaboratorTimeFrameError}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <NewDropdown
+              data={createDropdownObjects(logLevelOptions)}
+              multiple={false}
+              label="Select Log Level"
+              desc="Log Level to set"
+              inputField={logLevel}
+              setInputField={setLogLevel}
+              disabled={false}
+              error={logLevelError}
             />
           </div>
         </div>

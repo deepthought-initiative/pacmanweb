@@ -52,6 +52,7 @@ class Config:
     PACMAN_PATH = file_path.parents[1] / "PACMan"
     UPLOAD_FOLDER = ROOTDIR / "uploads"
     DOWNLOAD_FOLDER = ROOTDIR / "downloads"
+    PANELISTS_DATA = PACMAN_PATH / "runs" / "input_panelist_data"
 
     with open(ROOTDIR / 'options.yaml', 'r') as file:
         section_options = yaml.safe_load(file)
