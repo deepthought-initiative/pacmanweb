@@ -114,7 +114,10 @@ const Dashboard = () => {
                       src={UserEdit}
                       onClick={() => handleShow("edit", user)}
                     />
-                    <img src={UserDelete} />
+                    <img
+                      src={UserDelete}
+                      onClick={() => handleShow("DELETE", user)}
+                    />
                   </div>
                 </td>
               </tr>
