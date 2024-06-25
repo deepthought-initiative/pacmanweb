@@ -44,7 +44,7 @@ def register_update_user():
 
     secrets.update_secrets(secrets_file)
 
-@admin_bp.route("/edit_users", methods=["POST"])
+@admin_bp.route("/delete_user", methods=["POST"])
 @login_required
 def delete_user():
     username = request.form["username"]
