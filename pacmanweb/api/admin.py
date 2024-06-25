@@ -80,8 +80,8 @@ def register_update_user():
 
     secrets.update_secrets(secrets_file)
     return {
-            "value": f"New user {username} added."
-        }, 200
+            "value": f"New user {username} added/updated."
+        }, 201
 
 @admin_bp.route("/delete_user", methods=["POST"])
 @login_required
