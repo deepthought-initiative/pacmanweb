@@ -24,6 +24,7 @@ class Config:
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
     USERS = CREDS["users"]
+    ADMINS = CREDS["admins"]
 
     if MODE == "prod":
         CELERY_RESULT_BACKEND = "redis://redis:6379/0"
