@@ -8,7 +8,7 @@ from io import BytesIO, StringIO
 from os import R_OK, access, stat
 
 import pandas as pd
-from flask import Blueprint, request, send_file
+from flask import Blueprint, request, send_file, jsonify
 from flask_login import login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -35,13 +35,21 @@ class UpdateSecrets:
 @admin_bp.route("/edit_users", methods=["POST"])
 @login_required
 def register_update_user():
-    username = request.form["username"]
-    password = request.form["password"]
-    encoded_pass = generate_password_hash(password, method='pbkdf2:sha256')
-
     secrets = UpdateSecrets()
     secrets_file = secrets.read_secrets()
-    secrets_file["users"][username] = encoded_pass
+    username = request.form["username"]
+
+    if request.form.get("password"):
+        password = request.form["password"]
+        encoded_pass = generate_password_hash(password, method='pbkdf2:sha256')
+        secrets_file["users"][username] = encoded_pass
+
+    isadmin = bool(request.form.get("isadmin"))
+    if isadmin and username not in secrets_file["admins"]:
+        secrets_file["admins"].append(username)
+    elif not isadmin and username in secrets_file["admins"]:
+        secrets_file["admins"].remove(username)
+
     secrets.update_secrets(secrets_file)
 
 @admin_bp.route("/edit_users", methods=["POST"])
@@ -53,45 +61,17 @@ def delete_user():
     del secrets_data["users"][username]
     secrets.update_secrets(secrets_data)
 
-@admin_bp.route("/make_admin", methods=["POST"])
-@login_required
-def make_admin():
-    # user to make admin
-    username = request.form["username"]
-
-    secrets = UpdateSecrets()
-    secrets_data = secrets.read_secrets()
-    if username not in secrets_data["admins"]:
-        secrets_data["admins"].append(username)
-    secrets.update_secrets(secrets_data)
-
-@admin_bp.route("/revoke_admin", methods=["POST"])
-@login_required
-def revoke_admin():
-    # revoke admin privileges
-    username = request.form["username"]
-
-    secrets = UpdateSecrets()
-    secrets_data = secrets.read_secrets()
-    if username not in secrets_data["admins"]:
-        secrets_data["admins"].remove(username)
-    secrets.update_secrets(secrets_data)
-
 @admin_bp.route("/return_users", methods=["GET"])
 @login_required
 def return_user_data():
     secrets = UpdateSecrets()
     secrets_data = secrets.read_secrets()
     users = secrets_data["users"].keys()
-    admins = secrets_data["users"].keys()
-    res_total = []
-    # TODO: make this computation simpler
-    for index, item in enumerate(users.keys()):
-        res = {}
-        res["UID"] = index
-        res["username"] = item
-        res["isadmin"] = False
-        if item in admins:
-            res["isadmin"] = True
-        res_total.append(res)
-    return res_total
+    admins = secrets_data["admins"]
+    
+    res_total = [
+        {"UID": index, "username": item, "isadmin": item in admins}
+        for index, item in enumerate(users)
+    ]
+    
+    return jsonify(res_total)
