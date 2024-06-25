@@ -51,6 +51,8 @@ def delete_user():
     secrets = UpdateSecrets()
     secrets_data = secrets.read_secrets()
     del secrets_data["users"][username]
+    if username is secrets_data["admins"]:
+        secrets_data["admins"].remove(username)
     secrets.update_secrets(secrets_data)
 
 @admin_bp.route("/return_users", methods=["GET"])
