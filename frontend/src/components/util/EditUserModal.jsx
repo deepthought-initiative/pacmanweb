@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import ConfirmationModal from "./ConfirmationModal";
 
 // eslint-disable-next-line react/prop-types
 const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
+  const [processStatusCode, setProcessStatusCode] = useState();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);

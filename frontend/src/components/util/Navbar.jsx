@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -6,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import DefaultPfp from "../../assets/DefaultPfp.png";
 import "../../css/navbar.css";
 
-const MainNavbar = () => {
+const MainNavbar = ({ isUserAdminContext }) => {
   const location = useLocation();
   // Update screen width state when the window is resized
   useEffect(() => {
@@ -64,14 +65,16 @@ const MainNavbar = () => {
             >
               Upload Cycles
             </Nav.Link>
-            <Nav.Link
-              className={`nav-item ms-4${
-                isItemActive("/dashboard") ? " active" : ""
-              }`}
-              href="/dashboard"
-            >
-              Admin Dashboard
-            </Nav.Link>
+            {isUserAdminContext && (
+              <Nav.Link
+                className={`nav-item ms-4${
+                  isItemActive("/dashboard") ? " active" : ""
+                }`}
+                href="/dashboard"
+              >
+                Admin Dashboard
+              </Nav.Link>
+            )}
           </Nav>
           <Nav className="">
             <div id="right-corner">
