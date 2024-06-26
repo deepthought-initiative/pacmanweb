@@ -7,38 +7,57 @@ import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 
 // eslint-disable-next-line react/prop-types
-const EditUserModal = ({ show, setShow, mode, selectedUser, onUserUpdate }) => {
+const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
   const [loading, setLoading] = useState(false);
   const [processStatusCode, setProcessStatusCode] = useState();
   const [updatedUser, setUpdatedUser] = useState({
     username: selectedUser?.username || "",
-    isAdmin: selectedUser?.isAdmin || false,
+    isadmin: selectedUser?.isadmin || false,
+    password: selectedUser?.password,
   });
 
   useEffect(() => {
     setUpdatedUser({
       username: selectedUser?.username || "",
-      isAdmin: selectedUser?.isAdmin || false,
+      isadmin: selectedUser?.isadmin || false,
+      password: selectedUser?.password,
     });
   }, [selectedUser]);
 
   const handleClose = () => {
     setShow(false);
+    window.location.reload();
   };
 
   const handleUsernameChange = (event) => {
     setUpdatedUser({ ...updatedUser, username: event.target.value });
   };
 
+  const handlePasswordChange = (event) => {
+    setUpdatedUser({ ...updatedUser, password: event.target.value });
+  };
+
   const handleAdminStatusChange = (event) => {
-    setUpdatedUser({ ...updatedUser, isAdmin: event.target.value === "admin" });
+    setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
   };
 
   const handleSaveChanges = async () => {
     const formData = new FormData();
     formData.append("username", updatedUser.username);
-    formData.append("isadmin", updatedUser.isAdmin);
+    formData.append("isadmin", updatedUser.isadmin);
+    formData.append("password", updatedUser.password);
 
+    const ifExists = await fetch(
+      `/api/admin/ifexists/${selectedUser.username}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: { Authorization: "Basic " + btoa("default:barebones") },
+      }
+    );
+    if (ifExists.ok) {
+      formData.append("overwrite", true);
+    }
     try {
       const response = await fetch("/api/admin/edit_users", {
         method: "POST",
@@ -51,7 +70,6 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, onUserUpdate }) => {
         setProcessStatusCode(400);
       } else {
         setProcessStatusCode(200);
-        onUserUpdate(updatedUser);
         handleClose();
       }
     } catch (error) {
@@ -64,20 +82,35 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, onUserUpdate }) => {
       <Modal show={show} backdrop="static" onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>
-            {mode === "edit" ? "Edit User" : "Create New User"}
+            {mode === "edit"
+              ? `Editing credentials for ${selectedUser.username}`
+              : "Create New User"}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
-            <Form.Group className="mb-3" controlId="Form.Username">
+            {mode == "add" && (
+              <Form.Group className="mb-3" controlId="Form.Username">
+                <Form.Label>
+                  <strong>Username</strong>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  autoFocus
+                  value={updatedUser.username}
+                  onChange={handleUsernameChange}
+                />
+              </Form.Group>
+            )}
+            <Form.Group className="mb-3" controlId="Form.NewPassword">
               <Form.Label>
-                <strong>Username</strong>
+                <strong>{mode == "edit" ? "New Password" : "Password"}</strong>
               </Form.Label>
               <Form.Control
                 type="text"
                 autoFocus
-                value={updatedUser.username}
-                onChange={handleUsernameChange}
+                value={updatedUser.password}
+                onChange={handlePasswordChange}
               />
             </Form.Group>
             <Form.Group as={Row} className="mb-3" controlId="Form.AdminStatus">
@@ -91,7 +124,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, onUserUpdate }) => {
                   label="Normal user"
                   name="group1"
                   id="inline-radio-1"
-                  checked={!updatedUser.isAdmin}
+                  checked={!updatedUser.isadmin}
                   value="normal"
                   onChange={handleAdminStatusChange}
                 />
@@ -101,7 +134,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, onUserUpdate }) => {
                   label="Admin"
                   name="group1"
                   id="inline-radio-2"
-                  checked={updatedUser.isAdmin}
+                  checked={updatedUser.isadmin}
                   value="admin"
                   onChange={handleAdminStatusChange}
                 />
