@@ -73,9 +73,9 @@ const Dashboard = () => {
             </tr>
           </thead>
           <tbody>
-            {allUsers.map((user) => (
-              <tr key={user["UID"]}>
-                <td>{user["UID"]}</td>
+            {allUsers.map((user, index) => (
+              <tr key={index + 1}>
+                <td>{index + 1}</td>
                 <td>{user["username"]}</td>
                 <td>{user["isadmin"] ? "Admin" : "Normal User"}</td>
                 <td>
