@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import "../../css/LoginPage.css";
 
@@ -11,16 +12,14 @@ const Login = () => {
     try {
       const formData = new FormData();
       formData.append("creds", btoa(`${username}:${password}`));
-
       const response = await fetch(`/api/login`, {
         method: "POST",
         body: formData,
       });
-
-      const data = await response.json();
       if (response.ok) {
         localStorage.setItem("loggedIn", "true");
         window.location.href = "/";
+        localStorage.setItem("username", username);
       } else {
         setError("Invalid username or password");
       }

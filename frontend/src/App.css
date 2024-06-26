@@ -569,3 +569,26 @@ padding-left: 0;
   background-color: #7A8E99 !important;
   color: white !important;
 }
+
+/*Logout page*/
+.user-info-box {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.user-info-box p {
+  margin-bottom: 0.5rem;
+}
+
+.user-info-box span {
+  font-weight: bold;
+}
