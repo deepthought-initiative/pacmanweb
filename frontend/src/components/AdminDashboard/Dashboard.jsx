@@ -19,7 +19,6 @@ const Dashboard = () => {
   });
 
   const handleShow = (newMode, user) => {
-    console.log("dash", user);
     setSelectedUser(user);
     if (newMode.toLowerCase() == "delete") {
       setDeleteModal(true);
@@ -110,6 +109,7 @@ const Dashboard = () => {
           setShow={setShow}
           mode={mode}
           selectedUser={selectedUser}
+          allUsers={allUsers}
         />
       )}
       {deleteModal && (
