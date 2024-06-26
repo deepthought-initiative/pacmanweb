@@ -26,7 +26,6 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
 
   const handleClose = () => {
     setShow(false);
-    window.location.reload();
   };
 
   const handleUsernameChange = (event) => {
@@ -71,6 +70,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
       } else {
         setProcessStatusCode(200);
         handleClose();
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating user:", error);
