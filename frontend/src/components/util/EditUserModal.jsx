@@ -5,27 +5,33 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import ConfirmationModal from "./ConfirmationModal";
 
 // eslint-disable-next-line react/prop-types
 const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
   const [loading, setLoading] = useState(false);
   const [processStatusCode, setProcessStatusCode] = useState();
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [showEditModal, setShowEditModal] = useState(true);
   const [updatedUser, setUpdatedUser] = useState({
     username: selectedUser?.username || "",
     isadmin: selectedUser?.isadmin || false,
-    password: selectedUser?.password,
+    password: selectedUser?.password || "",
   });
 
   useEffect(() => {
     setUpdatedUser({
       username: selectedUser?.username || "",
       isadmin: selectedUser?.isadmin || false,
-      password: selectedUser?.password,
+      password: selectedUser?.password || "",
     });
   }, [selectedUser]);
 
   const handleClose = () => {
     setShow(false);
+    setShowConfirmationModal(false);
+    setShowEditModal(false);
   };
 
   const handleUsernameChange = (event) => {
@@ -41,23 +47,103 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
   };
 
   const handleSaveChanges = async () => {
-    const formData = new FormData();
-    formData.append("username", updatedUser.username);
-    formData.append("isadmin", updatedUser.isadmin);
-    formData.append("password", updatedUser.password);
+    // Check if any of the user's information has changed
+    const hasChanged =
+      updatedUser.username !== selectedUser.username ||
+      updatedUser.isadmin !== selectedUser.isadmin ||
+      updatedUser.password !== selectedUser.password;
 
-    const ifExists = await fetch(
-      `/api/admin/ifexists/${selectedUser.username}`,
-      {
-        method: "GET",
-        credentials: "include",
-        headers: { Authorization: "Basic " + btoa("default:barebones") },
+    if (hasChanged) {
+      // Ask for confirmation before saving changes
+      setConfirmationMessage(
+        `Are you sure you want to update the information for user "${
+          selectedUser.username
+        }"?
+
+Changes:
+
+- Username: ${
+          updatedUser.username !== selectedUser.username
+            ? `${selectedUser.username} -> ${updatedUser.username}`
+            : "No change"
+        }
+
+- Admin status: ${
+          updatedUser.isadmin !== selectedUser.isadmin
+            ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
+                updatedUser.isadmin ? "Admin" : "Normal user"
+              }`
+            : "No change"
+        }
+
+- Password: ${
+          updatedUser.password !== selectedUser.password
+            ? "Changed"
+            : "No change"
+        }`
+      );
+      setShowConfirmationModal(true);
+      setShowEditModal(false);
+    } else {
+      try {
+        const formData = new FormData();
+        formData.append("username", updatedUser.username);
+        formData.append("isadmin", updatedUser.isadmin);
+        formData.append("password", updatedUser.password);
+
+        const ifExists = await fetch(
+          `/api/admin/ifexists/${selectedUser.username}`,
+          {
+            method: "GET",
+            credentials: "include",
+            headers: { Authorization: "Basic " + btoa("default:barebones") },
+          }
+        );
+        if (ifExists.ok) {
+          formData.append("overwrite", true);
+        }
+
+        const response = await fetch("/api/admin/edit_users", {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+          headers: { Authorization: "Basic " + btoa("default:barebones") },
+        });
+
+        if (!response.ok) {
+          setProcessStatusCode(400);
+        } else {
+          setProcessStatusCode(200);
+          handleClose();
+          window.location.reload();
+        }
+      } catch (error) {
+        console.error("Error updating user:", error);
       }
-    );
-    if (ifExists.ok) {
-      formData.append("overwrite", true);
     }
+  };
+
+  const handleConfirmation = async () => {
+    setShowConfirmationModal(false);
+    setShowEditModal(true);
     try {
+      const formData = new FormData();
+      formData.append("username", updatedUser.username);
+      formData.append("isadmin", updatedUser.isadmin);
+      formData.append("password", updatedUser.password);
+
+      const ifExists = await fetch(
+        `/api/admin/ifexists/${selectedUser.username}`,
+        {
+          method: "GET",
+          credentials: "include",
+          headers: { Authorization: "Basic " + btoa("default:barebones") },
+        }
+      );
+      if (ifExists.ok) {
+        formData.append("overwrite", true);
+      }
+
       const response = await fetch("/api/admin/edit_users", {
         method: "POST",
         body: formData,
@@ -77,77 +163,117 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
     }
   };
 
+  const handleCancelConfirmation = () => {
+    setShowConfirmationModal(false);
+    setShowEditModal(true);
+  };
+
   return (
     <>
-      <Modal show={show} backdrop="static" onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {mode === "edit"
-              ? `Editing credentials for ${selectedUser.username}`
-              : "Create New User"}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            {mode == "add" && (
-              <Form.Group className="mb-3" controlId="Form.Username">
+      {showEditModal && (
+        <Modal show={show} backdrop="static" onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {mode === "edit"
+                ? `Editing credentials for ${selectedUser.username}`
+                : "Create New User"}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              {mode === "add" && (
+                <Form.Group className="mb-3" controlId="Form.Username">
+                  <Form.Label>
+                    <strong>Username</strong>
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    autoFocus
+                    value={updatedUser.username}
+                    onChange={handleUsernameChange}
+                  />
+                </Form.Group>
+              )}
+              <Form.Group className="mb-3" controlId="Form.NewPassword">
                 <Form.Label>
-                  <strong>Username</strong>
+                  <strong>
+                    {mode === "edit" ? "New Password" : "Password"}
+                  </strong>
                 </Form.Label>
                 <Form.Control
                   type="text"
                   autoFocus
-                  value={updatedUser.username}
-                  onChange={handleUsernameChange}
+                  value={updatedUser.password}
+                  onChange={handlePasswordChange}
                 />
               </Form.Group>
-            )}
-            <Form.Group className="mb-3" controlId="Form.NewPassword">
-              <Form.Label>
-                <strong>{mode == "edit" ? "New Password" : "Password"}</strong>
-              </Form.Label>
-              <Form.Control
-                type="text"
-                autoFocus
-                value={updatedUser.password}
-                onChange={handlePasswordChange}
-              />
-            </Form.Group>
-            <Form.Group as={Row} className="mb-3" controlId="Form.AdminStatus">
-              <Form.Label>
-                <strong>Status</strong>
-              </Form.Label>
-              <div>
-                <Form.Check
-                  inline
-                  type="radio"
-                  label="Normal user"
-                  name="group1"
-                  id="inline-radio-1"
-                  checked={!updatedUser.isadmin}
-                  value="normal"
-                  onChange={handleAdminStatusChange}
-                />
-                <Form.Check
-                  inline
-                  type="radio"
-                  label="Admin"
-                  name="group1"
-                  id="inline-radio-2"
-                  checked={updatedUser.isadmin}
-                  value="admin"
-                  onChange={handleAdminStatusChange}
-                />
-              </div>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="primary" onClick={handleSaveChanges}>
-            {mode === "edit" ? "Save Changes" : "Create User"}
-          </Button>
-        </Modal.Footer>
-      </Modal>
+              <Form.Group
+                as={Row}
+                className="mb-3"
+                controlId="Form.AdminStatus"
+              >
+                <Form.Label>
+                  <strong>Status</strong>
+                </Form.Label>
+                <div>
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="Normal user"
+                    name="group1"
+                    id="inline-radio-1"
+                    checked={!updatedUser.isadmin}
+                    value="normal"
+                    onChange={handleAdminStatusChange}
+                  />
+                  <Form.Check
+                    inline
+                    type="radio"
+                    label="Admin"
+                    name="group1"
+                    id="inline-radio-2"
+                    checked={updatedUser.isadmin}
+                    value="admin"
+                    onChange={handleAdminStatusChange}
+                  />
+                </div>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="primary"
+              onClick={() => {
+                setConfirmationMessage(
+                  `Are you sure you want to update the information for this user?
+
+Changes:
+
+- Admin status: ${
+                    updatedUser.isadmin !== selectedUser.isadmin
+                      ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
+                          updatedUser.isadmin ? "Admin" : "Normal user"
+                        }`
+                      : "No change"
+                  }
+
+- Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
+                );
+                setShowConfirmationModal(true);
+                setShowEditModal(false);
+              }}
+            >
+              {mode === "edit" ? "Save Changes" : "Create User"}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
+      <ConfirmationModal
+        show={showConfirmationModal}
+        onConfirm={handleConfirmation}
+        onCancel={handleCancelConfirmation}
+        message={confirmationMessage}
+      />
     </>
   );
 };
