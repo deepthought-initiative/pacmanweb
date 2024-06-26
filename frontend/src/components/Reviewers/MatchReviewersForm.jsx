@@ -47,6 +47,8 @@ const MatchReviewersForm = ({
     useState("");
   const [pastCycleError, setPastCycleError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
+  const [textAreaError, setTextAreaError] = useState("");
+
   //
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
