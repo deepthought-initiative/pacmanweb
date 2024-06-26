@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import UserDelete from "../../assets/UserDelete.png";
 import UserEdit from "../../assets/UserEdit.png";
-import AlertModal from "../util/AlertBox";
+import DeleteUserModal from "../util/DeleteUserModal";
 import EditUserModal from "../util/EditUserModal";
 
 const Dashboard = () => {
@@ -39,8 +39,17 @@ const Dashboard = () => {
     console.log(allUsers);
   }, []);
 
-  const deleteUserAlertTitle = "Delete a User";
-  const deleteUserAlertDesc = "Deleting";
+  const handleDeleteUser = async () => {
+    const formData = new FormData();
+    formData.append("username", selectedUser.username);
+    const response = await fetch("/api/admin/delete_user", {
+      method: "POST",
+      body: formData,
+    });
+    if (response.ok) {
+      window.location.reload();
+    }
+  };
 
   return (
     <div className="user-list-container">
@@ -104,11 +113,12 @@ const Dashboard = () => {
         />
       )}
       {deleteModal && (
-        <AlertModal
+        <DeleteUserModal
           show={deleteModal}
-          title={deleteUserAlertTitle}
-          desc={deleteUserAlertDesc}
+          buttonText="Confirm Delete"
           onHide={() => setDeleteModal(false)}
+          selectedUser={selectedUser}
+          handleDeleteUser={handleDeleteUser}
         />
       )}
     </div>
