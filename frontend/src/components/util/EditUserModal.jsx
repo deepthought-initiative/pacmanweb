@@ -8,9 +8,7 @@ import Row from "react-bootstrap/Row";
 import ConfirmationModal from "./ConfirmationModal";
 
 // eslint-disable-next-line react/prop-types
-const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
-  const [loading, setLoading] = useState(false);
-  const [processStatusCode, setProcessStatusCode] = useState();
+const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);
@@ -21,6 +19,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
   });
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
+  const [usernameErrorMessage, setusernameErrorMessage] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -62,24 +61,26 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
       (updatedUser.username === "" || updatedUser.password === "")
     ) {
       setUsernameError(updatedUser.username === "");
+      setusernameErrorMessage(" Username is required.");
       setPasswordError(updatedUser.password === "");
       return;
     }
 
+    if (mode === "add" && updatedUser.username !== "") {
+      const isUsernamePresent = allUsers.some(
+        (user) => user.username === updatedUser.username
+      );
+      if (isUsernamePresent) {
+        setUsernameError(true);
+        setusernameErrorMessage("Username already exists");
+      }
+    }
     if (hasChanged) {
       // Ask for confirmation before saving changes
       setConfirmationMessage(
-        `Are you sure you want to update the information for user "${
-          selectedUser.username
-        }"?
+        `Are you sure you want to update the information for this user?
 
 Changes:
-
-- Username: ${
-          updatedUser.username !== selectedUser.username
-            ? `${selectedUser.username} -> ${updatedUser.username}`
-            : "No change"
-        }
 
 - Admin status: ${
           updatedUser.isadmin !== selectedUser.isadmin
@@ -89,11 +90,7 @@ Changes:
             : "No change"
         }
 
-- Password: ${
-          updatedUser.password !== selectedUser.password
-            ? "Changed"
-            : "No change"
-        }`
+- Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
       );
       setShowConfirmationModal(true);
       setShowEditModal(false);
@@ -217,7 +214,7 @@ Changes:
                   />
                   {usernameError && (
                     <Form.Control.Feedback type="invalid">
-                      Username is required.
+                      {usernameErrorMessage}
                     </Form.Control.Feedback>
                   )}
                 </Form.Group>
@@ -229,7 +226,7 @@ Changes:
                   </strong>
                 </Form.Label>
                 <Form.Control
-                  type="password"
+                  type="text"
                   autoFocus
                   value={updatedUser.password}
                   onChange={handlePasswordChange}
