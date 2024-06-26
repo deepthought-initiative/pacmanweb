@@ -2,7 +2,7 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-const AlertModal = ({ show, onHide, title, desc }) => {
+const AlertModal = ({ show, onHide, title, desc, buttonText }) => {
   return (
     <Modal
       show={show}
@@ -22,7 +22,7 @@ const AlertModal = ({ show, onHide, title, desc }) => {
         <p>{desc}</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>Close</Button>
+        <Button onClick={onHide}>{buttonText}</Button>
       </Modal.Footer>
     </Modal>
   );

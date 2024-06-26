@@ -81,6 +81,7 @@ const OtherConfigOptionsCategorize = ({
       {modalShow && (
         <AlertModal
           show={modalShow}
+          buttonText="Close"
           title={multipleRequestAlertTitle}
           desc={multipleRequestAlertDesc}
           onHide={() => setModalShow(false)}
