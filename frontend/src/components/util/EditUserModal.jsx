@@ -19,6 +19,8 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
     isadmin: selectedUser?.isadmin || false,
     password: selectedUser?.password || "",
   });
+  const [usernameError, setUsernameError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -36,10 +38,12 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
 
   const handleUsernameChange = (event) => {
     setUpdatedUser({ ...updatedUser, username: event.target.value });
+    setUsernameError(false);
   };
 
   const handlePasswordChange = (event) => {
     setUpdatedUser({ ...updatedUser, password: event.target.value });
+    setPasswordError(false);
   };
 
   const handleAdminStatusChange = (event) => {
@@ -52,6 +56,15 @@ const EditUserModal = ({ show, setShow, mode, selectedUser }) => {
       updatedUser.username !== selectedUser.username ||
       updatedUser.isadmin !== selectedUser.isadmin ||
       updatedUser.password !== selectedUser.password;
+
+    if (
+      mode === "add" &&
+      (updatedUser.username === "" || updatedUser.password === "")
+    ) {
+      setUsernameError(updatedUser.username === "");
+      setPasswordError(updatedUser.password === "");
+      return;
+    }
 
     if (hasChanged) {
       // Ask for confirmation before saving changes
@@ -114,8 +127,17 @@ Changes:
           setProcessStatusCode(400);
         } else {
           setProcessStatusCode(200);
-          handleClose();
-          window.location.reload();
+          if (mode === "edit") {
+            handleClose();
+            window.location.reload();
+          } else {
+            alert(
+              `User "${updatedUser.username}" (${
+                updatedUser.isadmin ? "Admin" : "Normal user"
+              }) added successfully.`
+            );
+            handleClose();
+          }
         }
       } catch (error) {
         console.error("Error updating user:", error);
@@ -191,7 +213,13 @@ Changes:
                     autoFocus
                     value={updatedUser.username}
                     onChange={handleUsernameChange}
+                    isInvalid={usernameError}
                   />
+                  {usernameError && (
+                    <Form.Control.Feedback type="invalid">
+                      Username is required.
+                    </Form.Control.Feedback>
+                  )}
                 </Form.Group>
               )}
               <Form.Group className="mb-3" controlId="Form.NewPassword">
@@ -201,11 +229,17 @@ Changes:
                   </strong>
                 </Form.Label>
                 <Form.Control
-                  type="text"
+                  type="password"
                   autoFocus
                   value={updatedUser.password}
                   onChange={handlePasswordChange}
+                  isInvalid={passwordError}
                 />
+                {passwordError && (
+                  <Form.Control.Feedback type="invalid">
+                    Password is required.
+                  </Form.Control.Feedback>
+                )}
               </Form.Group>
               <Form.Group
                 as={Row}
@@ -243,25 +277,12 @@ Changes:
           <Modal.Footer>
             <Button
               variant="primary"
-              onClick={() => {
-                setConfirmationMessage(
-                  `Are you sure you want to update the information for this user?
-
-Changes:
-
-- Admin status: ${
-                    updatedUser.isadmin !== selectedUser.isadmin
-                      ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
-                          updatedUser.isadmin ? "Admin" : "Normal user"
-                        }`
-                      : "No change"
-                  }
-
-- Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
-                );
-                setShowConfirmationModal(true);
-                setShowEditModal(false);
-              }}
+              onClick={handleSaveChanges}
+              disabled={
+                mode === "edit" &&
+                !updatedUser.username &&
+                !updatedUser.password
+              }
             >
               {mode === "edit" ? "Save Changes" : "Create User"}
             </Button>
