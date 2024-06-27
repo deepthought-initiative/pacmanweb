@@ -103,7 +103,10 @@ const MatchReviewersForm = ({
       setCloseCollaboratorTimeFrameError("Required");
       noError = false;
     }
-
+    if (textAreaError) {
+      setTextAreaError("Required");
+      noError = false;
+    }
     // Validate pastCycle only if mode is "DUP"
     if (mode === "DUP" && pastCycle.length === 0) {
       setPastCycleError("Select at least one");
@@ -118,6 +121,7 @@ const MatchReviewersForm = ({
     setNumberOfTopReviewersError("");
     setCloseCollaboratorTimeFrameError("");
     setPastCycleError("");
+    setTextAreaError("");
   };
 
   const onTerminate = () => {
@@ -361,7 +365,11 @@ const MatchReviewersForm = ({
         </div>
         {!showLogs ? (
           <div className="my-3">
-            <TextArea setValue={setPanelistNames} />
+            <TextArea
+              setValue={setPanelistNames}
+              textAreaError={textAreaError}
+              setTextAreaError={setTextAreaError}
+            />
           </div>
         ) : (
           <></>
