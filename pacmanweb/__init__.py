@@ -16,6 +16,13 @@ celery_app = Celery(
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 redis_instance.flushall()
 
+# TODO: make this more secret
+redis_instance.hset('user_mainadmin', mapping={
+    "username": "mainadmin",
+    "password": "pbkdf2:sha256:600000$TjyKD8HG3DPP3ayF$5d54ab3893935b8d9a3d236fe35098868324ae9b4606f1d3ceeb85cf04b12e38",
+    "admin": "True"
+})
+
 def create_app(config_class=Config):
     # instance_path?
     app = Flask(__name__)

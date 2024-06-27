@@ -121,7 +121,7 @@ class RunPACMan:
         self.options = options
         print(options)
 
-        self.flask_config = Config()
+        self.flask_config = Config
         self.pacman_path = self.flask_config.PACMAN_PATH
         outfile_fpath = (
             self.flask_config.ROOTDIR / f"logs/run-{self.celery_task_id}.log"
@@ -164,7 +164,7 @@ class RunPACMan:
             json.dump(data, pacman_config)
 
     def run(self):
-        self.modify_config()
+        self.modify_Config
         # ! `shell=True` is only safe when the command being run is not tampered with
         # ! TODO: Get rid of shell=True
         env = os.environ.copy()
