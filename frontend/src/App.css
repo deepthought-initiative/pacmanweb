@@ -523,8 +523,12 @@ padding-left: 0;
 
 /*Admin Dashboard*/
 
-.user-list-container{
+.user-list-container {
   margin-top: 50px;
+  width: 80%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .user-edit-options {
@@ -539,6 +543,10 @@ padding-left: 0;
   &:hover {
     transform: scale(1.1);
   }
+}
+
+.new-user-btn-container{
+  justify-content: flex-end;
 }
 
 .password-container{
@@ -591,4 +599,20 @@ padding-left: 0;
 
 .user-info-box span {
   font-weight: bold;
+}
+
+/*Form Label*/
+.form-control{
+  font-family: 'Manrope';
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+textarea{
+  box-shadow: none !important;
+  border: 1px solid rgb(133, 140, 148) !important;
+}
+
+.textarea-input.is-invalid {
+  border: 2px solid red !important;
 }
