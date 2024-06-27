@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
+import FormGroup from "react-bootstrap/esm/FormGroup";
 
 const TextArea = ({ setValue, textAreaError, setTextAreaError }) => {
   const [textEntered, setTextEntered] = useState("");
@@ -58,20 +58,28 @@ const TextArea = ({ setValue, textAreaError, setTextAreaError }) => {
 
   return (
     <div>
-      <InputGroup>
+      <FormGroup className="dropdown-container">
+        <Form.Label
+          className={`custom-input-form-label ${
+            textAreaError ? "is-invalid" : ""
+          }`}
+        >
+          <strong>Panelist Names</strong>
+        </Form.Label>
         <Form.Control
           as="textarea"
           value={textEntered}
           aria-label="With textarea"
           onChange={handleOnChange}
-          isInvalid={!!textAreaError}
+          isInvalid={textAreaError}
+          className="textarea-input"
         />
         {validationError && (
           <Form.Control.Feedback type="invalid">
             {validationError}
           </Form.Control.Feedback>
         )}
-      </InputGroup>
+      </FormGroup>
     </div>
   );
 };

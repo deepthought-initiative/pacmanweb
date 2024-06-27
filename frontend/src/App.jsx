@@ -115,7 +115,10 @@ function App() {
           />
           <Route path="/upload" element={<UploadZipForm />} />
           {isUserAdminContext && (
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/dashboard"
+              element={<Dashboard usernameContext={usernameContext} />}
+            />
           )}
           <Route
             path="/logout"

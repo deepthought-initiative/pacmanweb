@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
@@ -6,7 +7,7 @@ import UserEdit from "../../assets/UserEdit.png";
 import DeleteUserModal from "../util/DeleteUserModal";
 import EditUserModal from "../util/EditUserModal";
 
-const Dashboard = () => {
+const Dashboard = ({ usernameContext }) => {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
@@ -54,7 +55,7 @@ const Dashboard = () => {
     <div className="user-list-container">
       <h2>All Users</h2>
       <div className="row mb-3">
-        <div className="col d-flex">
+        <div className="col d-flex new-user-btn-container">
           <button
             className="btn"
             onClick={() =>
@@ -92,10 +93,12 @@ const Dashboard = () => {
                       src={UserEdit}
                       onClick={() => handleShow("edit", user)}
                     />
-                    <img
-                      src={UserDelete}
-                      onClick={() => handleShow("DELETE", user)}
-                    />
+                    {user["username"] !== usernameContext && (
+                      <img
+                        src={UserDelete}
+                        onClick={() => handleShow("DELETE", user)}
+                      />
+                    )}
                   </div>
                 </td>
               </tr>
