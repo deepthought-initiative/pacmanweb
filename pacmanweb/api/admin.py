@@ -43,7 +43,7 @@ def exists(username):
 
 @admin_bp.route("/edit_users", methods=["POST"])
 @login_required
-# @admin_only
+@admin_only
 def register_update_user():
     username = request.form["username"]
     newuserdata = {
@@ -96,7 +96,7 @@ def register_update_user():
 
 @admin_bp.route("/delete_user", methods=["POST"])
 @login_required
-# @admin_only
+@admin_only
 def delete_user():
     username = request.form["username"]
     if f'user_{username}'.encode('utf-8') in redis_instance.keys('*'):
@@ -108,7 +108,7 @@ def delete_user():
 
 @admin_bp.route("/return_users", methods=["GET"])
 @login_required
-# @admin_only
+@admin_only
 def return_user_data():
     result = []
     for key in redis_instance.keys("user_*"):
