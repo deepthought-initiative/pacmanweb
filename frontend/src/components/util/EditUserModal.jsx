@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
 
 // eslint-disable-next-line react/prop-types
@@ -261,7 +262,11 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                   value={updatedUser.password}
                   onChange={handlePasswordChange}
                   isInvalid={passwordError}
+                  className="password-input-container"
                 />
+                <button type="button" className="show-password-btn">
+                  <img src={ShowPasswordIcon} alt="Show Password" />
+                </button>
                 {passwordError && (
                   <Form.Control.Feedback type="invalid">
                     {passwordErrorMessage}
