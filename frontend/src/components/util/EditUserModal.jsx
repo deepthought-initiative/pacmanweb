@@ -268,37 +268,39 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
-              <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="Form.AdminStatus"
-              >
-                <Form.Label>
-                  <strong>Status</strong>
-                </Form.Label>
-                <div>
-                  <Form.Check
-                    inline
-                    type="radio"
-                    label="Normal user"
-                    name="group1"
-                    id="inline-radio-1"
-                    checked={!updatedUser.isadmin}
-                    value="normal"
-                    onChange={handleAdminStatusChange}
-                  />
-                  <Form.Check
-                    inline
-                    type="radio"
-                    label="Admin"
-                    name="group1"
-                    id="inline-radio-2"
-                    checked={updatedUser.isadmin}
-                    value="admin"
-                    onChange={handleAdminStatusChange}
-                  />
-                </div>
-              </Form.Group>
+              {selectedUser["username"] !== "mainadmin" && (
+                <Form.Group
+                  as={Row}
+                  className="mb-3"
+                  controlId="Form.AdminStatus"
+                >
+                  <Form.Label>
+                    <strong>Status</strong>
+                  </Form.Label>
+                  <div>
+                    <Form.Check
+                      inline
+                      type="radio"
+                      label="Normal user"
+                      name="group1"
+                      id="inline-radio-1"
+                      checked={!updatedUser.isadmin}
+                      value="normal"
+                      onChange={handleAdminStatusChange}
+                    />
+                    <Form.Check
+                      inline
+                      type="radio"
+                      label="Admin"
+                      name="group1"
+                      id="inline-radio-2"
+                      checked={updatedUser.isadmin}
+                      value="admin"
+                      onChange={handleAdminStatusChange}
+                    />
+                  </div>
+                </Form.Group>
+              )}
             </Form>
           </Modal.Body>
           <Modal.Footer>
