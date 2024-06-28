@@ -7,6 +7,7 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import HidePasswordIcon from "../../assets/hide.png";
 import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
 
@@ -25,6 +26,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -52,6 +54,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
 
   const handleAdminStatusChange = (event) => {
     setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const hasChanged =
@@ -257,15 +263,22 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                   </strong>
                 </Form.Label>
                 <Form.Control
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   autoFocus
                   value={updatedUser.password}
                   onChange={handlePasswordChange}
                   isInvalid={passwordError}
                   className="password-input-container"
                 />
-                <button type="button" className="show-password-btn">
-                  <img src={ShowPasswordIcon} alt="Show Password" />
+                <button
+                  onClick={handleShowPassword}
+                  type="button"
+                  className="show-password-btn"
+                >
+                  <img
+                    src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
+                    alt="Show Password"
+                  />
                 </button>
                 {passwordError && (
                   <Form.Control.Feedback type="invalid">
