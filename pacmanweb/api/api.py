@@ -84,6 +84,7 @@ def run_pacman():
     
     if options["mode"] == "MATCH" and panelist_names_mode == "append": 
         panelist_names = options.pop('panelist_names', []).split(',')
+        panelist_names = [item for item in panelist_names if item not in [""] and len(item)!=0 and set(item)!=1]
         panelist_file_name = f"{options['main_test_cycle']}_panelists.csv"
         complete_panelist_file_path =Config.PANELISTS_DATA / panelist_file_name
         panelists_data = pd.read_csv(complete_panelist_file_path)
