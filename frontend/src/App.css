@@ -7,6 +7,7 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  margin-bottom: 60px;
 }
 
 #outer-container {
@@ -538,7 +539,8 @@ padding-left: 0;
 }
 
 .user-edit-options img {
-  max-width: 30px;
+  max-width: 20px;
+  border-radius: 0px;
   transition: transform 0.2s ease-in-out;
   &:hover {
     transform: scale(1.1);
@@ -623,4 +625,26 @@ textarea{
   cursor: not-allowed;
   opacity: 0.7;
   background-color: #8fa3b0;
+}
+
+/* App.css */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f5f5f5;
+  color: #6c757d;
+  text-align: center;
+  padding: 1rem 0;
+  z-index: 1000;
+}
+
+.footer .container {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.footer .text-muted {
+  font-size: 0.875rem;
 }
