@@ -579,25 +579,26 @@ padding-left: 0;
 }
 
 /*Logout page*/
-.user-info-box {
+.user-info-box{
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.user-info-content {
   padding: 1rem;
   width: 300px;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-bottom: 1rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 2rem;
+  text-align: center;
 }
 
-.user-info-box p {
+.user-info-content p {
   margin-bottom: 0.5rem;
 }
 
-.user-info-box span {
+.user-info-content span {
   font-weight: bold;
 }
 
