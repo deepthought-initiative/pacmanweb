@@ -12,16 +12,18 @@ const Logout = ({ usernameContext, isUserAdminContext, setLoggedIn }) => {
   };
   return (
     <div className="user-info-box">
-      <p>
-        Username: <span id="username">{usernameContext}</span>
-      </p>
-      <p>
-        Status:{" "}
-        <span id="user-status">{isUserAdminContext ? "Admin" : "User"}</span>
-      </p>
-      <button className="btn" onClick={handleLogout}>
-        Logout
-      </button>
+      <div className="user-info-content">
+        <p>
+          Username: <span id="username">{usernameContext}</span>
+        </p>
+        <p>
+          Status:{" "}
+          <span id="user-status">{isUserAdminContext ? "Admin" : "User"}</span>
+        </p>
+        <button className="btn" onClick={handleLogout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
