@@ -19,7 +19,7 @@ const Dashboard = ({ usernameContext }) => {
   });
 
   const handleShow = (newMode, user) => {
-    setSelectedUser({ ...user, isadmin: Boolean(user.isadmin) });
+    setSelectedUser(user);
     if (newMode.toLowerCase() == "delete") {
       setDeleteModal(true);
     } else {
@@ -32,7 +32,11 @@ const Dashboard = ({ usernameContext }) => {
     async function fetchAllUsers() {
       const fetchUsers = await fetch("/api/admin/return_users");
       const all_users_json = await fetchUsers.json();
-      setAllUsers(all_users_json);
+      const fixedAllUsers = all_users_json.map((user) => ({
+        ...user,
+        isadmin: user.isadmin === "True",
+      }));
+      setAllUsers(fixedAllUsers);
     }
     fetchAllUsers();
   }, []);
