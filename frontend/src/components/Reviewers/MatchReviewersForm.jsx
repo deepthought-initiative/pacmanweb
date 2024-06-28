@@ -265,19 +265,22 @@ const MatchReviewersForm = ({
     resetErrors();
     console.log(panelistNames);
     const checkErrors = validateFields();
+    let url = "";
+    if (panelistNames.length === 0) {
+      url = `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}&panelist_names=${panelistNames}&panelist_names_mode=append`;
+    } else {
+      url = `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}`;
+    }
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}&panelist_names=${panelistNames}&panelist_names_mode=append`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      spawnResponse = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: "Basic " + btoa("default:barebones"),
+          "Content-Type": "application/json",
+        },
+      });
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
