@@ -2,7 +2,13 @@
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
-const AlertModal = ({ show, onHide, title, desc, buttonText }) => {
+const DeleteUserModal = ({
+  show,
+  onHide,
+  buttonText,
+  handleDeleteUser,
+  selectedUser,
+}) => {
   return (
     <Modal
       show={show}
@@ -15,17 +21,18 @@ const AlertModal = ({ show, onHide, title, desc, buttonText }) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          <strong>{title}</strong>
+          <strong>{`Deleting user for ${selectedUser.username}`}</strong>
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>{desc}</p>
+        <p>{`Username: ${selectedUser.username}`}</p>
+        <p>{`Status: ${selectedUser.isadmin ? "Admin" : "Normal User"}`}</p>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={onHide}>{buttonText}</Button>
+        <Button onClick={handleDeleteUser}>{buttonText}</Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default AlertModal;
+export default DeleteUserModal;

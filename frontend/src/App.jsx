@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
@@ -19,6 +20,24 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("loggedIn") === "true"
   );
+  const [isUserAdminContext, setIsUserAdminContext] = useState(false);
+  const [usernameContext, setusernameContext] = useState(
+    localStorage.getItem("username")
+  );
+
+  const checkAdminStatus = async () => {
+    const ifExists = await fetch(`/api/admin/ifexists/${usernameContext}`, {
+      method: "GET",
+      credentials: "include",
+      headers: { Authorization: "Basic " + btoa("default:barebones") },
+    });
+    if (ifExists.ok) {
+      const existsResponse = await ifExists.json();
+      if (existsResponse.value === "User is admin and exists") {
+        setIsUserAdminContext(true);
+      }
+    }
+  };
 
   useEffect(() => {
     async function fetchCycles() {
@@ -39,13 +58,14 @@ function App() {
         }));
       setAllCycles(allAvailableCycles);
       setModalFile(fullResponseJson["models"]);
+      checkAdminStatus();
     }
     fetchCycles();
   }, []);
   return loggedIn ? (
     <>
       <BrowserRouter>
-        <MainNavbar />
+        <MainNavbar isUserAdminContext={isUserAdminContext} />
         <Routes>
           <Route
             path="/categorize"
@@ -94,16 +114,27 @@ function App() {
             }
           />
           <Route path="/upload" element={<UploadZipForm />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          {isUserAdminContext && (
+            <Route
+              path="/dashboard"
+              element={<Dashboard usernameContext={usernameContext} />}
+            />
+          )}
           <Route
             path="/logout"
-            element={<Logout setLoggedIn={setLoggedIn} />}
+            element={
+              <Logout
+                usernameContext={usernameContext}
+                isUserAdminContext={isUserAdminContext}
+                setLoggedIn={setLoggedIn}
+              />
+            }
           />
         </Routes>
       </BrowserRouter>
     </>
   ) : (
-    <Login setLoggedIn={setLoggedIn} />
+    <Login />
   );
 }
 

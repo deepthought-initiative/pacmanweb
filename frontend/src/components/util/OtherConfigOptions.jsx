@@ -107,6 +107,7 @@ const OtherConfigOptions = ({
           show={modalShow}
           title={multipleRequestAlertTitle}
           desc={multipleRequestAlertDesc}
+          buttonText="Close"
           onHide={() => setModalShow(false)}
         />
       )}

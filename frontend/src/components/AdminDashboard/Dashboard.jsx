@@ -1,40 +1,132 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
+import UserDelete from "../../assets/UserDelete.png";
+import UserEdit from "../../assets/UserEdit.png";
+import DeleteUserModal from "../util/DeleteUserModal";
+import EditUserModal from "../util/EditUserModal";
 
-const Dashboard = () => {
+const Dashboard = ({ usernameContext }) => {
+  const [show, setShow] = useState(false);
+  const [mode, setMode] = useState();
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState({
+    UID: "",
+    username: "",
+    isadmin: false,
+  });
+
+  const handleShow = (newMode, user) => {
+    setSelectedUser(user);
+    if (newMode.toLowerCase() == "delete") {
+      setDeleteModal(true);
+    } else {
+      setShow(true);
+      setMode(newMode.toLowerCase());
+    }
+  };
+
+  useEffect(() => {
+    async function fetchAllUsers() {
+      const fetchUsers = await fetch("/api/admin/return_users");
+      const all_users_json = await fetchUsers.json();
+      const fixedAllUsers = all_users_json.map((user) => ({
+        ...user,
+        isadmin: user.isadmin === "True",
+      }));
+      setAllUsers(fixedAllUsers);
+    }
+    fetchAllUsers();
+  }, []);
+
+  const handleDeleteUser = async () => {
+    const formData = new FormData();
+    formData.append("username", selectedUser.username);
+    const response = await fetch("/api/admin/delete_user", {
+      method: "POST",
+      body: formData,
+    });
+    if (response.ok) {
+      window.location.reload();
+    }
+  };
+
   return (
     <div className="user-list-container">
       <h2>All Users</h2>
+      <div className="row mb-3">
+        <div className="col d-flex new-user-btn-container">
+          <button
+            className="btn"
+            onClick={() =>
+              handleShow("ADD", {
+                UID: "",
+                username: "",
+                Password: "",
+                isadmin: false,
+              })
+            }
+          >
+            + New User
+          </button>
+        </div>
+      </div>
       <div>
         <Table striped bordered hover>
           <thead>
             <tr>
               <th>#</th>
-              <th>First Name</th>
-              <th>Last Name</th>
               <th>Username</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td colSpan={2}>Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+            {allUsers.map((user, index) => (
+              <tr key={index + 1}>
+                <td>{index + 1}</td>
+                <td>{user["username"]}</td>
+                <td>{user["isadmin"] ? "Admin" : "Normal User"}</td>
+                <td>
+                  <div className="user-edit-options">
+                    <img
+                      src={UserEdit}
+                      onClick={() => handleShow("edit", user)}
+                    />
+                    {user["username"] !== usernameContext && (
+                      <img
+                        src={UserDelete}
+                        onClick={() => handleShow("DELETE", user)}
+                      />
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </div>
+      {show && (
+        <EditUserModal
+          show={show}
+          setShow={setShow}
+          mode={mode}
+          selectedUser={selectedUser}
+          key={selectedUser?.username}
+          allUsers={allUsers}
+        />
+      )}
+      {deleteModal && (
+        <DeleteUserModal
+          show={deleteModal}
+          buttonText="Confirm Delete"
+          onHide={() => setDeleteModal(false)}
+          selectedUser={selectedUser}
+          handleDeleteUser={handleDeleteUser}
+        />
+      )}
     </div>
   );
 };

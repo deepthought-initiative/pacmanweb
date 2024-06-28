@@ -7,6 +7,7 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  margin-bottom: 60px;
 }
 
 #outer-container {
@@ -523,6 +524,127 @@ padding-left: 0;
 
 /*Admin Dashboard*/
 
-.user-list-container{
+.user-list-container {
   margin-top: 50px;
+  width: 80%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.user-edit-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.user-edit-options img {
+  max-width: 20px;
+  border-radius: 0px;
+  transition: transform 0.2s ease-in-out;
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.new-user-btn-container{
+  justify-content: flex-end;
+}
+
+.password-container{
+  display: flex;
+  align-items: center;
+}
+
+.password-toggle-btn {
+  font-weight: bolder;
+  padding: 10px 20px;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  background-color: #7A8E99;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.password-toggle-btn:hover {
+  background-color: #7A8E99 !important;
+  color: white !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+.password-toggle-btn:active {
+  animation: clickanimation 0.3s ease;
+  background-color: #7A8E99 !important;
+  color: white !important;
+}
+
+/*Logout page*/
+.user-info-box{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-info-content {
+  padding: 1rem;
+  width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.user-info-content p {
+  margin-bottom: 0.5rem;
+}
+
+.user-info-content span {
+  font-weight: bold;
+}
+
+/*Form Label*/
+.form-control{
+  font-family: 'Manrope';
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+textarea{
+  box-shadow: none !important;
+  border: 1px solid rgb(133, 140, 148) !important;
+}
+
+.textarea-input.is-invalid {
+  border: 2px solid red !important;
+}
+
+.modal-footer .btn.disabled,
+.modal-footer .btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background-color: #8fa3b0;
+}
+
+/* App.css */
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f5f5f5;
+  color: #6c757d;
+  text-align: center;
+  padding: 1rem 0;
+  z-index: 1000;
+}
+
+.footer .container {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.footer .text-muted {
+  font-size: 0.875rem;
 }
