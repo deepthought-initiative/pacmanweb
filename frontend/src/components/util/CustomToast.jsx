@@ -14,7 +14,7 @@ const CustomToast = () => {
             <img
               src="holder.js/20x20?text=%20"
               className="rounded me-2"
-              alt=""
+              alt="toast"
             />
             <strong className="me-auto">Bootstrap</strong>
             <small>11 mins ago</small>
