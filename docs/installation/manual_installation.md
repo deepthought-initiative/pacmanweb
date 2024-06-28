@@ -1,9 +1,10 @@
-# Without Docker Installation
+# Development Setup
 
 ### Prerequisites
-Changes you need to do only when running the application without docker. 
+Changes you need to do only when running the application for development purposes. **If you are on the latest commit on main, you will need to do any below modifications to deploy.**
+
 #### Frontend Modifications
-Head over to `frontend/vite.config.js` and follow the instructions there(you will need to do this is the latest commit is from the main branch)
+Head over to `frontend/vite.config.js` and follow the instructions there.
 You will need to comment the line
 ```js
 const { REACT_APP_BASE_URL, REACT_APP_API_URL } = process.env;

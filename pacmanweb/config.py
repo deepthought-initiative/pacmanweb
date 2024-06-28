@@ -23,7 +23,6 @@ class Config:
     DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
-    USERS = CREDS["users"]
 
     if MODE == "prod":
         CELERY_RESULT_BACKEND = "redis://redis:6379/0"
@@ -49,7 +48,6 @@ class Config:
     PACMAN_PATH = file_path.parents[1] / "PACMan"
     UPLOAD_FOLDER = ROOTDIR / "uploads"
     DOWNLOAD_FOLDER = ROOTDIR / "downloads"
-    PANELISTS_DATA = PACMAN_PATH / "runs" / "input_panelist_data"
 
     with open(ROOTDIR / 'options.yaml', 'r') as file:
         section_options = yaml.safe_load(file)

@@ -4,7 +4,7 @@ Please refer to the official website to install docker on your (virtual) machine
 https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository 
 ```
 ### Docker Specific Prerequisites
-Edits to be done when running the application using docker compose. Usually, if you are on the latest commit on main, you won't need to do this.
+Edits to be done when running the application using docker compose. **If you are on the latest commit on main, you won't need to do any below modifications to deploy in production.**
 
 #### Frontend Modifications
 Head over to `frontend/vite.config.js` and follow the instructions there.
@@ -33,6 +33,13 @@ docker compose -f docker-compose.yml up -d # starts the containers in detached m
 For shutting them down, removing them and attached volumes
 ```bash
 docker compose -f docker-compose.yml down -v
+```
+
+```{note}
+The server will start with only one `mainadmin` user. The intial password is encrypted and saved in an `initpassword.txt` file. You can change this ater login from the admin dashboard and also create new users. If you want a different password you can create one using-
+```py
+from werkzeug.security import generate_password_hash
+generate_password_hash(password, method="pbkdf2:sha256")
 ```
 
 ### Common Errors
