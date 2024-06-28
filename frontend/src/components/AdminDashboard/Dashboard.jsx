@@ -95,12 +95,13 @@ const Dashboard = ({ usernameContext }) => {
                       src={UserEdit}
                       onClick={() => handleShow("edit", user)}
                     />
-                    {user["username"] !== usernameContext && (
-                      <img
-                        src={UserDelete}
-                        onClick={() => handleShow("DELETE", user)}
-                      />
-                    )}
+                    {user["username"] !== usernameContext &&
+                      user["username"] !== "mainadmin" && (
+                        <img
+                          src={UserDelete}
+                          onClick={() => handleShow("DELETE", user)}
+                        />
+                      )}
                   </div>
                 </td>
               </tr>
