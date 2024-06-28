@@ -35,7 +35,7 @@ def client(app):
 
 @pytest.fixture()
 def auth_header():
-    credentials = b64encode(f"default:{Config.DEFAULT_PASSWORD}".encode()).decode(
+    credentials = b64encode("default:password".encode()).decode(
         "utf-8"
     )
     return {"Authorization": f"Basic {credentials}"}

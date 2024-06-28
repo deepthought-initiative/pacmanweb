@@ -44,15 +44,7 @@ def create_app(config_class=Config):
 
     @login_manager.request_loader
     def load_user_from_request(request):
-        # first, try to login using the api_key url arg
-        api_key = request.args.get("api_key")
-        if api_key:
-            # check if this is the same as in the file
-            if auth.validate_key(api_key):
-                user = auth.User()
-                return user
-
-        # next, try to login using Basic Auth
+        # try to login using Basic Auth
         auth_header = request.headers.get("Authorization")
         if auth_header:
             encoded_auth = auth_header.replace("Basic ", "", 1)
