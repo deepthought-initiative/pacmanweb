@@ -24,21 +24,14 @@ def admin_only(f):
 
 @admin_bp.route("/ifexists/<username>", methods=["GET"])
 def exists(username):
-    secrets = UpdateSecrets()
-    secrets_file = secrets.read_secrets()
-    
     if username is None or f'user_{username}'.encode('utf-8') not in redis_instance.keys('*'):
         return {'value': 'User not found'}, 404
-
-    if username not in secrets_file["admins"]:
-        return {'value': 'User is not admin but exists'}, 200
     else:
         user_data = redis_instance.hgetall(f"user_{username}")
         if user_data[b"admin"] == b"True":
             return {'value': 'User is admin and exists'}, 200
         else:
-            return {'value': 'User is not admin but exists'}, 404
-
+            return {'value': 'User is not admin but exists'}, 200
 
 
 @admin_bp.route("/edit_users", methods=["POST"])
