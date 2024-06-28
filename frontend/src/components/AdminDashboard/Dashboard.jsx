@@ -112,6 +112,7 @@ const Dashboard = ({ usernameContext }) => {
           setShow={setShow}
           mode={mode}
           selectedUser={selectedUser}
+          key={selectedUser?.username}
           allUsers={allUsers}
         />
       )}
