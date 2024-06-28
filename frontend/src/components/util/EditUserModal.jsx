@@ -21,7 +21,8 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   });
   const [usernameError, setUsernameError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
-  const [usernameErrorMessage, setusernameErrorMessage] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState(false);
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -53,46 +54,35 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
 
   const handleSaveChanges = async () => {
     // Check if any of the user's information has changed
-    const hasChanged =
-      updatedUser.username !== selectedUser.username ||
-      updatedUser.isadmin !== selectedUser.isadmin ||
-      updatedUser.password !== selectedUser.password;
-
-    if (
-      mode === "add" &&
-      (updatedUser.username === "" || updatedUser.password === "")
-    ) {
-      setUsernameError(updatedUser.username === "");
-      setusernameErrorMessage(" Username is required.");
-      setPasswordError(updatedUser.password === "");
-      return;
-    }
-
-    if (mode === "add" && updatedUser.username !== "") {
-      const isUsernamePresent = allUsers.some(
-        (user) => user.username === updatedUser.username
+    if (/\s|\t|\n/.test(updatedUser.password)) {
+      setPasswordErrorMessage(
+        "Password cannot have white spaces, tabs or new line characters"
       );
-      if (isUsernamePresent) {
-        setUsernameError(true);
-        setusernameErrorMessage("Username already exists");
-      }
+      setPasswordError(true);
+      return;
+    } else {
+      setPasswordError(false);
     }
+    const hasChanged =
+      updatedUser.username !== selectedUser.isadmin ||
+      updatedUser.isadmin !== selectedUser.isadmin ||
+      updatedUser.password !== "";
+
     if (hasChanged) {
       // Ask for confirmation before saving changes
       setConfirmationMessage(
         `Are you sure you want to update the information for this user?
 
-Changes:
+      Changes:
+      - Admin status: ${
+        updatedUser.isadmin !== selectedUser.isadmin
+          ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
+              updatedUser.isadmin ? "Admin" : "Normal user"
+            }`
+          : "No change"
+      }
 
-- Admin status: ${
-          updatedUser.isadmin !== selectedUser.isadmin
-            ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
-                updatedUser.isadmin ? "Admin" : "Normal user"
-              }`
-            : "No change"
-        }
-
-- Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
+      - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
       );
       setShowConfirmationModal(true);
       setShowEditModal(false);
@@ -146,7 +136,6 @@ Changes:
 
   const handleConfirmation = async () => {
     setShowConfirmationModal(false);
-    setShowEditModal(true);
     try {
       const formData = new FormData();
       formData.append("username", updatedUser.username);
@@ -181,6 +170,44 @@ Changes:
       }
     } catch (error) {
       console.error("Error updating user:", error);
+    }
+  };
+
+  const handleAddNewUser = () => {
+    if (updatedUser.username === "" || updatedUser.password === "") {
+      setUsernameError(updatedUser.username === "");
+      setUsernameErrorMessage(" Username is required.");
+      setPasswordError(updatedUser.password === "");
+      setPasswordErrorMessage(" Password is required.");
+      return;
+    }
+    if (/\s|\t|\n/.test(updatedUser.password)) {
+      setPasswordErrorMessage(
+        "Password cannot have white spaces, tabs or new line characters"
+      );
+      setPasswordError(true);
+      return;
+    } else {
+      setPasswordError(false);
+    }
+
+    if (updatedUser.username !== "") {
+      const isUsernamePresent = allUsers.some(
+        (user) => user.username === updatedUser.username
+      );
+      if (isUsernamePresent) {
+        setUsernameError(true);
+        setUsernameErrorMessage("Username already exists");
+      } else {
+        setConfirmationMessage(
+          `Are you sure you want to add this user?
+
+          - Username: ${updatedUser.username}
+          - Admin status: ${updatedUser.isadmin ? "Admin" : "Normal user"}`
+        );
+        setShowConfirmationModal(true);
+        setShowEditModal(false);
+      }
     }
   };
 
@@ -228,7 +255,7 @@ Changes:
                   </strong>
                 </Form.Label>
                 <Form.Control
-                  type="text"
+                  type="password"
                   autoFocus
                   value={updatedUser.password}
                   onChange={handlePasswordChange}
@@ -236,7 +263,7 @@ Changes:
                 />
                 {passwordError && (
                   <Form.Control.Feedback type="invalid">
-                    Password is required.
+                    {passwordErrorMessage}
                   </Form.Control.Feedback>
                 )}
               </Form.Group>
@@ -276,7 +303,7 @@ Changes:
           <Modal.Footer>
             <Button
               variant="primary"
-              onClick={handleSaveChanges}
+              onClick={mode === "edit" ? handleSaveChanges : handleAddNewUser}
               disabled={
                 mode === "edit" &&
                 !updatedUser.username &&
