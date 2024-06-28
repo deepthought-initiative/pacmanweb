@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
@@ -52,8 +53,12 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
   };
 
+  const hasChanged =
+    updatedUser.username !== selectedUser.username ||
+    updatedUser.isadmin !== selectedUser.isadmin ||
+    updatedUser.password !== "";
+
   const handleSaveChanges = async () => {
-    // Check if any of the user's information has changed
     if (/\s|\t|\n/.test(updatedUser.password)) {
       setPasswordErrorMessage(
         "Password cannot have white spaces, tabs or new line characters"
@@ -63,10 +68,6 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     } else {
       setPasswordError(false);
     }
-    const hasChanged =
-      updatedUser.username !== selectedUser.isadmin ||
-      updatedUser.isadmin !== selectedUser.isadmin ||
-      updatedUser.password !== "";
 
     if (hasChanged) {
       // Ask for confirmation before saving changes
@@ -304,11 +305,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
             <Button
               variant="primary"
               onClick={mode === "edit" ? handleSaveChanges : handleAddNewUser}
-              disabled={
-                mode === "edit" &&
-                !updatedUser.username &&
-                !updatedUser.password
-              }
+              disabled={!hasChanged}
             >
               {mode === "edit" ? "Save Changes" : "Create User"}
             </Button>

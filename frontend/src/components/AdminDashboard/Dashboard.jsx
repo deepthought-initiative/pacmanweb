@@ -15,12 +15,11 @@ const Dashboard = ({ usernameContext }) => {
   const [selectedUser, setSelectedUser] = useState({
     UID: "",
     username: "",
-    password: "",
     isadmin: false,
   });
 
   const handleShow = (newMode, user) => {
-    setSelectedUser(user);
+    setSelectedUser({ ...user, isadmin: Boolean(user.isadmin) });
     if (newMode.toLowerCase() == "delete") {
       setDeleteModal(true);
     } else {
@@ -36,7 +35,6 @@ const Dashboard = ({ usernameContext }) => {
       setAllUsers(all_users_json);
     }
     fetchAllUsers();
-    console.log(allUsers);
   }, []);
 
   const handleDeleteUser = async () => {
