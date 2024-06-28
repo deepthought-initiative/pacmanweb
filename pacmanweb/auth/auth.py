@@ -18,11 +18,3 @@ from pacmanweb import Config
 
 from .models import *
 
-
-def validate_key(api_key):
-    # TODO: is this needed anymore?
-    password = Config.DEFAULT_PASSWORD
-    password_hash = generate_password_hash(password)
-    if check_password_hash(password_hash, api_key):
-        return True
-    return False

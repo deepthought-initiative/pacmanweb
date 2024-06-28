@@ -19,14 +19,8 @@ class Config:
         ENV_NAME = CREDS["ENV_NAME"]
 
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    DEFAULT_USERNAME = CREDS.get("default_username", "default")
-    DEFAULT_PASSWORD = CREDS["default_password"]
     TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
     ENV_NAME = CREDS["ENV_NAME"]
-    USERS = CREDS["users"]
-    if not USERS:
-        raise ValueError("No users found in secrets.json file.")
-    ADMINS = CREDS["admins"]
 
     if MODE == "prod":
         CELERY_RESULT_BACKEND = "redis://redis:6379/0"
@@ -41,9 +35,9 @@ class Config:
 
     if not SECRET_KEY:
         try:
-            SECRET_KEY = CREDS.get("secret_key")
+            SECRET_KEY = CREDS.get("SECRET_KEY")
         except KeyError:
-            raise ValueError("No secret key found in secrets.json or in path")
+            raise ValueError("No SECRET_KEY found in secrets.json or in path")
 
     # celery config
     CELERY = {}
