@@ -164,7 +164,7 @@ class RunPACMan:
             json.dump(data, pacman_config)
 
     def run(self):
-        self.modify_Config
+        self.modify_config()
         # ! `shell=True` is only safe when the command being run is not tampered with
         # ! TODO: Get rid of shell=True
         env = os.environ.copy()
