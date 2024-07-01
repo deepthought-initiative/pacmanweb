@@ -256,30 +256,34 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                   )}
                 </Form.Group>
               )}
-              <Form.Group className="mb-3" controlId="Form.NewPassword">
+              <Form.Group
+                className="mb-3 password-input-wrapper"
+                controlId="Form.NewPassword"
+              >
                 <Form.Label>
                   <strong>
                     {mode === "edit" ? "New Password" : "Password"}
                   </strong>
                 </Form.Label>
-                <Form.Control
-                  type={showPassword ? "text" : "password"}
-                  autoFocus
-                  value={updatedUser.password}
-                  onChange={handlePasswordChange}
-                  isInvalid={passwordError}
-                  className="password-input-container"
-                />
-                <button
-                  onClick={handleShowPassword}
-                  type="button"
-                  className="show-password-btn"
-                >
-                  <img
-                    src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
-                    alt="Show Password"
+                <div className="password-input-container">
+                  <Form.Control
+                    type={showPassword ? "text" : "password"}
+                    autoFocus
+                    value={updatedUser.password}
+                    onChange={handlePasswordChange}
+                    isInvalid={passwordError}
                   />
-                </button>
+                  <button
+                    onClick={handleShowPassword}
+                    type="button"
+                    className="show-password-btn"
+                  >
+                    <img
+                      src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
+                      alt="Show Password"
+                    />
+                  </button>
+                </div>
                 {passwordError && (
                   <Form.Control.Feedback type="invalid">
                     {passwordErrorMessage}

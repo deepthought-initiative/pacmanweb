@@ -59,7 +59,7 @@ body {
 }
 
 .progress{
-  margin-top: 20px;
+  margin-top: 20px; 
   font-size: 1.5rem;
   height: 48px;
 }
@@ -546,14 +546,19 @@ padding-left: 0;
   }
 }
 
+.password-input-wrapper{
+  position: relative;
+}
+
 .password-input-container {
   position: relative;
+  align-items: center;
 }
 
 .show-password-btn {
   position: absolute;
-  top: 54%;
-  right: 22px; /*set 50 px when there is an error*/
+  top: 67%;
+  right: 8px; /*set 35 px when there is an error*/
   transform: translateY(-50%);
   background: transparent;
   border: none;
@@ -561,7 +566,12 @@ padding-left: 0;
 }
 
 .show-password-btn img{
-  max-width: 25px ;
+  width: 20px;
+  height: 20px;
+}
+
+.show-password-btn{
+  background-color: transparent !important;
 }
 
 .new-user-btn-container{
