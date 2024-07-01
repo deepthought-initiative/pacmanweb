@@ -685,3 +685,31 @@ textarea{
 .footer .text-muted {
   font-size: 0.875rem;
 }
+
+/*Admin dashboard table*/
+.admin-table-container{
+  background-color: #E7ECEF;
+  height: 600px;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.admin-table-container thead {
+  position: sticky;
+  z-index: 2;
+  background-color: transparent;
+}
+
+.admin-table-container tr{
+  background-color: #E7ECEF;
+}
+
+.admin-table-container th {
+  border-bottom: 5px white solid;
+}
+
+.admin-table-container td {
+  font-size: 14px;
+  border-bottom: 2px white solid;
+}

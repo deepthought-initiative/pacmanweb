@@ -73,8 +73,8 @@ const Dashboard = ({ usernameContext }) => {
           </button>
         </div>
       </div>
-      <div>
-        <Table striped bordered hover>
+      <div className="admin-table-container">
+        <Table className="admin-table" bordered hover>
           <thead>
             <tr>
               <th>#</th>
