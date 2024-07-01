@@ -7,7 +7,6 @@ body {
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-  margin-bottom: 60px;
 }
 
 #outer-container {
@@ -54,7 +53,7 @@ body {
 #log-container>* {
   color: white;
   font-size: 13px;
-  font-family: "Roboto", sans-serif !important;
+  font-family: "Monospace", sans-serif !important;
   font-weight: 400;
   font-style: normal !important;
 }
