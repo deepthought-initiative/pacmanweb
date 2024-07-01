@@ -272,11 +272,13 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                     value={updatedUser.password}
                     onChange={handlePasswordChange}
                     isInvalid={passwordError}
+                    className="password-input"
                   />
                   <button
                     onClick={handleShowPassword}
                     type="button"
                     className="show-password-btn"
+                    style={passwordError ? { right: "35px" } : {}}
                   >
                     <img
                       src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
@@ -284,11 +286,15 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                     />
                   </button>
                 </div>
-                {passwordError && (
-                  <Form.Control.Feedback type="invalid">
-                    {passwordErrorMessage}
-                  </Form.Control.Feedback>
-                )}
+                <div className="password-feedback-container">
+                  {passwordError && (
+                    <div className="password-feedback-container">
+                      <Form.Control.Feedback type="invalid">
+                        {passwordErrorMessage}
+                      </Form.Control.Feedback>
+                    </div>
+                  )}
+                </div>
               </Form.Group>
               {selectedUser["username"] !== "mainadmin" && (
                 <Form.Group
