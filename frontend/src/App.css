@@ -564,6 +564,16 @@ padding-left: 0;
   border: none;
   cursor: pointer;
 }
+.password-feedback-container {
+  margin-top: 8px;
+}
+.password-input {
+  padding-right: 40px;
+}
+
+.invalid-feedback{
+  display: block;
+}
 
 .show-password-btn img{
   width: 20px;
