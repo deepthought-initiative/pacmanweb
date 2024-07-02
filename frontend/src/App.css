@@ -768,7 +768,7 @@ textarea{
 /*Admin dashboard table*/
 .admin-table-container{
   background-color: #E7ECEF;
-  height: 540px;
+  height: 420px;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   overflow-y: auto;
@@ -793,4 +793,9 @@ textarea{
   font-size: 14px;
   border-bottom: 2px white solid;
   background-color: #E7ECEF;
+}
+
+/*Match Rev page*/
+.panelist-name-container{
+  display: flex;
 }
