@@ -74,6 +74,12 @@ const TextArea = ({ setValue, textAreaError, setTextAreaError }) => {
           isInvalid={textAreaError}
           className="textarea-input"
         />
+        <div className="option-header">
+          <div className="form-text text-start ms-4">
+            Names of reviewers for the current cycle. These will add to the
+            reviewers on the server for this cycle.
+          </div>
+        </div>
         {validationError && (
           <Form.Control.Feedback type="invalid">
             {validationError}
