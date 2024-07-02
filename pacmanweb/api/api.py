@@ -70,10 +70,8 @@ def get_available_cycles():
 @login_required
 def run_pacman():
     options = request.args.to_dict(flat=True)
-    panelist_names_mode = options.pop("panelist_names_mode", "")
-    if options.get("mode", None):
-        pass
-    else:
+    panelist_names = options.pop('panelist_names', None)
+    if not options.get("mode", None):
         return {"output": "Mode is required."}
     if options.get("past_cycles", None):
         options["past_cycles"] = options["past_cycles"].split(",")
@@ -81,19 +79,25 @@ def run_pacman():
         return {
             "output": "DUP mode needs past cycles with the same cycle included.",
         }
-    
-    if options["mode"] == "MATCH" and panelist_names_mode == "append": 
-        panelist_names = options.pop('panelist_names', []).split(',')
-        panelist_names = [item for item in panelist_names if item not in [""] and len(item)!=0 and set(item)!=1]
-        panelist_file_name = f"{options['main_test_cycle']}_panelists.csv"
-        complete_panelist_file_path =Config.PANELISTS_DATA / panelist_file_name
-        panelists_data = pd.read_csv(complete_panelist_file_path)
-        if len(panelist_names) != 0:
-            new_panelists_df = pd.DataFrame(panelist_names, columns=['name'])
-            merged_panelists_data = pd.concat([panelists_data, new_panelists_df], ignore_index=True)
-            updated_panelists_data = merged_panelists_data.drop_duplicates(subset='name', keep='first')
-            updated_panelists_data.to_csv(complete_panelist_file_path, index=False)
+    # mode is always append for now
+    if panelist_names:
+        new_names = panelist_names.split(",")
+        # remove strings with the same character repeated
+        # remove leading and trailing whitespace
+        new_names = [item.strip() for item in new_names]
+        new_names = [item for item in new_names if len(set(item))>1]
+        
+        if not new_names:
+            pass
+        panelist_fname = f"{options['main_test_cycle']}_panelists.csv"
+        panelist_fpath =Config.PANELISTS_DATA / panelist_fname
+        panelists_data = pd.read_csv(panelist_fpath, header=None)
+        existing_names = set(panelists_data[0])
 
+        unique_new_names = [name for name in new_names if name not in existing_names]
+        new_panelists = pd.concat([panelists_data, pd.DataFrame(unique_new_names)], ignore_index=True)
+        new_panelists.to_csv(Config.PANELISTS_DATA / panelist_fname, index=False, header=False)
+        
     options["current_user"] = current_user.username
     # if task is already running don't run another
     existing_tasks = redis_instance.hgetall(current_user.username)
