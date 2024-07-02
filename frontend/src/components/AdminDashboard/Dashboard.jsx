@@ -1,9 +1,12 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Form from "react-bootstrap/Form";
+import InputGroup from "react-bootstrap/InputGroup";
 import Table from "react-bootstrap/Table";
 import UserDelete from "../../assets/UserDelete.png";
 import UserEdit from "../../assets/UserEdit.png";
+import SearchIcon from "../../assets/search.png";
 import DeleteUserModal from "../util/DeleteUserModal";
 import EditUserModal from "../util/EditUserModal";
 
@@ -11,6 +14,8 @@ const Dashboard = ({ usernameContext }) => {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState();
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState({
     UID: "",
@@ -37,6 +42,7 @@ const Dashboard = ({ usernameContext }) => {
         isadmin: user.isadmin === "True",
       }));
       setAllUsers(fixedAllUsers);
+      setFilteredUsers(fixedAllUsers);
     }
     fetchAllUsers();
   }, []);
@@ -53,11 +59,66 @@ const Dashboard = ({ usernameContext }) => {
     }
   };
 
+  const handleSearchTerm = () => {};
+
+  const filterUserByStatus = useCallback(
+    (event) => {
+      if (event.target.value === "Admins") {
+        setFilteredUsers(allUsers.filter((user) => user.isadmin === true));
+      } else if (event.target.value === "Users") {
+        setFilteredUsers(allUsers.filter((user) => user.isadmin === false));
+      } else {
+        setFilteredUsers(allUsers);
+      }
+    },
+    [allUsers]
+  );
+
   return (
     <div className="user-list-container">
-      <h2>All Users</h2>
-      <div className="row mb-3">
-        <div className="col d-flex new-user-btn-container">
+      <h1>All Users</h1>
+      <div className="row mb-3 filter-bar">
+        <InputGroup size="" className="mb-3 search-bar-wrapper">
+          <InputGroup.Text id="inputGroup-sizing-sm">
+            <img src={SearchIcon} />
+          </InputGroup.Text>
+          <Form.Control
+            className="search-bar"
+            aria-label="Small"
+            aria-describedby="inputGroup-sizing-sm"
+            value={searchTerm}
+            onChange={handleSearchTerm}
+          />
+        </InputGroup>
+
+        <div className="filter-user-on-status">
+          <Form.Check
+            defaultChecked
+            value="All"
+            label="All"
+            name="filter"
+            type="radio"
+            id="filter-all"
+            onChange={filterUserByStatus}
+          />
+          <Form.Check
+            value="Admins"
+            label="Admins"
+            name="filter"
+            type="radio"
+            id="filter-admins"
+            onChange={filterUserByStatus}
+          />
+          <Form.Check
+            value="Users"
+            label="Users"
+            name="filter"
+            type="radio"
+            id="filter-users"
+            onChange={filterUserByStatus}
+          />
+        </div>
+        <div className="col new-user-btn-container">
           <button
             className="btn"
             onClick={() =>
@@ -84,7 +145,7 @@ const Dashboard = ({ usernameContext }) => {
             </tr>
           </thead>
           <tbody>
-            {allUsers.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <tr key={index + 1}>
                 <td>{index + 1}</td>
                 <td>{user["username"]}</td>

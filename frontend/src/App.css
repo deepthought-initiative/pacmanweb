@@ -531,6 +531,9 @@ padding-left: 0;
   margin-right: auto;
 }
 
+.user-list-container h1{
+  margin-bottom: 40px;
+}
 .user-edit-options {
   display: flex;
   align-items: center;
@@ -584,8 +587,84 @@ padding-left: 0;
   background-color: transparent !important;
 }
 
-.new-user-btn-container{
+.search-bar-wrapper{
+  flex-grow: 1;
+  margin-right: 1rem;
+}
+
+.search-bar-wrapper > *{
+  max-height: 40px;
+}
+
+.search-bar-wrapper img {
+  height: 30px;
+  width: 30px;
+}
+
+.search-bar-wrapper,
+.filter-user-on-status,
+.new-user-btn-container {
+  display: flex;
+  align-items: center;
+  height: 40px;
+}
+
+.filter-bar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.new-user-btn-container {
   justify-content: flex-end;
+  height: 100%;
+}
+
+.filter-user-on-status{
+  width: 30%;
+  justify-content: space-between;
+}
+
+@media (max-width: 1180px){
+  .filter-user-on-status {
+      width: 50%;
+      justify-content: space-between;
+    }
+}
+
+.filter-user-on-status .form-check-input {
+  display: none;
+}
+
+.filter-user-on-status .form-check{
+  padding-left: 0px;
+}
+
+.filter-user-on-status .form-check-label{
+  padding: 10px 20px;
+  width: 100px;
+  font-size: 14px;
+  font-weight: bolder;
+  border-radius: 5px;
+  background-color: transparent;
+  border: 2px solid #ccc;
+  color: #ccc;
+  cursor: pointer;
+}
+
+.filter-user-on-status .form-check input:checked+.form-check-label {
+  border: none;
+  color: white;
+  background-color: #7A8E99;
+}
+
+.filter-user-on-status button{
+  border: 1px solid grey;
+  padding: 10px 20px;
+  margin-right: 10px;
+  width: 100px;
+  border-radius: 5px;
+  background-color: transparent;
 }
 
 .password-container{
@@ -689,7 +768,7 @@ textarea{
 /*Admin dashboard table*/
 .admin-table-container{
   background-color: #E7ECEF;
-  height: 600px;
+  height: 540px;
   box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.2);
   border-radius: 10px;
   overflow-y: auto;
@@ -706,10 +785,12 @@ textarea{
 }
 
 .admin-table-container th {
-  border-bottom: 5px white solid;
+  border-bottom: 2px white solid;
+  background-color: #E7ECEF;
 }
 
 .admin-table-container td {
   font-size: 14px;
   border-bottom: 2px white solid;
+  background-color: #E7ECEF;
 }
