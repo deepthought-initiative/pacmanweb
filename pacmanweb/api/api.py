@@ -36,11 +36,17 @@ redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
 @api_bp.route("/login", methods=["GET", "POST"])
 def login():
-    encoded_creds = request.form["creds"]
-    decoded_creds = base64.b64decode(encoded_creds)
-    username, password = decoded_creds.decode("utf-8").split(":")
-
-    user = User.get(username=username, password=password)
+    # TODO: are we doing this twice?
+    user = None
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        encoded_auth = auth_header.replace("Basic ", "", 1)
+        try:
+            decoded_authb = base64.b64decode(encoded_auth)
+            username, password = decoded_authb.decode("utf-8").split(":")
+        except TypeError:
+            pass
+        user = User.get(username, password)
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
     else:
