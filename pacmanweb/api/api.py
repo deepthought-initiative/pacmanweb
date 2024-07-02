@@ -65,6 +65,13 @@ def login():
 def signup():
     return "Signup"
 
+@api_bp.route("/logged_in", methods=["GET"])
+def main_route():
+    if current_user.is_authenticated:
+         return {"value": "True"}, 200
+    else:
+         return {"value": "False"}, 404
+
 
 @api_bp.route("/logout", methods=["POST"])
 def logout():

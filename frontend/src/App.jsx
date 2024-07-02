@@ -13,6 +13,7 @@ import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
 import MainNavbar from "./components/util/Navbar";
+import PrivateRoute from "./components/util/PrivateRoute";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -62,7 +63,7 @@ function App() {
     }
     fetchCycles();
   }, []);
-  return loggedIn ? (
+  return (
     <>
       <BrowserRouter>
         <MainNavbar isUserAdminContext={isUserAdminContext} />
@@ -70,71 +71,89 @@ function App() {
           <Route
             path="/categorize"
             element={
-              <CategorizationForm
-                key="PROP"
-                mode="PROP"
-                allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
-                renderTableComponent={(props) => <ProposalTable {...props} />}
-                button_label="Categorize Proposals"
-              />
+              <PrivateRoute>
+                <CategorizationForm
+                  key="PROP"
+                  mode="PROP"
+                  allCycles={allCycles}
+                  modalFile={modalFile}
+                  setModalFile={setModalFile}
+                  renderTableComponent={(props) => <ProposalTable {...props} />}
+                  button_label="Categorize Proposals"
+                />
+              </PrivateRoute>
             }
           />
           <Route
             path="/duplication"
             element={
-              <DuplicationForm
-                key="DUP"
-                mode="DUP"
-                allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
-                renderTableComponent={(props) => (
-                  <TableForDuplicationChecker {...props} />
-                )}
-                button_label="Find Duplicates"
-              />
+              <PrivateRoute>
+                <DuplicationForm
+                  key="DUP"
+                  mode="DUP"
+                  allCycles={allCycles}
+                  modalFile={modalFile}
+                  setModalFile={setModalFile}
+                  renderTableComponent={(props) => (
+                    <TableForDuplicationChecker {...props} />
+                  )}
+                  button_label="Find Duplicates"
+                />
+              </PrivateRoute>
             }
           />
           <Route
             path="/review"
             element={
-              <MatchReviewersForm
-                key="MATCH"
-                mode="MATCH"
-                allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
-                renderTableComponent={(props) => (
-                  <TableMatchReviewers {...props} />
-                )}
-                button_label="Match Reviewers"
-              />
+              <PrivateRoute>
+                <MatchReviewersForm
+                  key="MATCH"
+                  mode="MATCH"
+                  allCycles={allCycles}
+                  modalFile={modalFile}
+                  setModalFile={setModalFile}
+                  renderTableComponent={(props) => (
+                    <TableMatchReviewers {...props} />
+                  )}
+                  button_label="Match Reviewers"
+                />
+              </PrivateRoute>
             }
           />
-          <Route path="/upload" element={<UploadZipForm />} />
+          <Route
+            path="/upload"
+            element={
+              <PrivateRoute>
+                <UploadZipForm />
+              </PrivateRoute>
+            }
+          />
           {isUserAdminContext && (
             <Route
               path="/dashboard"
-              element={<Dashboard usernameContext={usernameContext} />}
+              element={
+                <PrivateRoute>
+                  <Dashboard usernameContext={usernameContext} />
+                </PrivateRoute>
+              }
             />
           )}
           <Route
             path="/logout"
             element={
-              <Logout
-                usernameContext={usernameContext}
-                isUserAdminContext={isUserAdminContext}
-                setLoggedIn={setLoggedIn}
-              />
+              <PrivateRoute>
+                <Logout
+                  usernameContext={usernameContext}
+                  isUserAdminContext={isUserAdminContext}
+                  setLoggedIn={setLoggedIn}
+                />
+              </PrivateRoute>
             }
           />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
     </>
-  ) : (
-    <Login />
   );
 }
 
