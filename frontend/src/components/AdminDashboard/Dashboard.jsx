@@ -15,7 +15,8 @@ const Dashboard = ({ usernameContext }) => {
   const [mode, setMode] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
   const [filteredUsers, setFilteredUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [userType, setUserType] = useState("All");
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState({
     UID: "",
@@ -59,19 +60,41 @@ const Dashboard = ({ usernameContext }) => {
     }
   };
 
-  const handleSearchTerm = () => {};
+  const filterUsers = useCallback(
+    (userType, searchTerm) => {
+      let userTypeFilters;
+      if (userType === "Admins") {
+        userTypeFilters = allUsers.filter((user) => user.isadmin);
+      } else if (userType == "Users") {
+        userTypeFilters = allUsers.filter((user) => !user.isadmin);
+      } else {
+        userTypeFilters = allUsers;
+      }
+      setFilteredUsers(
+        userTypeFilters.filter((user) =>
+          user.username.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    },
+    [allUsers]
+  );
+
+  const handleSearchTerm = useCallback(
+    (event) => {
+      const newSearchTerm = event.target.value;
+      setSearchTerm(newSearchTerm);
+      filterUsers(userType, newSearchTerm);
+    },
+    [filterUsers, userType]
+  );
 
   const filterUserByStatus = useCallback(
     (event) => {
-      if (event.target.value === "Admins") {
-        setFilteredUsers(allUsers.filter((user) => user.isadmin === true));
-      } else if (event.target.value === "Users") {
-        setFilteredUsers(allUsers.filter((user) => user.isadmin === false));
-      } else {
-        setFilteredUsers(allUsers);
-      }
+      const newUserType = event.target.value;
+      setUserType(newUserType);
+      filterUsers(newUserType, searchTerm);
     },
-    [allUsers]
+    [filterUsers, searchTerm]
   );
 
   return (
@@ -93,7 +116,7 @@ const Dashboard = ({ usernameContext }) => {
 
         <div className="filter-user-on-status">
           <Form.Check
-            defaultChecked
+            checked={userType === "All"}
             value="All"
             label="All"
             name="filter"
@@ -102,6 +125,7 @@ const Dashboard = ({ usernameContext }) => {
             onChange={filterUserByStatus}
           />
           <Form.Check
+            checked={userType === "Admins"}
             value="Admins"
             label="Admins"
             name="filter"
@@ -110,6 +134,7 @@ const Dashboard = ({ usernameContext }) => {
             onChange={filterUserByStatus}
           />
           <Form.Check
+            checked={userType === "Users"}
             value="Users"
             label="Users"
             name="filter"
