@@ -47,6 +47,12 @@ def login():
         except TypeError:
             pass
         user = User.get(username, password)
+    elif request.form.get("creds", None):
+        encoded_creds = request.form["creds"]
+        decoded_creds = base64.b64decode(encoded_creds)
+        username, password = decoded_creds.decode("utf-8").split(":")
+        user = User.get(username, password)
+
     if user is None:
         return jsonify({"error": "Unauthorized"}), 401
     else:
