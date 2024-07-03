@@ -13,5 +13,5 @@ parts:
     - file: deployment/local
 - caption: Code
   chapters:
-    - file: api_run
-    - file: testing_building_docs
+    - file: code/api_run
+    - file: code/testing_building_docs
