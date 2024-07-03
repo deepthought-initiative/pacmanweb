@@ -1,6 +1,11 @@
 format: jb-book
 root: intro
 parts:
+- caption: Usage and Features
+  chapters:
+    - file: usage/pages
+    - file: usage/user_management
+    - file: usage/logging
 - caption: Deployment
   chapters:
     - file: deployment/prerequisites
@@ -10,6 +15,3 @@ parts:
   chapters:
     - file: api_run
     - file: testing_building_docs
-- caption: Usage and Features
-  chapters:
-    - file: usage/pages
