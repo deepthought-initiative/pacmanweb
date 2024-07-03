@@ -1,4 +1,4 @@
-# Docker Compose Setup
+# Production Setup
 ```{note}
 Please refer to the official website to install docker on your (virtual) machine.
 https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository 
@@ -36,7 +36,7 @@ docker compose -f docker-compose.yml down -v
 ```
 
 ```{note}
-The server will start with only one `mainadmin` user. The intial password is encrypted and saved in an `initpassword.txt` file. You can change this ater login from the admin dashboard and also create new users. If you want a different password you can create one using-
+The server will start with only one `mainadmin` user. The intial password is encrypted and saved in an `initpassword.txt` file. You can change this after login from the admin dashboard and also create new users. If you want a different password you can create one using-
 ```py
 from werkzeug.security import generate_password_hash
 generate_password_hash(password, method="pbkdf2:sha256")

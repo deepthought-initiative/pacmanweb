@@ -1,12 +1,17 @@
 format: jb-book
 root: intro
 parts:
-- caption: Installation
+- caption: Usage and Features
   chapters:
-    - file: installation/prerequisites
-    - file: installation/docker_setup
-    - file: installation/manual_installation
+    - file: usage/pages
+    - file: usage/user_management
+    - file: usage/logging
+- caption: Deployment
+  chapters:
+    - file: deployment/prerequisites
+    - file: deployment/production
+    - file: deployment/local
 - caption: Code
   chapters:
-    - file: api_run
-    - file: testing_building_docs
+    - file: code/api_run
+    - file: code/testing_building_docs
