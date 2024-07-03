@@ -14,7 +14,7 @@ celery_app = Celery(
     include=["pacmanweb.tasks"],
 )
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
-redis_instance.flushall()
+# redis_instance.flushall()
 
 # TODO: make this more secret
 redis_instance.hset('user_mainadmin', mapping={
