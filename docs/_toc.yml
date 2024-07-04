@@ -5,7 +5,6 @@ parts:
   chapters:
     - file: usage/pages
     - file: usage/user_management
-    - file: usage/logging
 - caption: Deployment
   chapters:
     - file: deployment/prerequisites
