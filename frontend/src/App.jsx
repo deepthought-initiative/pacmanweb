@@ -41,32 +41,29 @@ function App() {
           console.error("Error fetching current user:", error);
         }
       }
+      async function fetchCycles() {
+        const fullResponse = await fetch(`/api/get_cycles`);
+        const fullResponseJson = await fullResponse.json();
+        const valid_cycles = fullResponseJson["proposal_cycles_valid"];
+        const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
+        const allAvailableCycles = valid_cycles
+          .concat(invalid_cycles)
+          .map((cycleNumber) => ({
+            cycleNumber: cycleNumber,
+            label: cycleNumber.toString(), // Convert id to string for display
+            style: {
+              backgroundColor: valid_cycles.includes(cycleNumber)
+                ? ""
+                : "#FFBABA",
+            },
+          }));
+        setAllCycles(allAvailableCycles);
+        setModalFile(fullResponseJson["models"]);
+      }
       fetchCurrentUser()
+      fetchCycles();
     }
   }, [isLoggedIn])
-
-  useEffect(() => {
-    async function fetchCycles() {
-      const fullResponse = await fetch(`/api/get_cycles`);
-      const fullResponseJson = await fullResponse.json();
-      const valid_cycles = fullResponseJson["proposal_cycles_valid"];
-      const invalid_cycles = fullResponseJson["proposal_cycles_invalid"];
-      const allAvailableCycles = valid_cycles
-        .concat(invalid_cycles)
-        .map((cycleNumber) => ({
-          cycleNumber: cycleNumber,
-          label: cycleNumber.toString(), // Convert id to string for display
-          style: {
-            backgroundColor: valid_cycles.includes(cycleNumber)
-              ? ""
-              : "#FFBABA",
-          },
-        }));
-      setAllCycles(allAvailableCycles);
-      setModalFile(fullResponseJson["models"]);
-    }
-    fetchCycles();
-  }, [usernameContext]);
 
   return (
     <>
