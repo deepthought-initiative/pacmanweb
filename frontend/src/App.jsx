@@ -15,6 +15,7 @@ import Logout from "./components/util/Logout";
 import MainNavbar from "./components/util/Navbar";
 import PrivateRoute from "./components/util/PrivateRoute";
 import AuthContext from "./context/AuthContext";
+import { useLocation } from "react-router-dom";
 import PageNotFound from "./components/util/PageNotFound";
 
 function App() {
@@ -23,7 +24,9 @@ function App() {
   const [usernameContext, setusernameContext] = useState(
     localStorage.getItem("username")
   );
+
   const navigate = useNavigate()
+  const location = useLocation();
 
   const { loggedInUser, isLoggedIn, setLoggedInUser, handleAuthLogout } = useContext(AuthContext);
 
@@ -74,7 +77,7 @@ function App() {
           path="/"
           element={
             isLoggedIn ? (
-              <Navigate to="/categorize" replace />
+              <Navigate to={location.state?.from || '/categorize'} replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -158,7 +161,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/login" element={!isLoggedIn ? <Login /> : (<Navigate to="/categorize" replace />)} />
+        <Route path="/login" element={!isLoggedIn ? <Login /> : (<Navigate to={location.state?.from || '/categorize'} replace />)} />
         <Route path="/404" element={<PageNotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
