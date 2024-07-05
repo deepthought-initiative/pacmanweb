@@ -70,7 +70,7 @@ function App() {
 
   return (
     <>
-      <MainNavbar />
+      {isLoggedIn && <MainNavbar />}
       <Routes>
         <Route
           path="/categorize"

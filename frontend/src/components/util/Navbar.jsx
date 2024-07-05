@@ -12,7 +12,7 @@ import AuthContext from "../../context/AuthContext";
 const MainNavbar = () => {
   const location = useLocation();
   // Update screen width state when the window is resized
-  const { loggedInUser, isLoggedIn } = useContext(AuthContext);
+  const { loggedInUser} = useContext(AuthContext);
 
   useEffect(() => {
     const handleResize = () => {
@@ -37,16 +37,6 @@ const MainNavbar = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            {!isLoggedIn ? (
-              <Nav.Link
-                as={Link}
-                to="/login"
-                className={`nav-item ms-4${isItemActive("/login") ? " active" : ""
-                  }`}
-              >
-                Login
-              </Nav.Link>
-            ) : (
               <>
                 <Nav.Link
                   as={Link}
@@ -91,10 +81,8 @@ const MainNavbar = () => {
                   </Nav.Link>
                 )}
               </>
-            )}
           </Nav>
           <Nav>
-            {isLoggedIn && (
               <div id="right-corner">
                 {screenWidth < 1200 ? (
                   <div className="logout">
@@ -115,7 +103,6 @@ const MainNavbar = () => {
                   </div>
                 )}
               </div>
-            )}
           </Nav>
         </Navbar.Collapse>
       </Container>
