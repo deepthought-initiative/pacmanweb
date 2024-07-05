@@ -58,12 +58,31 @@ def login():
     else:
         login_user(user, remember=True)
         next = request.args.get("next")
-        return jsonify({"username": username, "password": password})
+        return jsonify({"username": username, "isadmin": user.isadmin()})
 
 
 @api_bp.route("/signup")
 def signup():
     return "Signup"
+
+@api_bp.route("/logged_in", methods=["GET"])
+def main_route():
+    if current_user.is_authenticated:
+         return {"value": "True"}, 200
+    else:
+         return {"value": "False"}, 404
+
+@api_bp.route("/get_current_user", methods=["GET"])
+@login_required
+def get_current_user():
+    if current_user.is_authenticated:
+        response = {
+            "username": current_user.username,
+            "isadmin": current_user.isadmin()
+        }
+        return jsonify(response), 200
+    else:
+        return jsonify({"status": "not authenticated"}), 401
 
 
 @api_bp.route("/logout", methods=["POST"])

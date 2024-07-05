@@ -1,11 +1,16 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import "../../css/LoginPage.css";
+import { useNavigate } from "react-router-dom";
+import AuthContext from "../../context/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const { setIsLoggedIn, setLoggedInUser } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,12 +21,15 @@ const Login = () => {
         method: "POST",
         body: formData,
       });
-      if (response.ok) {
-        localStorage.setItem("loggedIn", "true");
-        window.location.href = "/";
-        localStorage.setItem("username", username);
-      } else {
+      const userInfo = await response.json()
+      if (!response.ok) {
         setError("Invalid username or password");
+      } else {
+        localStorage.setItem("loggedIn", "true");
+        setIsLoggedIn(true)
+        setLoggedInUser(userInfo)
+        navigate("/categorize");
+        localStorage.setItem("username", username);
       }
     } catch (error) {
       console.error("Error during login:", error);

@@ -72,7 +72,7 @@ const TableMatchReviewers = ({
                     ([key, value]) => (
                       <tr
                         onClick={() =>
-                          handleHighlight(value["fname"].toUpperCase())
+                          handleHighlight(value["fname"])
                         }
                         className={
                           highlighted === value["fname"] ? "highlighted" : ""
