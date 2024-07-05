@@ -15,6 +15,7 @@ import Logout from "./components/util/Logout";
 import MainNavbar from "./components/util/Navbar";
 import PrivateRoute from "./components/util/PrivateRoute";
 import AuthContext from "./context/AuthContext";
+import PageNotFound from "./components/util/PageNotFound";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -158,6 +159,8 @@ function App() {
           }
         />
         <Route path="/login" element={!isLoggedIn ? <Login /> : (<Navigate to="/categorize" replace />)} />
+        <Route path="/404" element={<PageNotFound />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>
     </>
   );

@@ -14,12 +14,14 @@ const MainNavbar = () => {
   // Update screen width state when the window is resized
   const { loggedInUser} = useContext(AuthContext);
 
+
   const isItemActive = (path) => {
     return location.pathname === path;
   };
 
   return (
-    <Navbar collapseOnSelect expand="xl" className="border bg-body-tertiary">
+    <>
+    {location.pathname !== '/404' && (<Navbar collapseOnSelect expand="xl" className="border bg-body-tertiary">
       <Container className="mx-0 container-nav px-0">
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -79,7 +81,8 @@ const MainNavbar = () => {
           </Nav>
         </Navbar.Collapse>
       </Container>
-    </Navbar>
+    </Navbar>)}
+    </>
   );
 };
 
