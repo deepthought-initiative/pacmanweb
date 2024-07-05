@@ -88,7 +88,7 @@ const MainNavbar = () => {
                   <div className="logout">
                     <Nav.Link
                       as={Link}
-                      to="/logout"
+                      to="/profile"
                       className={`nav-item ms-3${isItemActive("/logout") ? " active" : ""
                         }`}
                     >
@@ -97,7 +97,7 @@ const MainNavbar = () => {
                   </div>
                 ) : (
                   <div className="logout">
-                    <Link to="/logout">
+                    <Link to="/profile">
                       <img src={DefaultPfp} alt="Profile" />
                     </Link>
                   </div>

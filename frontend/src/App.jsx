@@ -140,7 +140,7 @@ function App() {
           }
         />
         <Route
-          path="/logout"
+          path="/profile"
           element={
             <PrivateRoute>
               <Logout />
