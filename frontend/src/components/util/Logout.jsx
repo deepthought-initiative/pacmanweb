@@ -6,18 +6,13 @@ import AuthContext from "../../context/AuthContext";
 
 const Logout = () => {
   const navigate = useNavigate()
-  const { loggedInUser, setIsLoggedIn, setLoggedInUser } = useContext(AuthContext);
+  const { loggedInUser, handleAuthLogout } = useContext(AuthContext);
 
-  const handleLogout = async () => {
-    const response = await fetch(`/api/logout`, {
-      method: "POST",
-    });
-    if (response.ok) {
-      setIsLoggedIn(false)
-      setLoggedInUser(null)
-      navigate("/login")
-    }
+  const handleSubmit = async () => {
+    handleAuthLogout()
+    navigate("/login")
   };
+
   return (
     <div className="user-info-box">
       <div className="user-info-content">
@@ -27,7 +22,7 @@ const Logout = () => {
         <p>
           Status: <span id="user-status">{loggedInUser.isadmin ? "Admin" : "Normal User"}</span>
         </p>
-        <button className="btn" onClick={handleLogout}>
+        <button className="btn" onClick={handleSubmit}>
           Logout
         </button>
       </div>

@@ -11,7 +11,6 @@ export const AuthContextProvider = ({ children }) => {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-
   useEffect(() => {
     const checkIsUserLoggedIn = async () => {
       try {
@@ -27,23 +26,15 @@ export const AuthContextProvider = ({ children }) => {
     checkIsUserLoggedIn();
   }, []);
 
-  useEffect(() =>{
-    if(isLoggedIn){
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await fetch("/api/get_current_user");
-        if (!response.ok) {
-          throw new Error("Failed to fetch current user");
-        }
-        const currentUser = await response.json();
-        setLoggedInUser(currentUser);
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-      }
+  const handleAuthLogout = async () => {
+    const response = await fetch(`/api/logout`, {
+      method: "POST",
+    });
+    if (response.ok) {
+      setIsLoggedIn(false)
+      setLoggedInUser(null)
     }
-      fetchCurrentUser()
-    }
-  },[isLoggedIn])
+  };
 
   return (
     <AuthContext.Provider
@@ -51,7 +42,8 @@ export const AuthContextProvider = ({ children }) => {
         loggedInUser,
         isLoggedIn,
         setIsLoggedIn,
-        setLoggedInUser
+        setLoggedInUser,
+        handleAuthLogout
       }}
     >
       {children}
