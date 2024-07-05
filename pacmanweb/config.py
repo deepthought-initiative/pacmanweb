@@ -35,7 +35,7 @@ class Config:
 
     if not SECRET_KEY:
         try:
-            SECRET_KEY = CREDS.get("SECRET_KEY")
+            SECRET_KEY = CREDS.get("SECRET_KEY", os.urandom(32))
         except KeyError:
             raise ValueError("No SECRET_KEY found in secrets.json or in path")
 
