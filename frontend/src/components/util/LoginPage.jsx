@@ -28,7 +28,7 @@ const Login = () => {
         localStorage.setItem("loggedIn", "true");
         setIsLoggedIn(true)
         setLoggedInUser(userInfo)
-        navigate("/profile");
+        navigate("/categorize");
         localStorage.setItem("username", username);
       }
     } catch (error) {

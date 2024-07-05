@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useContext, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
@@ -69,6 +69,16 @@ function App() {
     <>
       {isLoggedIn && <MainNavbar />}
       <Routes>
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/categorize" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
         <Route
           path="/categorize"
           element={
@@ -147,7 +157,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={!isLoggedIn ? <Login /> : (<Navigate to="/categorize" replace />)} />
       </Routes>
     </>
   );

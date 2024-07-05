@@ -14,19 +14,6 @@ const MainNavbar = () => {
   // Update screen width state when the window is resized
   const { loggedInUser} = useContext(AuthContext);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setScreenWidth(window.innerWidth);
-    };
-
-    window.addEventListener("resize", handleResize);
-    // Clean up event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-  const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
   const isItemActive = (path) => {
     return location.pathname === path;
   };
@@ -80,29 +67,15 @@ const MainNavbar = () => {
                     Admin Dashboard
                   </Nav.Link>
                 )}
-              </>
-          </Nav>
-          <Nav>
-              <div id="right-corner">
-                {screenWidth < 1200 ? (
-                  <div className="logout">
-                    <Nav.Link
+                 <Nav.Link
                       as={Link}
                       to="/profile"
-                      className={`nav-item ms-3${isItemActive("/logout") ? " active" : ""
+                      className={`nav-item ms-4${isItemActive("/profile") ? " active" : ""
                         }`}
                     >
-                      Profile
-                    </Nav.Link>
-                  </div>
-                ) : (
-                  <div className="logout">
-                    <Link to="/profile">
-                      <img src={DefaultPfp} alt="Profile" />
-                    </Link>
-                  </div>
-                )}
-              </div>
+                    Profile
+                </Nav.Link>
+              </>
           </Nav>
         </Navbar.Collapse>
       </Container>
