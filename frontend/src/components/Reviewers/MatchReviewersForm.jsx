@@ -377,16 +377,16 @@ const MatchReviewersForm = ({
           />
         </div>
         {!showLogs ? (
-          <div className="panelist-name-container">
-            <div className="upload-panelist-file">
+          <div> {/** Use panelist panelist-name-container for css*/}
+            {/* <div className="upload-panelist-file">
               <div className="border d-flex">
                 <input type="file" />
                 <button className="btn rounded-1" type="submit">
-                  {/* {uploading ? "Uploading..." : "Upload"} */} Upload
+                  Upload
                 </button>
               </div>
             </div>
-            <div>OR</div>
+            <div>OR</div> */}
             <div className="my-3">
               <TextArea
                 setValue={setPanelistNames}
