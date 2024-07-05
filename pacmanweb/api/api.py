@@ -83,6 +83,7 @@ def get_available_cycles():
 def run_pacman():
     options = request.args.to_dict(flat=True)
     panelist_names = options.pop('panelist_names', None)
+    panelist_names_mode = options.pop('panelist_names_mode', None)
     if not options.get("mode", None):
         return {"output": "Mode is required."}
     if options.get("past_cycles", None):
