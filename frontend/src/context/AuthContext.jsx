@@ -1,67 +1,57 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { createContext, useContext,useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-export const useAuthContext = () => useContext(AuthContext);
-
 export const AuthContextProvider = ({ children }) => {
-  const [user, setUser] = useState({
+  const [loggedInUser, setLoggedInUser] = useState({
     username: null,
     isadmin: false,
   });
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = async (e, usernameInput, passwordInput) => {
-    e.preventDefault();
-    try {
-      const formData = new FormData();
-      formData.append("creds", btoa(`${usernameInput}:${passwordInput}`));
-      const response = await fetch(`/api/login`, {
-        method: "POST",
-        body: formData,
-      });
-      const loginResponse = await response.json();
-      if (response.status === 200) {
-        const { username, isadmin } = loginResponse;
-        localStorage.setItem("loggedIn", "true");
-        setUser({ username, isadmin });
-        setIsLoggedIn(true);
-        navigate("/logout");
-        localStorage.setItem("username", username);
-      } else {
-        setError("Invalid username or password");
-      }
-    } catch (error) {
-      console.error("Error during login:", error);
-      setError("Error during login. Please try again later.");
-    }
-  };
 
-  const handleLogout = async () => {
-    const response = await fetch(`/api/logout`, {
-      method: "POST",
-    });
-    if (response.ok) {
-      setIsLoggedIn(false);
-      localStorage.removeItem("loggedIn");
-      localStorage.removeItem("username");
-      localStorage.removeItem("isadmin");
-      navigate("/login");
+  useEffect(() => {
+    const checkIsUserLoggedIn = async () => {
+      try {
+        const response = await fetch("/api/logged_in");
+        const data = await response.json();
+        const status = data.value === "True";
+        setIsLoggedIn(status);
+      } catch (error) {
+        console.error("Error checking login status:", error);
+        setIsLoggedIn(false);
+      }
+    };
+    checkIsUserLoggedIn();
+  }, []);
+
+  useEffect(() =>{
+    if(isLoggedIn){
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await fetch("/api/get_current_user");
+        if (!response.ok) {
+          throw new Error("Failed to fetch current user");
+        }
+        const currentUser = await response.json();
+        setLoggedInUser(currentUser);
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+      }
     }
-  };
+      fetchCurrentUser()
+    }
+  },[isLoggedIn])
+
   return (
     <AuthContext.Provider
       value={{
-        user,
+        loggedInUser,
         isLoggedIn,
-        handleLogin,
-        handleLogout,
-        error,
+        setIsLoggedIn,
+        setLoggedInUser
       }}
     >
       {children}
