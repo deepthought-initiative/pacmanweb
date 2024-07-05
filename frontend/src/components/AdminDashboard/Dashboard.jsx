@@ -101,7 +101,7 @@ const Dashboard = ({ usernameContext }) => {
     <div className="user-list-container">
       <h1>All Users</h1>
       <div className="row mb-3 filter-bar">
-        <InputGroup size="" className="mb-3 search-bar-wrapper">
+        {/* <InputGroup size="" className="mb-3 search-bar-wrapper">
           <InputGroup.Text id="inputGroup-sizing-sm">
             <img src={SearchIcon} />
           </InputGroup.Text>
@@ -112,7 +112,7 @@ const Dashboard = ({ usernameContext }) => {
             value={searchTerm}
             onChange={handleSearchTerm}
           />
-        </InputGroup>
+        </InputGroup> */}
 
         <div className="filter-user-on-status">
           <Form.Check
