@@ -3,9 +3,30 @@
 Please refer to the official website to install docker on your (virtual) machine.
 https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository 
 ```
-### Docker Specific Prerequisites
-Edits to be done when running the application using docker compose. **If you are on the latest commit on main, you won't need to do any below modifications to deploy in production.**
 
+### SSL
+Nginx configuration looks for a certificate and key pair inside `nginx/ssl` folder to setup HTTPS for your website. Please make sure to edit nginx/nginx-setup.conf replacing these placeholders with your own relevant names. 
+
+```conf
+server {
+    listen 80;
+    server_name <YOUR_DOMAIN> www.<YOUR_DOMAIN>;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+
+    ssl_certificate /etc/nginx/ssl/<YOUR_CRT_FILE>;
+    ssl_certificate_key /etc/nginx/ssl/<YOUR_KEY>;
+    server_name pacmanweb.live www.pacmanweb.live;
+...
+```
+
+### Modifications
+```{warning}
+If you are on the latest commit on main, you will not need to do any below modifications to deploy in production.
+```
 #### Frontend Modifications
 Head over to `frontend/vite.config.js` and follow the instructions there.
 You will need to uncomment the line
@@ -28,7 +49,7 @@ MODE = "prod"
 Here are all the commands to setup docker containers-
 ```bash
 docker compose -f docker-compose.yml build
-docker compose -f docker-compose.yml up -d # starts the containers in detached mode
+docker compose -f docker-compose.yml up -d
 ```
 For shutting them down, removing them and attached volumes
 ```bash

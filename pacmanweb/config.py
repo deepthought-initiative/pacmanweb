@@ -9,6 +9,7 @@ MODE = "prod"
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
+    ENV_NAME = ""
 
     secrets_fpath = ROOTDIR.parent / "secrets.json"
     with open(secrets_fpath, "r") as secrets:
