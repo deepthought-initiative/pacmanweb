@@ -7,6 +7,8 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
+import HidePasswordIcon from "../../assets/hide.png";
+import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
 
 // eslint-disable-next-line react/prop-types
@@ -24,6 +26,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   const [passwordError, setPasswordError] = useState(false);
   const [usernameErrorMessage, setUsernameErrorMessage] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setUpdatedUser({
@@ -51,6 +54,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
 
   const handleAdminStatusChange = (event) => {
     setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
+  };
+
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const hasChanged =
@@ -249,24 +256,45 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                   )}
                 </Form.Group>
               )}
-              <Form.Group className="mb-3" controlId="Form.NewPassword">
+              <Form.Group
+                className="mb-3 password-input-wrapper"
+                controlId="Form.NewPassword"
+              >
                 <Form.Label>
                   <strong>
                     {mode === "edit" ? "New Password" : "Password"}
                   </strong>
                 </Form.Label>
-                <Form.Control
-                  type="password"
-                  autoFocus
-                  value={updatedUser.password}
-                  onChange={handlePasswordChange}
-                  isInvalid={passwordError}
-                />
-                {passwordError && (
-                  <Form.Control.Feedback type="invalid">
-                    {passwordErrorMessage}
-                  </Form.Control.Feedback>
-                )}
+                <div className="password-input-container">
+                  <Form.Control
+                    type={showPassword ? "text" : "password"}
+                    autoFocus
+                    value={updatedUser.password}
+                    onChange={handlePasswordChange}
+                    isInvalid={passwordError}
+                    className="password-input"
+                  />
+                  <button
+                    onClick={handleShowPassword}
+                    type="button"
+                    className="show-password-btn"
+                    style={passwordError ? { right: "35px" } : {}}
+                  >
+                    <img
+                      src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
+                      alt="Show Password"
+                    />
+                  </button>
+                </div>
+                <div className="password-feedback-container">
+                  {passwordError && (
+                    <div className="password-feedback-container">
+                      <Form.Control.Feedback type="invalid">
+                        {passwordErrorMessage}
+                      </Form.Control.Feedback>
+                    </div>
+                  )}
+                </div>
               </Form.Group>
               {selectedUser["username"] !== "mainadmin" && (
                 <Form.Group

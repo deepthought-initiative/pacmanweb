@@ -22,6 +22,19 @@ const Footer = () => {
           <a href="https://www.flaticon.com/free-icons/red" title="red icons">
             Red icons created by hqrloveq - Flaticon
           </a>
+          |
+          <a
+            href="https://www.flaticon.com/free-icons/password"
+            title="password icons"
+          >
+            Password icons created by th studio - Flaticon
+          </a>
+          <a
+            href="https://www.flaticon.com/free-icons/search"
+            title="search icons"
+          >
+            Search icons created by Freepik - Flaticon
+          </a>
         </span>
       </div>
     </footer>

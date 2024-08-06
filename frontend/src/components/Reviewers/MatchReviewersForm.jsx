@@ -265,19 +265,32 @@ const MatchReviewersForm = ({
     resetErrors();
     console.log(panelistNames);
     const checkErrors = validateFields();
+    const params = [
+      `mode=${mode}`,
+      `main_test_cycle=${currentCycle}`,
+      `modelfile=${selectedModal}`,
+      `assignment_number_top_reviewers=${numberOfTopReviewers}`,
+      `close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
+      `log_level=${logLevel}`,
+      `assignment_number_top_reviewers=${numberOfTopReviewers}`,
+    ];
+    if (panelistNames.length !== 0) {
+      params.push("panelist_names", panelistNames);
+      params.push("panelist_names_mode", "append");
+    }
+
+    const query = params.join("&");
+    const url = `/api/run_pacman?${query}`;
     if (checkErrors) {
       let spawnResponse;
       setLoading(true);
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&assignment_number_top_reviewers=${numberOfTopReviewers}&close_collaborator_time_frame=${closeCollaboratorTimeFrame}&log_level=${logLevel}&panelist_names=${panelistNames}&panelist_names_mode=append`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      spawnResponse = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: "Basic " + btoa("default:barebones"),
+          "Content-Type": "application/json",
+        },
+      });
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -364,12 +377,23 @@ const MatchReviewersForm = ({
           />
         </div>
         {!showLogs ? (
-          <div className="my-3">
-            <TextArea
-              setValue={setPanelistNames}
-              textAreaError={textAreaError}
-              setTextAreaError={setTextAreaError}
-            />
+          <div> {/** Use panelist panelist-name-container for css*/}
+            {/* <div className="upload-panelist-file">
+              <div className="border d-flex">
+                <input type="file" />
+                <button className="btn rounded-1" type="submit">
+                  Upload
+                </button>
+              </div>
+            </div>
+            <div>OR</div> */}
+            <div className="my-3">
+              <TextArea
+                setValue={setPanelistNames}
+                textAreaError={textAreaError}
+                setTextAreaError={setTextAreaError}
+              />
+            </div>
           </div>
         ) : (
           <></>

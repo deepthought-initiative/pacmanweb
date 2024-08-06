@@ -72,7 +72,7 @@ const OtherConfigOptions = ({
             <InputConfigOption
               label="Assignment Number Top Reviewers"
               value={numberOfTopReviewers}
-              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+              desc="Number of top recommended reviewers"
               setValue={setNumberOfTopReviewers}
             />
           </div>
