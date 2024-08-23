@@ -7,7 +7,7 @@ describe('CategorizationForm', () => {
     // Mock the required props
     const mockProps = {
       allCycles: [],
-      modalFile: '',
+      modalFile: [],
       mode: 'PROP',
       renderTableComponent: vi.fn(),
       button_label: 'Submit'
