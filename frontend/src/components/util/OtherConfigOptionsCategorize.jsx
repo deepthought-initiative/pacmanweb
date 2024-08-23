@@ -26,6 +26,9 @@ const OtherConfigOptionsCategorize = ({
   setLogLevel,
 }) => {
   const createDropdownObjects = (dataList) => {
+    if (!dataList){
+      return []
+    }
     return dataList.map((item) => ({
       cycleNumber: item,
       label: item.toString(),
