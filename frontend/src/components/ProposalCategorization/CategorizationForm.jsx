@@ -311,7 +311,7 @@ const CategorizationForm = ({
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
       <div className={`${mode === "DUP" && "d-flex"}`}>
-        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
+        <div className={`row ${mode === "DUP" && "col-md-6"}`} data-testid="cycle-selection-container">
           <NewDropdown
             data={allCycles}
             label="Selected Current Cycle"
@@ -325,7 +325,8 @@ const CategorizationForm = ({
         </div>
       </div>
       {showTable ? (
-        renderTableComponent({
+        <div data-testid="table-container">
+        {renderTableComponent({
           currentId: currentId,
           currentCycle: currentCycle,
           setShowTable: setShowTable,
@@ -336,8 +337,10 @@ const CategorizationForm = ({
           mode: mode,
           downloadZIP: downloadZIP,
         })
+      }</div>
       ) : showLogs ? (
-        <Logs
+        <div className="logs-container">
+          {  <Logs
           currentId={currentId}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}
@@ -352,7 +355,8 @@ const CategorizationForm = ({
           dataToDisplay={dataToDisplay}
           downloadCSV={downloadCSV}
           downloadZIP={downloadZIP}
-        />
+        />}
+        </div>
       ) : (
         <OtherConfigOptionsCategorize
           button_label={button_label}
