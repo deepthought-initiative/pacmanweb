@@ -26,16 +26,13 @@ const OtherConfigOptionsCategorize = ({
   setLogLevel,
 }) => {
   const createDropdownObjects = (dataList) => {
-    if (!dataList){
-      return []
-    }
-    return dataList.map((item) => ({
+    return dataList?.map((item) => ({
       cycleNumber: item,
       label: item.toString(),
       style: {
         backgroundColor: "",
       },
-    }));
+    })) ?? [];
   };
   const logLevelOptions = ["info", "debug", "warning", "critical"];
   return (
