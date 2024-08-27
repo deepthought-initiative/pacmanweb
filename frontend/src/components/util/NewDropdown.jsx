@@ -12,7 +12,6 @@ const NewDropdown = ({
   disabled,
   error,
 }) => {
-  console.log(label, data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
