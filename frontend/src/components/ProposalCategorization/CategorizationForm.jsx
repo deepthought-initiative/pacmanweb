@@ -155,10 +155,8 @@ const CategorizationForm = ({
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
-        console.log(processStatus);
       } catch (error) {
         setProgressPercentage(100);
-        console.error("Error fetching table data:", error);
       }
     },
     [currentCycle, mode, processStatus]
@@ -339,7 +337,7 @@ const CategorizationForm = ({
         })
       }</div>
       ) : showLogs ? (
-        <div className="logs-container">
+        <div data-testid="logs-container" className="logs-container">
           {  <Logs
           currentId={currentId}
           setShowTable={setShowTable}

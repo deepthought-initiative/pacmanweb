@@ -12,6 +12,7 @@ const NewDropdown = ({
   disabled,
   error,
 }) => {
+  console.log(label, data);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -57,6 +58,7 @@ const NewDropdown = ({
         className={`option-display ${error ? "required" : ""} ${
           disabled ? "disabled" : ""
         }`}
+        data-testid={`dropdown-${label}`}
         onClick={handleDropdownToggle}
       >
         {multiple
@@ -76,6 +78,7 @@ const NewDropdown = ({
             <ul>
               {data.map((value) => (
                 <li
+                  data-testid={`dropdown-cycle-option-${value.cycleNumber}`}
                   key={value.cycleNumber}
                   onClick={() => handleOptionClick(value.cycleNumber)}
                   className={

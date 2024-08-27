@@ -92,6 +92,7 @@ const OtherConfigOptionsCategorize = ({
           <button
             className="btn form-page-button rounded-0"
             onClick={loading ? preventClick : handleClick}
+            data-testid="submit-button"
           >
             {loading ? (
               <>
