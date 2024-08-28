@@ -9,11 +9,13 @@ const TableForDuplicationChecker = ({
   setShowLogs,
   dataToDisplay,
   onCategorizeAnotherCycle,
-  downloadCSV,
   lowerLimit,
   upperLimit,
   currentCycle,
-  downloadZIP,
+  showTable,
+  currentId,
+  showLogs,
+  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -177,8 +179,11 @@ const TableForDuplicationChecker = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        showTable={showTable}
+        showLogs={showLogs}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentId={currentId}
       />
     </>
   );
