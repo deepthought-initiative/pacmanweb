@@ -356,6 +356,10 @@ const DuplicationForm = ({
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
+          currentCycle={currentCycle}
+          mode={mode}
+          showLogs={showLogs}
+          showTable={showTable}
         />
       ) : (
         <OtherConfigOptionsDuplication

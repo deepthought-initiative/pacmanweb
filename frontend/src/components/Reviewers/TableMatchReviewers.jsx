@@ -9,8 +9,11 @@ const TableMatchReviewers = ({
   setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
-  downloadCSV,
-  downloadZIP,
+  showTable,
+  currentId,
+  currentCycle,
+  showLogs,
+  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -162,8 +165,11 @@ const TableMatchReviewers = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        showTable={showTable}
+        showLogs={showLogs}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentId={currentId}
       />
     </>
   );
