@@ -356,7 +356,7 @@ def proposal_cat_output(result_id):
     return json.dumps(response)
 
 
-@outputs_bp.route("/download/<result_id>", methods=["GET"])
+@outputs_bp.route("/download/csv/<result_id>", methods=["GET"])
 @login_required
 def download_data_as_csv(result_id):
     options = request.args.to_dict(flat=True)

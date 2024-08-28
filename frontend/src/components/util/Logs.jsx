@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Spinner from "react-bootstrap/Spinner";
+import { DownloadFile } from "./DownloadFile";
 
 const Logs = ({
   setShowTable,
@@ -14,11 +16,14 @@ const Logs = ({
   processStatus,
   logContainerRef,
   showTerminateProcess,
-  downloadCSV,
-  downloadZIP,
   loading,
   preventClick,
   setShowLogs,
+  showLogs,
+  mode,
+  currentCycle,
+  currentId,
+  showTable,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
@@ -97,10 +102,10 @@ const Logs = ({
             See Results
           </button>
           <DropdownButton id="dropdown-basic-button" title="Download Data">
-            <Dropdown.Item className="download-option" onClick={downloadCSV}>
+            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
               Download as CSV
             </Dropdown.Item>
-            <Dropdown.Item className="download-option" onClick={downloadZIP}>
+            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
               Download as Zip
             </Dropdown.Item>
           </DropdownButton>

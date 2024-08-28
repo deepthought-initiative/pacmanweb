@@ -3,12 +3,16 @@
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
+import { DownloadFile } from "./DownloadFile";
 
 const ButtonTray = ({
   onCategorizeAnotherCycle,
-  downloadZIP,
   viewLogs,
-  downloadCSV,
+  showTable,
+  showLogs,
+  mode,
+  currentCycle,
+  currentId,
 }) => {
   return (
     <div className="button-tray container-fluid p-0">
@@ -16,10 +20,10 @@ const ButtonTray = ({
         Categorize Another Cycle
       </button>
       <DropdownButton id="dropdown-basic-button" title="Download Data">
-        <Dropdown.Item className="download-option" onClick={downloadCSV}>
+        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
           Download as CSV
         </Dropdown.Item>
-        <Dropdown.Item className="download-option" onClick={downloadZIP}>
+        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "zip")}>
           Download as Zip
         </Dropdown.Item>
       </DropdownButton>

@@ -5,15 +5,17 @@ import ButtonTray from "../util/ButtonTray";
 
 const ProposalTable = ({
   setShowTable,
+  showTable,
+  currentId,
+  currentCycle,
+  showLogs,
   setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
-  downloadZIP,
-  downloadCSV,
+  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-
   const expo = (num) => {
     if (num < 0.001) {
       return Number.parseFloat(num).toExponential(3);
@@ -21,12 +23,10 @@ const ProposalTable = ({
       return Number.parseFloat(num).toFixed(3);
     }
   };
-
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
     setCurrentRow(current_id);
   };
-
   const viewLogs = (event) => {
     event.preventDefault();
     setShowLogs(true);
@@ -110,8 +110,11 @@ const ProposalTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        showTable={showTable}
+        showLogs={showLogs}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentId={currentId}
       />
     </>
   );
