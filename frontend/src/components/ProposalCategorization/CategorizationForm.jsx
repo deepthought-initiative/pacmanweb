@@ -255,58 +255,6 @@ const CategorizationForm = ({
     return false;
   };
 
-  const downloadCSV = async () => {
-    const csvUrl = `/api/outputs/download/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
-    try {
-      const response = await fetch(csvUrl);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const fileName = response.headers
-        .get("content-disposition")
-        .split("=")[1];
-      let blob;
-      if (mode == "MATCH") {
-        blob = await response.blob();
-      } else {
-        const data = await response.text();
-        blob = new Blob([data], { type: "text/csv" });
-      }
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    } catch (error) {
-      console.error("There was a problem with the fetch operation:", error);
-    }
-  };
-
-  const downloadZIP = async () => {
-    const zipUrl = `/api/outputs/download/zip/${currentId}`;
-    try {
-      const response = await fetch(zipUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const fileName = response.headers
-        .get("content-disposition")
-        .split("=")[1];
-      const blob = await response.blob();
-      const downloadURL = window.URL.createObjectURL(blob);
-      const downloadLink = document.createElement("a");
-      downloadLink.href = downloadURL;
-      downloadLink.setAttribute("download", fileName);
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    } catch (error) {
-      console.error("Error downloading ZIP file:", error);
-    }
-  };
-
   return (
     <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
@@ -329,20 +277,25 @@ const CategorizationForm = ({
           currentId: currentId,
           currentCycle: currentCycle,
           setShowTable: setShowTable,
+          showLogs: showLogs,
+          showTable: showTable,
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
-          downloadCSV: downloadCSV,
           mode: mode,
-          downloadZIP: downloadZIP,
         })
       ) : showLogs ? (
         <Logs
           currentId={currentId}
+          currentCycle={currentCycle}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
           logs={logs}
+          mode={mode}
+          setShowLogs={setShowLogs}
+          showLogs={showLogs}
+          showTable={showTable}
           preventClick={preventClick}
           loading={loading}
           progressPercentage={progressPercentage}
@@ -350,8 +303,6 @@ const CategorizationForm = ({
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
-          downloadCSV={downloadCSV}
-          downloadZIP={downloadZIP}
         />
       ) : (
         <OtherConfigOptionsCategorize
