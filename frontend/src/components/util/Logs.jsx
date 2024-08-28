@@ -105,7 +105,7 @@ const Logs = ({
             <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
               Download as CSV
             </Dropdown.Item>
-            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
+            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "zip")}>
               Download as Zip
             </Dropdown.Item>
           </DropdownButton>
