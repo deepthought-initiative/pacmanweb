@@ -3,10 +3,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
-import InputConfigOption from "../util/InputConfigOption.jsx";
 import Logs from "../util/Logs.jsx";
-import NewDropdown from "../util/NewDropdown.jsx";
-import OtherConfigOptionsDuplication from "../util/OtherConfigOptionsDuplication.jsx";
 
 const DuplicationPage = ({
   allCycles,
@@ -16,28 +13,24 @@ const DuplicationPage = ({
   renderFormComponent,
   button_label,
 }) => {
-  const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
+  const defaultInputFields = {
+    currentCycle: "",
+    runName: "",
+    pastCycle: [],
+    selectedModal: "strolger_pacman_model_7cycles.joblib",
+    logLevel: "info",
+  };
+  const [inputFields, setInputFields] = useState(defaultInputFields);
+
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
-  const [currentCycle, setCurrentCycle] = useState();
   const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [upperLimit, setUpperLimit] = useState("");
   const [lowerLimit, setLowerLimit] = useState("");
-
-  // state variables for other config options
-  const [runName, setRunName] = useState("");
-  const [logLevel, setLogLevel] = useState("info");
-  const [pastCycle, setPastCycle] = useState([]);
-  const bothPastandCurrentCycles = [...pastCycle, currentCycle];
-
-  // Error variables
-  const [currentCycleError, setCurrentCycleError] = useState("");
-  const [logLevelError, setLogLevelError] = useState("");
-  const [pastCycleError, setPastCycleError] = useState("");
 
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
@@ -45,11 +38,6 @@ const DuplicationPage = ({
 
   //loading
   const [loading, setLoading] = useState(false);
-
-  // Text description for alert modals
-  const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
@@ -66,49 +54,21 @@ const DuplicationPage = ({
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
-
     window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [allCycles, terminateAllProcesses]);
 
-  const validateFields = () => {
-    let noError = true;
-    if (!currentCycle) {
-      setCurrentCycleError("Required");
-      noError = false;
-    }
-    if (!logLevel) {
-      setLogLevelError("Required");
-      noError = false;
-    }
-    if (pastCycle.length === 0) {
-      setPastCycleError("Select at least one");
-      noError = false;
-    }
-    return noError;
-  };
-
-  const resetErrors = () => {
-    setCurrentCycleError("");
-    setPastCycleError("");
-    setLogLevelError("");
-  };
-
   const onTerminate = () => {
     setCurrentId();
-    setLogLevel("info");
+    setInputFields(defaultInputFields);
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
     setLogs([]);
     setShowTerminateProcess(true);
     setProcessStatus();
-    setCurrentCycle("");
-    setPastCycle([]);
-    setRunName("");
     setLoading(false);
     setUpperLimit("");
     setLowerLimit("");
@@ -118,11 +78,14 @@ const DuplicationPage = ({
     const newCycles = allCycles.filter((cycle) => {
       return cycle.cycleNumber !== newCurrentCycle;
     });
-    const newPastCycles = pastCycle.filter((cycle) => {
+    const newPastCycles = inputFields.pastCycle.filter((cycle) => {
       return cycle !== newCurrentCycle;
     });
-    setCurrentCycle(newCurrentCycle);
-    setPastCycle(newPastCycles);
+    setInputFields({
+      ...inputFields,
+      currentCycle: newCurrentCycle,
+      pastCycle: newPastCycles,
+    });
     setFilteredCycles(newCycles);
   };
 
@@ -137,7 +100,7 @@ const DuplicationPage = ({
       }
       try {
         const tableResponse = await fetch(
-          `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
+          `/api/outputs/${tableCategory}/${curId}?cycle_number=${inputFields.currentCycle}`,
           {
             method: "GET",
             credentials: "include",
@@ -173,7 +136,7 @@ const DuplicationPage = ({
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, mode, processStatus]
+    [inputFields.currentCycle, mode, processStatus]
   );
 
   const startFetchingLogs = useCallback(
@@ -233,35 +196,6 @@ const DuplicationPage = ({
     [fetchTable, setShowTerminateProcess, setLogs, logContainerRef]
   );
 
-  const handleClick = async (event) => {
-    event.preventDefault();
-    resetErrors();
-    const checkErrors = validateFields();
-    if (checkErrors) {
-      let spawnResponse;
-      setLoading(true);
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&past_cycles=${bothPastandCurrentCycles.toString()}&main_test_cycle=${currentCycle}&log_level=${logLevel}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (spawnResponse.status === 429) {
-        setModalShow(true);
-      } else {
-        const data = await spawnResponse.json();
-        setCurrentId(data["result_id"]);
-        setShowLogs(true);
-        setLoading(false);
-        await startFetchingLogs(data["result_id"]);
-      }
-    }
-  };
-
   const preventClick = (event) => {
     event.preventDefault();
     return false;
@@ -276,6 +210,7 @@ const DuplicationPage = ({
         handleFilteringCycles: handleFilteringCycles,
         preventClick: preventClick,
         loading: loading,
+        filteredCycles: filteredCycles,
         setLoading: setLoading,
         button_label: button_label,
         inputFields: inputFields,
@@ -290,7 +225,7 @@ const DuplicationPage = ({
       {showTable ? (
         renderTableComponent({
           currentId: currentId,
-          currentCycle: currentCycle,
+          currentCycle: inputFields.currentCycle,
           setShowTable: setShowTable,
           setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
@@ -316,7 +251,7 @@ const DuplicationPage = ({
           logContainerRef={logContainerRef}
           showTerminateProcess={showTerminateProcess}
           dataToDisplay={dataToDisplay}
-          currentCycle={currentCycle}
+          currentCycle={inputFields.currentCycle}
           mode={mode}
           showLogs={showLogs}
           showTable={showTable}
