@@ -24,11 +24,13 @@ const DuplicationForm = ({
   setLoading,
   setInputFields,
   inputFields,
-  filteredCycles
+  filteredCycles,
+  upperLimit,
+  setUpperLimit,
+  lowerLimit,
+  setLowerLimit
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
-  const [upperLimit, setUpperLimit] = useState("");
-  const [lowerLimit, setLowerLimit] = useState("");
   const bothPastAndCurrentCycles = [
     ...inputFields.pastCycle,
     inputFields.currentCycle ? inputFields.currentCycle : [],
@@ -100,16 +102,13 @@ const DuplicationForm = ({
       ];
       const query = params.join("&");
       const Url = `/api/run_pacman?${query}`;
-      spawnResponse = await fetch(
-        Url,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      spawnResponse = await fetch(Url, {
+        method: "GET",
+        headers: {
+          Authorization: "Basic " + btoa("default:barebones"),
+          "Content-Type": "application/json",
+        },
+      });
       if (spawnResponse.status === 429) {
         setModalShow(true);
       } else {
@@ -184,6 +183,8 @@ const DuplicationForm = ({
             <></>
           )}
         </div>
+      </div>
+      {!showTable && !showLogs && (
         <>
           <div className="separator">Other Options</div>
           <div className="all-options">
@@ -242,7 +243,7 @@ const DuplicationForm = ({
             </div>
           </div>
         </>
-      </div>
+      )}
     </form>
   );
 };
