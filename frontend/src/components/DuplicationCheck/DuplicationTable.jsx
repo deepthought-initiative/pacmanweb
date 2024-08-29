@@ -4,7 +4,7 @@ import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
-const TableForDuplicationChecker = ({
+const DuplicationTable = ({
   setShowTable,
   setShowLogs,
   dataToDisplay,
@@ -189,4 +189,4 @@ const TableForDuplicationChecker = ({
   );
 };
 
-export default TableForDuplicationChecker;
+export default DuplicationTable;

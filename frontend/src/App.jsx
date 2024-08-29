@@ -1,10 +1,11 @@
+/* eslint-disable no-inner-declarations */
 /* eslint-disable no-unused-vars */
 import { useEffect, useContext, useState } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
+import DuplicationPage from "./components/DuplicationCheck/DuplicationPage";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
-import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import CategorizationTable from "./components/ProposalCategorization/CategorizationTable";
@@ -18,6 +19,7 @@ import PrivateRoute from "./components/util/PrivateRoute";
 import AuthContext from "./context/AuthContext";
 import { useLocation } from "react-router-dom";
 import PageNotFound from "./components/util/PageNotFound";
+import DuplicationTable from "./components/DuplicationCheck/DuplicationTable";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -95,8 +97,12 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
-                renderFormComponent={(props) => <CategorizationForm {...props} />}
-                renderTableComponent={(props) => <CategorizationTable {...props} />}
+                renderFormComponent={(props) => (
+                  <CategorizationForm {...props} />
+                )}
+                renderTableComponent={(props) => (
+                  <CategorizationTable {...props} />
+                )}
                 button_label="Categorize Proposals"
               />
             </PrivateRoute>
@@ -106,14 +112,15 @@ function App() {
           path="/duplication"
           element={
             <PrivateRoute>
-              <DuplicationForm
+              <DuplicationPage
                 key="DUP"
                 mode="DUP"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                renderFormComponent={(props) => <DuplicationForm {...props} />}
                 renderTableComponent={(props) => (
-                  <TableForDuplicationChecker {...props} />
+                  <DuplicationTable {...props} />
                 )}
                 button_label="Find Duplicates"
               />
