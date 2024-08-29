@@ -3,7 +3,7 @@ import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
-const ProposalTable = ({
+const CategorizationTable = ({
   setShowTable,
   showTable,
   currentId,
@@ -120,4 +120,4 @@ const ProposalTable = ({
   );
 };
 
-export default ProposalTable;
+export default CategorizationTable;
