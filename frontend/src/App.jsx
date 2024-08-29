@@ -7,7 +7,7 @@ import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
-import ProposalTable from "./components/ProposalCategorization/ProposalTable";
+import CategorizationTable from "./components/ProposalCategorization/CategorizationTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
 import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
 import UploadZipForm from "./components/Upload/UploadZip";
@@ -96,7 +96,7 @@ function App() {
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 renderFormComponent={(props) => <CategorizationForm {...props} />}
-                renderTableComponent={(props) => <ProposalTable {...props} />}
+                renderTableComponent={(props) => <CategorizationTable {...props} />}
                 button_label="Categorize Proposals"
               />
             </PrivateRoute>
