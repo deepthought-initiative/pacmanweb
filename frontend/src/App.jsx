@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-inner-declarations */
 import { useEffect, useContext, useState } from "react";
