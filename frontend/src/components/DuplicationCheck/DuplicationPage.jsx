@@ -221,6 +221,10 @@ const DuplicationPage = ({
         setCurrentId: setCurrentId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
+        upperLimit: upperLimit,
+        setUpperLimit: setUpperLimit,
+        lowerLimit: lowerLimit,
+        setLowerLimit: setLowerLimit
       })}
       {showTable ? (
         renderTableComponent({
