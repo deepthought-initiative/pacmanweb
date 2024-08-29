@@ -4,8 +4,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
-import NewDropdown from "../util/NewDropdown.jsx";
-import OtherConfigOptionsCategorize from "../util/OtherConfigOptionsCategorize.jsx";
 
 const CategorizationPage = ({
   allCycles,
@@ -13,39 +11,25 @@ const CategorizationPage = ({
   mode,
   renderTableComponent,
   button_label,
+  renderFormComponent,
 }) => {
-  const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
+  const defaultInputFields = {
+    currentCycle: "",
+    runName: "",
+    selectedModal: "strolger_pacman_model_7cycles.joblib",
+    logLevel: "info",
+  };
+  const [inputFields, setInputFields] = useState(defaultInputFields);
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
-  const [currentCycle, setCurrentCycle] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
-
-  // state variables for other config options
-  const [runName, setRunName] = useState("");
-  const [selectedModal, setSelectedModal] = useState(
-    "strolger_pacman_model_7cycles.joblib"
-  );
-  const [logLevel, setLogLevel] = useState("info");
-
-  // Error variables
-  const [currentCycleError, setCurrentCycleError] = useState("");
-  const [selectedModalError, setSelectedModalError] = useState("");
-  const [logLevelError, setLogLevelError] = useState("");
-  //
   const [dataToDisplay, setDataToDisplay] = useState([]);
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
-
-  //loading
   const [loading, setLoading] = useState(false);
-
-  // Text description for alert modals
-  const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
@@ -61,49 +45,21 @@ const CategorizationPage = ({
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
-
     window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [allCycles, terminateAllProcesses]);
 
-  const validateFields = () => {
-    let noError = true;
-    if (!currentCycle) {
-      setCurrentCycleError("Required");
-      noError = false;
-    }
-    if (!selectedModal) {
-      setSelectedModalError("Required");
-      noError = false;
-    }
-    if (!logLevel) {
-      setLogLevelError("Required");
-      noError = false;
-    }
-    return noError;
-  };
-
-  const resetErrors = () => {
-    setCurrentCycleError("");
-    setSelectedModalError("");
-    setLogLevelError("");
-  };
-
   const onTerminate = () => {
     setCurrentId();
-    setLogLevel("info");
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
     setLogs([]);
     setShowTerminateProcess(true);
     setProcessStatus();
-    setCurrentCycle("");
-    setRunName("");
-    setSelectedModal("strolger_pacman_model_7cycles.joblib");
+    setInputFields(defaultInputFields);
     setLoading(false);
   };
 
@@ -111,7 +67,7 @@ const CategorizationPage = ({
     const newCycles = allCycles.filter((cycle) => {
       return cycle.cycleNumber !== newCurrentCycle;
     });
-    setCurrentCycle(newCurrentCycle);
+    setInputFields({ ...inputFields, currentCycle: newCurrentCycle });
   };
 
   const fetchTable = useCallback(
@@ -125,7 +81,7 @@ const CategorizationPage = ({
       }
       try {
         const tableResponse = await fetch(
-          `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
+          `/api/outputs/${tableCategory}/${curId}?cycle_number=${inputFields["currentCycle"]}`,
           {
             method: "GET",
             credentials: "include",
@@ -161,13 +117,12 @@ const CategorizationPage = ({
         console.error("Error fetching table data:", error);
       }
     },
-    [currentCycle, mode, processStatus]
+    [inputFields, mode, processStatus]
   );
 
   const startFetchingLogs = useCallback(
     async (curId) => {
       let reconnectFrequencySeconds = 1;
-
       const fetchLogs = async () => {
         try {
           const eventSource = new EventSource(`/api/stream/${curId}`);
@@ -221,61 +176,35 @@ const CategorizationPage = ({
     [fetchTable, setShowTerminateProcess, setLogs, logContainerRef]
   );
 
-  const handleClick = async (event) => {
-    event.preventDefault();
-    resetErrors();
-    const checkErrors = validateFields();
-    if (checkErrors) {
-      let spawnResponse;
-      setLoading(true);
-      spawnResponse = await fetch(
-        `/api/run_pacman?mode=${mode}&main_test_cycle=${currentCycle}&modelfile=${selectedModal}&log_level=${logLevel}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Basic " + btoa("default:barebones"),
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (spawnResponse.status === 429) {
-        setModalShow(true);
-      } else {
-        const data = await spawnResponse.json();
-        setCurrentId(data["result_id"]);
-        setShowLogs(true);
-        setLoading(false);
-        await startFetchingLogs(data["result_id"]);
-      }
-    }
-  };
-
   const preventClick = (event) => {
     event.preventDefault();
     return false;
   };
 
   return (
-    <div className="mt-5" id="main-container">
-      {!showLogs && !showTable && <h3>Start a new process</h3>}
-      <div className={`${mode === "DUP" && "d-flex"}`}>
-        <div className={`row ${mode === "DUP" && "col-md-6"}`}>
-          <NewDropdown
-            data={allCycles}
-            label="Selected Current Cycle"
-            desc="Prefix used throughout script to match with cycle description"
-            inputField={currentCycle}
-            multiple={false}
-            setInputField={handleFilteringCycles}
-            disabled={showTable || showLogs}
-            error={currentCycleError}
-          />
-        </div>
-      </div>
+    <>
+      {renderFormComponent({
+        allCycles: allCycles,
+        modalFile: modalFile,
+        mode: mode,
+        handleFilteringCycles: handleFilteringCycles,
+        preventClick: preventClick,
+        loading: loading,
+        setLoading: setLoading,
+        button_label: button_label,
+        inputFields: inputFields,
+        setInputFields: setInputFields,
+        defaultInputFields: defaultInputFields,
+        showLogs: showLogs,
+        showTable: showTable,
+        setCurrentId: setCurrentId,
+        setShowLogs: setShowLogs,
+        startFetchingLogs: startFetchingLogs,
+      })}
       {showTable ? (
         renderTableComponent({
           currentId: currentId,
-          currentCycle: currentCycle,
+          currentCycle: inputFields["currentCycle"],
           setShowTable: setShowTable,
           showLogs: showLogs,
           showTable: showTable,
@@ -287,7 +216,7 @@ const CategorizationPage = ({
       ) : showLogs ? (
         <Logs
           currentId={currentId}
-          currentCycle={currentCycle}
+          currentCycle={inputFields["currentCycle"]}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}
           onTerminate={onTerminate}
@@ -305,28 +234,9 @@ const CategorizationPage = ({
           dataToDisplay={dataToDisplay}
         />
       ) : (
-        <OtherConfigOptionsCategorize
-          button_label={button_label}
-          logLevelError={logLevelError}
-          modalShow={modalShow}
-          multipleRequestAlertTitle={multipleRequestAlertTitle}
-          multipleRequestAlertDesc={multipleRequestAlertDesc}
-          setModalShow={setModalShow}
-          handleClick={handleClick}
-          preventClick={preventClick}
-          currentCycle={currentCycle}
-          runName={runName}
-          modalFile={modalFile}
-          logLevel={logLevel}
-          setLogLevel={setLogLevel}
-          selectedModal={selectedModal}
-          setSelectedModal={setSelectedModal}
-          setRunName={setRunName}
-          selectedModalError={selectedModalError}
-          loading={loading}
-        />
+        <></>
       )}
-    </div>
+    </>
   );
 };
 

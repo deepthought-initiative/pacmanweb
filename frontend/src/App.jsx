@@ -5,6 +5,7 @@ import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import TableForDuplicationChecker from "./components/DuplicationCheck/TableForDuplicationChecker";
+import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import ProposalTable from "./components/ProposalCategorization/ProposalTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
@@ -25,10 +26,11 @@ function App() {
     localStorage.getItem("username")
   );
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
 
-  const { loggedInUser, isLoggedIn, setLoggedInUser, handleAuthLogout } = useContext(AuthContext);
+  const { loggedInUser, isLoggedIn, setLoggedInUser, handleAuthLogout } =
+    useContext(AuthContext);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -36,15 +38,15 @@ function App() {
         try {
           const response = await fetch("/api/get_current_user");
           if (!response.ok) {
-            handleAuthLogout()
-            navigate("/login")
+            handleAuthLogout();
+            navigate("/login");
           }
           const currentUser = await response.json();
           setLoggedInUser(currentUser);
         } catch (error) {
           console.error("Error fetching current user:", error);
         }
-      }
+      };
       async function fetchCycles() {
         const fullResponse = await fetch(`/api/get_cycles`);
         const fullResponseJson = await fullResponse.json();
@@ -64,10 +66,10 @@ function App() {
         setAllCycles(allAvailableCycles);
         setModalFile(fullResponseJson["models"]);
       }
-      fetchCurrentUser()
+      fetchCurrentUser();
       fetchCycles();
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn]);
 
   return (
     <>
@@ -77,7 +79,7 @@ function App() {
           path="/"
           element={
             isLoggedIn ? (
-              <Navigate to={location.state?.from || '/categorize'} replace />
+              <Navigate to={location.state?.from || "/categorize"} replace />
             ) : (
               <Navigate to="/login" replace />
             )
@@ -87,15 +89,14 @@ function App() {
           path="/categorize"
           element={
             <PrivateRoute>
-              <CategorizationForm
+              <CategorizationPage
                 key="PROP"
                 mode="PROP"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
-                renderTableComponent={(props) => (
-                  <ProposalTable {...props} />
-                )}
+                renderFormComponent={(props) => <CategorizationForm {...props} />}
+                renderTableComponent={(props) => <ProposalTable {...props} />}
                 button_label="Categorize Proposals"
               />
             </PrivateRoute>
@@ -161,7 +162,16 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/login" element={!isLoggedIn ? <Login /> : (<Navigate to={location.state?.from || '/categorize'} replace />)} />
+        <Route
+          path="/login"
+          element={
+            !isLoggedIn ? (
+              <Login />
+            ) : (
+              <Navigate to={location.state?.from || "/categorize"} replace />
+            )
+          }
+        />
         <Route path="/404" element={<PageNotFound />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
       </Routes>

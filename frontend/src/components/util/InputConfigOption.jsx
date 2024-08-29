@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { useCallback } from "react";
 import ErrorMessage from "../util/ErrorMessage.jsx";
 
 const InputConfigOption = ({
@@ -9,9 +10,9 @@ const InputConfigOption = ({
   error,
   disabled,
 }) => {
-  const handleOnChange = (event) => {
+  const handleOnChange = useCallback((event) => {
     setValue(event.target.value);
-  };
+  }, [setValue]);
   return (
     <div className="dropdown-container">
       <div className="option-header">
