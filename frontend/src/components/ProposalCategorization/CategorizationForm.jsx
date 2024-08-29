@@ -22,7 +22,6 @@ const CategorizationForm = ({
   startFetchingLogs, 
   loading,
   preventClick,
-  handleFilteringCycles,
   setLoading,
   setInputFields,
   inputFields,
@@ -123,7 +122,7 @@ const CategorizationForm = ({
               desc="Prefix used throughout script to match with cycle description"
               inputField={inputFields["currentCycle"]}
               multiple={false}
-              setInputField={handleFilteringCycles}
+              setInputField={(value) => updateInputFields("currentCycle", value)}
               disabled={showLogs || showTable}
               error={currentCycleError}
             />

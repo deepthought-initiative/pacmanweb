@@ -63,13 +63,6 @@ const CategorizationPage = ({
     setLoading(false);
   };
 
-  const handleFilteringCycles = (newCurrentCycle) => {
-    const newCycles = allCycles.filter((cycle) => {
-      return cycle.cycleNumber !== newCurrentCycle;
-    });
-    setInputFields({ ...inputFields, currentCycle: newCurrentCycle });
-  };
-
   const fetchTable = useCallback(
     async (curId) => {
       if (!curId) {
@@ -187,7 +180,6 @@ const CategorizationPage = ({
         allCycles: allCycles,
         modalFile: modalFile,
         mode: mode,
-        handleFilteringCycles: handleFilteringCycles,
         preventClick: preventClick,
         loading: loading,
         setLoading: setLoading,
