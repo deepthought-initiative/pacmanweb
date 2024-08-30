@@ -3,41 +3,44 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
-import Logs from "../util/Logs";
 import NewDropdown from "../util/NewDropdown.jsx";
-import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
 import TextArea from "../util/TextArea.jsx";
+import Spinner from "react-bootstrap/Spinner";
+import "../../css/otherConfigOptions.css";
+import AlertModal from "../util/AlertBox.jsx";
+import InputConfigOption from "../util/InputConfigOption.jsx";
 
 const MatchReviewersForm = ({
   allCycles,
   modalFile,
   mode,
-  renderTableComponent,
   button_label,
+  showTable,
+  showLogs,
+  inputFields,
+  setInputFields,
+  defaultInputFields,
+  setCurrentId,
+  setShowLogs,
+  startFetchingLogs,
+  setLoading,
+  preventClick,
+  setShowTable,
+  loading,
+  currentId
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
-  const [showTable, setShowTable] = useState(false);
-  const [showLogs, setShowLogs] = useState(false);
-  const [logs, setLogs] = useState([]);
-  const [currentId, setCurrentId] = useState();
-  const [showTerminateProcess, setShowTerminateProcess] = useState(true);
-  const [currentCycle, setCurrentCycle] = useState();
-  const [filteredCycles, setFilteredCycles] = useState();
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [panelistNames, setPanelistNames] = useState([]);
 
-  // state variables for other config options
-  const [runName, setRunName] = useState("");
-  const [selectedModal, setSelectedModal] = useState(
-    "strolger_pacman_model_7cycles.joblib"
-  );
-  const [numberOfTopReviewers, setNumberOfTopReviewers] = useState(5);
-  const [closeCollaboratorTimeFrame, setCloseCollaboratorTimeFrame] =
-    useState(3);
-  const [pastCycle, setPastCycle] = useState([]);
-  const bothPastandCurrentCycles = [...pastCycle, currentCycle];
-  const [logLevel, setLogLevel] = useState("info");
-
+  const createDropdownObjects = (dataList) => {
+    return dataList.map((item) => ({
+      cycleNumber: item,
+      label: item.toString(), // Assuming items have a toString method
+      style: {
+        backgroundColor: "",
+      },
+    }));
+  };
+  const logLevelOptions = ["info", "debug", "warning", "critical"];
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [selectedModalError, setSelectedModalError] = useState("");
@@ -49,67 +52,36 @@ const MatchReviewersForm = ({
   const [logLevelError, setLogLevelError] = useState("");
   const [textAreaError, setTextAreaError] = useState("");
 
-  //
-  const [dataToDisplay, setDataToDisplay] = useState([]);
-  const [processStatus, setProcessStatus] = useState();
-  const logContainerRef = useRef(null);
-
-  //loading
-  const [loading, setLoading] = useState(false);
-
   // Text description for alert modals
   const multipleRequestAlertTitle = "Process Running Elsewhere";
   const multipleRequestAlertDesc =
     "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
-  const terminateAllProcesses = useCallback(async () => {
-    if (!currentId) {
-      return;
-    }
-    await fetch(`/api/terminate/${currentId}?mode=${mode}`, {
-      method: "POST",
-    });
-    onTerminate();
-  }, [currentId, mode]);
 
-  useEffect(() => {
-    setFilteredCycles(allCycles);
-    const handleBeforeUnload = async (event) => {
-      await terminateAllProcesses();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [allCycles, terminateAllProcesses]);
+  const updateInputFields = useCallback((key, value) => {
+      setInputFields(prev => ({...prev, [key]: value}));
+    }, [setInputFields]);
 
   const validateFields = () => {
     let noError = true;
-    if (!currentCycle) {
+    if (!inputFields.currentCycle) {
       setCurrentCycleError("Required");
       noError = false;
     }
-    if (!selectedModal) {
+    if (!inputFields.selectedModal) {
       setSelectedModalError("Required");
       noError = false;
     }
-    if (!numberOfTopReviewers) {
+    if (!inputFields.numberOfTopReviewers) {
       setNumberOfTopReviewersError("Required");
       noError = false;
     }
-    if (!closeCollaboratorTimeFrame) {
+    if (!inputFields.closeCollaboratorTimeFrame) {
       setCloseCollaboratorTimeFrameError("Required");
       noError = false;
     }
     if (textAreaError) {
       setTextAreaError("Required");
-      noError = false;
-    }
-    // Validate pastCycle only if mode is "DUP"
-    if (mode === "DUP" && pastCycle.length === 0) {
-      setPastCycleError("Select at least one");
       noError = false;
     }
     return noError;
@@ -124,158 +96,21 @@ const MatchReviewersForm = ({
     setTextAreaError("");
   };
 
-  const onTerminate = () => {
-    setCurrentId();
-    setShowLogs(false);
-    setShowTable(false);
-    setProgressPercentage(0);
-    setLogs([]);
-    setShowTerminateProcess(true);
-    setProcessStatus();
-    setCurrentCycle("");
-    setPastCycle([]);
-    setRunName("");
-    setSelectedModal("strolger_pacman_model_7cycles.joblib");
-    setLoading(false);
-    setNumberOfTopReviewers(5);
-    setCloseCollaboratorTimeFrame(3);
-  };
-
-  const handleFilteringCycles = (newCurrentCycle) => {
-    const newCycles = allCycles.filter((cycle) => {
-      return cycle.cycleNumber !== newCurrentCycle;
-    });
-    const newPastCycles = pastCycle.filter((cycle) => {
-      return cycle !== newCurrentCycle;
-    });
-    setCurrentCycle(newCurrentCycle);
-    setPastCycle(newPastCycles);
-    setFilteredCycles(newCycles);
-  };
-
-  const fetchTable = useCallback(
-    async (curId) => {
-      if (!curId) {
-        return;
-      }
-      let tableCategory = "";
-      if (mode == "MATCH") {
-        tableCategory = "match_reviewers_output";
-      }
-      try {
-        const tableResponse = await fetch(
-          `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: { Authorization: "Basic " + btoa("default:barebones") },
-          }
-        );
-        if (!tableResponse.ok) {
-          setProgressPercentage(100);
-          throw new Error(
-            `Failed to fetch table data: ${tableResponse.statusText}`
-          );
-        }
-        const tableData = await tableResponse.json();
-        const [tabularData, code] = tableData;
-        setDataToDisplay(tabularData);
-        setProcessStatus(code);
-        if (code === 200) {
-          setProgressPercentage(100);
-          setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
-        } else if (code === 204) {
-          setProgressPercentage(100);
-          setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
-        } else {
-          setProgressPercentage(100);
-          alert("Process failed! Please try again");
-          setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-        }
-        logContainerRef.current.scrollTop =
-          logContainerRef.current.scrollHeight;
-        console.log(processStatus);
-      } catch (error) {
-        setProgressPercentage(100);
-        console.error("Error fetching table data:", error);
-      }
-    },
-    [currentCycle, mode, processStatus]
-  );
-
-  const startFetchingLogs = useCallback(
-    async (curId) => {
-      let reconnectFrequencySeconds = 1;
-
-      const fetchLogs = async () => {
-        try {
-          const eventSource = new EventSource(`/api/stream/${curId}`);
-          eventSource.onopen = () => {
-            setShowTerminateProcess(true);
-          };
-          eventSource.onmessage = async (event) => {
-            const newLog = event.data;
-            if (newLog.includes("STARTING RUN")) {
-              setProgressPercentage(10);
-            }
-            if (newLog.includes("Log file can be found")) {
-              setProgressPercentage(50);
-            }
-            if (
-              newLog.includes("PROCESS COMPLETE") ||
-              newLog.includes("run complete")
-            ) {
-              await fetchTable(curId);
-              eventSource.close();
-              setShowTerminateProcess(false);
-              return; // Exit after process completion
-            }
-            setLogs((prevLogs) => [...prevLogs, newLog]);
-            logContainerRef.current.scrollTop =
-              logContainerRef.current.scrollHeight;
-          };
-          eventSource.onerror = (error) => {
-            console.error("EventSource failed:", error);
-            setShowTerminateProcess(false);
-            reconnectFrequencySeconds = Math.min(
-              reconnectFrequencySeconds * 2,
-              64
-            );
-            setTimeout(
-              () => startFetchingLogs(curId),
-              reconnectFrequencySeconds * 1000
-            );
-          };
-        } catch (error) {
-          console.error("Error fetching logs:", error);
-          setTimeout(
-            () => startFetchingLogs(curId),
-            reconnectFrequencySeconds * 1000
-          );
-        }
-      };
-
-      await fetchLogs();
-    },
-    [fetchTable, setShowTerminateProcess, setLogs, logContainerRef]
-  );
-
   const handleClick = async (event) => {
     event.preventDefault();
     resetErrors();
-    console.log(panelistNames);
     const checkErrors = validateFields();
     const params = [
       `mode=${mode}`,
-      `main_test_cycle=${currentCycle}`,
-      `modelfile=${selectedModal}`,
-      `assignment_number_top_reviewers=${numberOfTopReviewers}`,
-      `close_collaborator_time_frame=${closeCollaboratorTimeFrame}`,
-      `log_level=${logLevel}`,
-      `assignment_number_top_reviewers=${numberOfTopReviewers}`,
+      `main_test_cycle=${inputFields.currentCycle}`,
+      `modelfile=${inputFields.selectedModal}`,
+      `assignment_number_top_reviewers=${inputFields.numberOfTopReviewers}`,
+      `close_collaborator_time_frame=${inputFields.closeCollaboratorTimeFrame}`,
+      `log_level=${inputFields.logLevel}`,
+      `assignment_number_top_reviewers=${inputFields.numberOfTopReviewers}`,
     ];
-    if (panelistNames.length !== 0) {
-      params.push("panelist_names", panelistNames);
+    if (inputFields.panelistNames.length !== 0) {
+      params.push("panelist_names", inputFields.panelistNames);
       params.push("panelist_names_mode", "append");
     }
 
@@ -303,13 +138,9 @@ const MatchReviewersForm = ({
     }
   };
 
-  const preventClick = (event) => {
-    event.preventDefault();
-    return false;
-  };
-
   return (
-    <div className="mt-5" id="main-container">
+    <form>
+      <div className="mt-5" id="main-container">
       {!showLogs && !showTable && <h3>Start a new process</h3>}
       <div>
         <div className="row">
@@ -317,14 +148,14 @@ const MatchReviewersForm = ({
             data={allCycles}
             label="Selected Current Cycle"
             desc="Prefix used throughout script to match with cycle description"
-            inputField={currentCycle}
+            inputField={inputFields.currentCycle}
             multiple={false}
-            setInputField={handleFilteringCycles}
+            setInputField={(value) => updateInputFields("currentCycle", value)}
             disabled={showTable || showLogs}
             error={currentCycleError}
           />
         </div>
-        {!showLogs ? (
+        {!showLogs && (
           <div> {/** Use panelist panelist-name-container for css*/}
             {/* <div className="upload-panelist-file">
               <div className="border d-flex">
@@ -337,77 +168,104 @@ const MatchReviewersForm = ({
             <div>OR</div> */}
             <div className="my-3">
               <TextArea
-                setValue={setPanelistNames}
+                setValue={(value) => updateInputFields("panelistNames", value)}
                 textAreaError={textAreaError}
                 setTextAreaError={setTextAreaError}
               />
             </div>
           </div>
-        ) : (
-          <></>
         )}
       </div>
-      {showTable ? (
-        renderTableComponent({
-          currentId: currentId,
-          currentCycle: currentCycle,
-          setShowTable: setShowTable,
-          setShowLogs: setShowLogs,
-          onCategorizeAnotherCycle: onTerminate,
-          dataToDisplay: dataToDisplay,
-          mode: mode,
-          showLogs: showLogs,
-          showTable: showTable,
-        })
-      ) : showLogs ? (
-        <Logs
-          currentId={currentId}
-          setShowTable={setShowTable}
-          terminateAllProcesses={terminateAllProcesses}
-          onTerminate={onTerminate}
-          logs={logs}
-          preventClick={preventClick}
-          loading={loading}
-          progressPercentage={progressPercentage}
-          processStatus={processStatus}
-          logContainerRef={logContainerRef}
-          showTerminateProcess={showTerminateProcess}
-          dataToDisplay={dataToDisplay}
-          currentCycle={currentCycle}
-          mode={mode}
-          setShowLogs={setShowLogs}
-          showLogs={showLogs}
-          showTable={showTable}
-        />
-      ) : (
-        <OtherConfigOptions
-          button_label={button_label}
-          modalShow={modalShow}
-          multipleRequestAlertTitle={multipleRequestAlertTitle}
-          multipleRequestAlertDesc={multipleRequestAlertDesc}
-          setModalShow={setModalShow}
-          handleClick={handleClick}
-          preventClick={preventClick}
-          currentCycle={currentCycle}
-          runName={runName}
-          modalFile={modalFile}
-          numberOfTopReviewers={numberOfTopReviewers}
-          closeCollaboratorTimeFrame={closeCollaboratorTimeFrame}
-          selectedModal={selectedModal}
-          setSelectedModal={setSelectedModal}
-          setRunName={setRunName}
-          setNumberOfTopReviewers={setNumberOfTopReviewers}
-          setCloseCollaboratorTimeFrame={setCloseCollaboratorTimeFrame}
-          selectedModalError={selectedModalError}
-          numberOfTopReviewersError={numberOfTopReviewersError}
-          closeCollaboratorTimeFrameError={closeCollaboratorTimeFrameError}
-          loading={loading}
-          logLevelError={logLevelError}
-          logLevel={logLevel}
-          setLogLevel={setLogLevel}
+    </div>
+    <div className="separator">Other Options</div>
+      <div className="all-options">
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Enter Run name(optional)"
+              value={inputFields.setRunName}
+              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+              setValue={(value) => updateInputFields("runName", value)}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <NewDropdown
+              data={createDropdownObjects(modalFile)}
+              multiple={false}
+              label="Select modal file to use"
+              desc="Name of modal file to use"
+              inputField={inputFields.selectedModal}
+              setInputField={(value) => updateInputFields("selectedModal", value)}
+              disabled={false}
+              error={selectedModalError}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Assignment Number Top Reviewers"
+              value={inputFields.numberOfTopReviewers}
+              desc="Number of top recommended reviewers"
+              setValue={(value) => updateInputFields("numberOfTopReviewers", value)}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Close Collaborator Time Frame"
+              value={inputFields.closeCollaboratorTimeFrame}
+              desc="Number of years over which to check close collaborators"
+              setValue={(value) => updateInputFields("closeCollaboratorTimeFrame", value)}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <NewDropdown
+              data={createDropdownObjects(logLevelOptions)}
+              multiple={false}
+              label="Select Log Level"
+              desc="Log Level to set"
+              inputField={inputFields.logLevel}
+              setInputField={(value) => updateInputFields("logLevel", value)}
+              disabled={false}
+              error={logLevelError}
+            />
+          </div>
+        </div>
+      </div>
+      {modalShow && (
+        <AlertModal
+          show={modalShow}
+          title={multipleRequestAlertTitle}
+          desc={multipleRequestAlertDesc}
+          buttonText="Close"
+          onHide={() => setModalShow(false)}
         />
       )}
-    </div>
+      <div className="row mt-5">
+        <div className="col-md-6 text-start">
+          <button
+            className="btn form-page-button rounded-0"
+            onClick={loading ? preventClick : handleClick}
+          >
+            {loading ? (
+              <>
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </>
+            ) : (
+              button_label
+            )}
+          </button>
+        </div>
+      </div>
+    </form>
   );
 };
 
