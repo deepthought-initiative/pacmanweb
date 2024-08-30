@@ -99,7 +99,6 @@ const CategorizationPage = ({
           setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
         } else {
           setProgressPercentage(100);
-          alert("Process failed! Please try again");
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
         }
         logContainerRef.current.scrollTop =
