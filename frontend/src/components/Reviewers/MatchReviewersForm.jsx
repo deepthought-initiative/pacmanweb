@@ -48,7 +48,6 @@ const MatchReviewersForm = ({
     useState("");
   const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
     useState("");
-  const [pastCycleError, setPastCycleError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
   const [textAreaError, setTextAreaError] = useState("");
 
@@ -84,6 +83,9 @@ const MatchReviewersForm = ({
       setTextAreaError("Required");
       noError = false;
     }
+    if(!inputFields.logLevel){
+      setLogLevelError("Required")
+    }
     return noError;
   };
 
@@ -92,8 +94,8 @@ const MatchReviewersForm = ({
     setSelectedModalError("");
     setNumberOfTopReviewersError("");
     setCloseCollaboratorTimeFrameError("");
-    setPastCycleError("");
     setTextAreaError("");
+    setLogLevelError("")
   };
 
   const handleClick = async (event) => {
@@ -210,6 +212,7 @@ const MatchReviewersForm = ({
               value={inputFields.numberOfTopReviewers}
               desc="Number of top recommended reviewers"
               setValue={(value) => updateInputFields("numberOfTopReviewers", value)}
+              error={numberOfTopReviewersError}
             />
           </div>
         </div>
@@ -220,6 +223,7 @@ const MatchReviewersForm = ({
               value={inputFields.closeCollaboratorTimeFrame}
               desc="Number of years over which to check close collaborators"
               setValue={(value) => updateInputFields("closeCollaboratorTimeFrame", value)}
+              error={closeCollaboratorTimeFrameError}
             />
           </div>
         </div>
