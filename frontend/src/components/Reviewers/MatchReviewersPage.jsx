@@ -14,7 +14,6 @@ const MatchReviewersPage = ({
   button_label,
   renderFormComponent,
 }) => {
-  const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const defaultInputFields = {
     currentCycle: "",
     panelistNames: [],
