@@ -4,9 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
-import NewDropdown from "../util/NewDropdown.jsx";
-import OtherConfigOptions from "../util/OtherConfigOptions.jsx";
-import TextArea from "../util/TextArea.jsx";
+
 
 const MatchReviewersPage = ({
   allCycles,
@@ -26,13 +24,12 @@ const MatchReviewersPage = ({
     logLevel: "info",
     selectedModal: "strolger_pacman_model_7cycles.joblib"
   };
-  const [inputFields, setInputFields] = useState();
+  const [inputFields, setInputFields] = useState(defaultInputFields);
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
   const [currentId, setCurrentId] = useState();
   const [showTerminateProcess, setShowTerminateProcess] = useState(true);
-  const [filteredCycles, setFilteredCycles] = useState();
   const [progressPercentage, setProgressPercentage] = useState(0);
 
   //
@@ -54,7 +51,6 @@ const MatchReviewersPage = ({
   }, [currentId, mode]);
 
   useEffect(() => {
-    setFilteredCycles(allCycles);
     const handleBeforeUnload = async (event) => {
       await terminateAllProcesses();
     };
@@ -198,7 +194,6 @@ const MatchReviewersPage = ({
         mode: mode,
         preventClick: preventClick,
         loading: loading,
-        filteredCycles: filteredCycles,
         setLoading: setLoading,
         button_label: button_label,
         inputFields: inputFields,

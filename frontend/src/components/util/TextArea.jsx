@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import FormGroup from "react-bootstrap/esm/FormGroup";
 
@@ -10,11 +10,11 @@ const TextArea = ({ setValue, textAreaError, setTextAreaError }) => {
   useEffect(() => {
     const listOfPanelists = validateAndCleanPanelistNames(textEntered);
     setValue(listOfPanelists);
-  }, [textEntered, setValue]);
+  }, [textEntered]);
 
-  const handleOnChange = (event) => {
+  const handleOnChange = useCallback((event) => {
     setTextEntered(event.target.value);
-  };
+  }, [setTextEntered]);
 
   const validateAndCleanPanelistNames = (input) => {
     const regex = /^[a-zA-Z\s.]{2,}$/;
