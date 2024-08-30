@@ -4,7 +4,7 @@ import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 import ImgTooltip from "../util/Tooltip";
 
-const TableMatchReviewers = ({
+const MatchReviewersTable = ({
   setShowTable,
   setShowLogs,
   onCategorizeAnotherCycle,
@@ -175,4 +175,4 @@ const TableMatchReviewers = ({
   );
 };
 
-export default TableMatchReviewers;
+export default MatchReviewersTable;

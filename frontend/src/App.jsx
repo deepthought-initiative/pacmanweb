@@ -10,7 +10,7 @@ import CategorizationPage from "./components/ProposalCategorization/Categorizati
 import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
 import CategorizationTable from "./components/ProposalCategorization/CategorizationTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
-import TableMatchReviewers from "./components/Reviewers/TableMatchReviewers";
+import MatchReviewersTable from "./components/Reviewers/MatchReviewersTable";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
@@ -20,6 +20,7 @@ import AuthContext from "./context/AuthContext";
 import { useLocation } from "react-router-dom";
 import PageNotFound from "./components/util/PageNotFound";
 import DuplicationTable from "./components/DuplicationCheck/DuplicationTable";
+import MatchReviewersPage from "./components/Reviewers/MatchReviewersPage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
@@ -131,14 +132,15 @@ function App() {
           path="/review"
           element={
             <PrivateRoute>
-              <MatchReviewersForm
+              <MatchReviewersPage
                 key="MATCH"
                 mode="MATCH"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                renderFormComponent={(props) => <MatchReviewersForm {...props} />}
                 renderTableComponent={(props) => (
-                  <TableMatchReviewers {...props} />
+                  <MatchReviewersTable {...props} />
                 )}
                 button_label="Match Reviewers"
               />
