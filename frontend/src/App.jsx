@@ -35,6 +35,13 @@ function App() {
   const { loggedInUser, isLoggedIn, setLoggedInUser, handleAuthLogout } =
     useContext(AuthContext);
 
+  const logLevelOptions = [
+    { label: "info" },
+    { label: "debug" },
+    { label: "warning" },
+    { label: "critical" },
+  ];
+
   useEffect(() => {
     if (isLoggedIn) {
       const fetchCurrentUser = async () => {
@@ -67,7 +74,10 @@ function App() {
             },
           }));
         setAllCycles(allAvailableCycles);
-        setModalFile(fullResponseJson["models"]);
+        const modalFilesList = fullResponseJson["models"].map((item) => ({
+          label: item,
+        }));
+        setModalFile(modalFilesList);
       }
       fetchCurrentUser();
       fetchCycles();
@@ -98,6 +108,7 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                logLevelOptions={logLevelOptions}
                 renderFormComponent={(props) => (
                   <CategorizationForm {...props} />
                 )}
@@ -117,6 +128,7 @@ function App() {
                 key="DUP"
                 mode="DUP"
                 allCycles={allCycles}
+                logLevelOptions={logLevelOptions}
                 renderFormComponent={(props) => <DuplicationForm {...props} />}
                 renderTableComponent={(props) => (
                   <DuplicationTable {...props} />
@@ -136,7 +148,10 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
-                renderFormComponent={(props) => <MatchReviewersForm {...props} />}
+                logLevelOptions={logLevelOptions}
+                renderFormComponent={(props) => (
+                  <MatchReviewersForm {...props} />
+                )}
                 renderTableComponent={(props) => (
                   <MatchReviewersTable {...props} />
                 )}

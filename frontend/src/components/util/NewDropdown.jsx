@@ -76,18 +76,20 @@ const NewDropdown = ({
             <ul>
               {data.map((value) => (
                 <li
-                  key={value.cycleNumber}
-                  onClick={() => handleOptionClick(value.cycleNumber)}
+                  key={value.cycleNumber || value.label}
+                  onClick={() =>
+                    handleOptionClick(value.cycleNumber || value.label)
+                  }
                   className={
                     multiple
-                      ? inputField.includes(value.cycleNumber)
+                      ? inputField.includes(value.cycleNumber || value.label)
                         ? "selected"
                         : ""
-                      : inputField === value.cycleNumber
+                      : inputField === (value.cycleNumber || value.label)
                       ? "selected"
                       : ""
                   }
-                  style={value.style}
+                  style={value.style ? value.style : {}}
                 >
                   {value.label}
                 </li>
