@@ -5,7 +5,7 @@ import { useCallback, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import InputConfigOption from "../util/InputConfigOption.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
-import AlertModal from "../util/AlertBox.jsx";
+import MultiprocessModal from "../util/MultiprocessModal.jsx";
 import Spinner from "react-bootstrap/Spinner";
 
 const DuplicationForm = ({
@@ -40,11 +40,6 @@ const DuplicationForm = ({
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
   const [pastCycleError, setPastCycleError] = useState("");
-
-  // Text description for alert modals
-  const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
   const updateInputFields = useCallback(
     (key, value) => {
@@ -216,13 +211,10 @@ const DuplicationForm = ({
             </div>
           </div>
           {modalShow && (
-            <AlertModal
-              show={modalShow}
-              title={multipleRequestAlertTitle}
-              desc={multipleRequestAlertDesc}
-              buttonText="Close"
-              onHide={() => setModalShow(false)}
-            />
+            <MultiprocessModal
+            modalShow={modalShow}
+            setModalShow={setModalShow}
+          />
           )}
           <div className="row mt-5">
             <div className="col-md-6 text-start">

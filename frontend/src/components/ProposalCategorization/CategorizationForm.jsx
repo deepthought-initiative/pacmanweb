@@ -6,9 +6,8 @@ import "../../css/searchBox.css";
 import NewDropdown from "../util/NewDropdown.jsx";
 import Spinner from "react-bootstrap/Spinner";
 import "../../css/otherConfigOptions.css";
-import AlertModal from "../util/AlertBox.jsx";
-import InputConfigOption
- from "../util/InputConfigOption.jsx";
+import MultiprocessModal from "../util/MultiprocessModal.jsx";
+import InputConfigOption from "../util/InputConfigOption.jsx";
 
 const CategorizationForm = ({
   allCycles,
@@ -19,7 +18,7 @@ const CategorizationForm = ({
   button_label,
   setCurrentId,
   setShowLogs,
-  startFetchingLogs, 
+  startFetchingLogs,
   loading,
   preventClick,
   setLoading,
@@ -32,11 +31,6 @@ const CategorizationForm = ({
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [selectedModalError, setSelectedModalError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
-  
-  // Text description for alert modals
-  const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
 
   const createDropdownObjects = (dataList) => {
     return dataList.map((item) => ({
@@ -49,9 +43,12 @@ const CategorizationForm = ({
   };
   const logLevelOptions = ["info", "debug", "warning", "critical"];
 
-  const updateInputFields = useCallback((key, value) => {
-    setInputFields(prev => ({...prev, [key]: value}));
-  }, [setInputFields]);
+  const updateInputFields = useCallback(
+    (key, value) => {
+      setInputFields((prev) => ({ ...prev, [key]: value }));
+    },
+    [setInputFields]
+  );
 
   const validateFields = () => {
     let noError = true;
@@ -122,7 +119,9 @@ const CategorizationForm = ({
               desc="Prefix used throughout script to match with cycle description"
               inputField={inputFields["currentCycle"]}
               multiple={false}
-              setInputField={(value) => updateInputFields("currentCycle", value)}
+              setInputField={(value) =>
+                updateInputFields("currentCycle", value)
+              }
               disabled={showLogs || showTable}
               error={currentCycleError}
             />
@@ -131,74 +130,75 @@ const CategorizationForm = ({
       </div>
       {!showLogs && !showTable && (
         <>
-        <div className="separator">Other Options</div>
-        <div className="all-options">
-          <div className="row">
-            <div className="single-option col-12">
-              <InputConfigOption
-                label="Enter Run name(optional)"
-                value={inputFields["runName"]}
-                desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
-                setValue={(value) => updateInputFields("runName", value)}
-              />
+          <div className="separator">Other Options</div>
+          <div className="all-options">
+            <div className="row">
+              <div className="single-option col-12">
+                <InputConfigOption
+                  label="Enter Run name(optional)"
+                  value={inputFields["runName"]}
+                  desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+                  setValue={(value) => updateInputFields("runName", value)}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="single-option col-12">
+                <NewDropdown
+                  data={createDropdownObjects(modalFile)}
+                  multiple={false}
+                  label="Select modal file to use"
+                  desc="Name of modal file to use"
+                  inputField={inputFields["selectedModal"]}
+                  setInputField={(value) =>
+                    updateInputFields("selectedModal", value)
+                  }
+                  disabled={false}
+                  error={selectedModalError}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="single-option col-12">
+                <NewDropdown
+                  data={createDropdownObjects(logLevelOptions)}
+                  multiple={false}
+                  label="Select Log Level"
+                  desc="Log Level to set"
+                  inputField={inputFields["logLevel"]}
+                  setInputField={(value) =>
+                    updateInputFields("logLevel", value)
+                  }
+                  disabled={false}
+                  error={logLevelError}
+                />
+              </div>
             </div>
           </div>
-          <div className="row">
-            <div className="single-option col-12">
-              <NewDropdown
-                data={createDropdownObjects(modalFile)}
-                multiple={false}
-                label="Select modal file to use"
-                desc="Name of modal file to use"
-                inputField={inputFields["selectedModal"]}
-                setInputField={(value) => updateInputFields("selectedModal", value)}
-                disabled={false}
-                error={selectedModalError}
-              />
+          {modalShow && (
+            <MultiprocessModal
+              modalShow={modalShow}
+              setModalShow={setModalShow}
+            />
+          )}
+          <div className="row mt-5">
+            <div className="col-md-6 text-start">
+              <button
+                className="btn form-page-button rounded-0"
+                onClick={loading ? preventClick : handleClick}
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </>
+                ) : (
+                  button_label
+                )}
+              </button>
             </div>
           </div>
-          <div className="row">
-            <div className="single-option col-12">
-              <NewDropdown
-                data={createDropdownObjects(logLevelOptions)}
-                multiple={false}
-                label="Select Log Level"
-                desc="Log Level to set"
-                inputField={inputFields["logLevel"]}
-                setInputField={(value) => updateInputFields("logLevel", value)}
-                disabled={false}
-                error={logLevelError}
-              />
-            </div>
-          </div>
-        </div>
-        {modalShow && (
-        <AlertModal
-          show={modalShow}
-          buttonText="Close"
-          title={multipleRequestAlertTitle}
-          desc={multipleRequestAlertDesc}
-          onHide={() => setModalShow(false)}
-        />
-        )}
-        <div className="row mt-5">
-          <div className="col-md-6 text-start">
-            <button
-              className="btn form-page-button rounded-0"
-              onClick={loading ? preventClick : handleClick}
-            >
-              {loading ? (
-                <>
-                  <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                </>
-              ) : (
-                button_label
-              )}
-            </button>
-          </div>
-        </div>
         </>
       )}
     </form>
