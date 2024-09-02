@@ -117,8 +117,6 @@ function App() {
                 key="DUP"
                 mode="DUP"
                 allCycles={allCycles}
-                modalFile={modalFile}
-                setModalFile={setModalFile}
                 renderFormComponent={(props) => <DuplicationForm {...props} />}
                 renderTableComponent={(props) => (
                   <DuplicationTable {...props} />
