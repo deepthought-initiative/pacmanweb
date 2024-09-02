@@ -84,6 +84,10 @@ h6 {
   border-radius: 10px;
 }
 
+.secondary-table td {
+  cursor: text;
+}
+
 thead th {
   position: sticky;
   top: 0;
