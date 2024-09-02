@@ -10,7 +10,6 @@ import Spinner from "react-bootstrap/Spinner";
 
 const DuplicationForm = ({
   allCycles,
-  modalFile,
   mode,
   button_label,
   showLogs,

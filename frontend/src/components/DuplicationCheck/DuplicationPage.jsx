@@ -212,7 +212,6 @@ const DuplicationPage = ({
         button_label: button_label,
         inputFields: inputFields,
         setInputFields: setInputFields,
-        defaultInputFields: defaultInputFields,
         showLogs: showLogs,
         showTable: showTable,
         setCurrentId: setCurrentId,
