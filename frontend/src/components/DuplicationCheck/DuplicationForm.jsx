@@ -27,7 +27,8 @@ const DuplicationForm = ({
   upperLimit,
   setUpperLimit,
   lowerLimit,
-  setLowerLimit
+  setLowerLimit,
+  logLevelOptions
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const bothPastAndCurrentCycles = [
@@ -46,17 +47,6 @@ const DuplicationForm = ({
     },
     [setInputFields]
   );
-
-  const createDropdownObjects = (dataList) => {
-    return dataList.map((item) => ({
-      cycleNumber: item,
-      label: item.toString(),
-      style: {
-        backgroundColor: "",
-      },
-    }));
-  };
-  const logLevelOptions = ["info", "debug", "warning", "critical"];
 
   const validateFields = () => {
     let noError = true;
@@ -195,7 +185,7 @@ const DuplicationForm = ({
             <div className="row">
               <div className="single-option col-12">
                 <NewDropdown
-                  data={createDropdownObjects(logLevelOptions)}
+                  data={logLevelOptions}
                   multiple={false}
                   label="Select Log Level"
                   desc="Log Level to set"

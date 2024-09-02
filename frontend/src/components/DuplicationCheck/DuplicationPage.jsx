@@ -11,6 +11,7 @@ const DuplicationPage = ({
   renderTableComponent,
   renderFormComponent,
   button_label,
+  logLevelOptions
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -220,7 +221,8 @@ const DuplicationPage = ({
         upperLimit: upperLimit,
         setUpperLimit: setUpperLimit,
         lowerLimit: lowerLimit,
-        setLowerLimit: setLowerLimit
+        setLowerLimit: setLowerLimit,
+        logLevelOptions: logLevelOptions
       })}
       {showTable ? (
         renderTableComponent({

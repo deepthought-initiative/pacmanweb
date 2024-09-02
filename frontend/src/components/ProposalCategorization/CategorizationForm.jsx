@@ -24,6 +24,7 @@ const CategorizationForm = ({
   setLoading,
   setInputFields,
   inputFields,
+  logLevelOptions
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
 
@@ -31,17 +32,6 @@ const CategorizationForm = ({
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [selectedModalError, setSelectedModalError] = useState("");
   const [logLevelError, setLogLevelError] = useState("");
-
-  const createDropdownObjects = (dataList) => {
-    return dataList.map((item) => ({
-      cycleNumber: item,
-      label: item.toString(),
-      style: {
-        backgroundColor: "",
-      },
-    }));
-  };
-  const logLevelOptions = ["info", "debug", "warning", "critical"];
 
   const updateInputFields = useCallback(
     (key, value) => {
@@ -145,7 +135,7 @@ const CategorizationForm = ({
             <div className="row">
               <div className="single-option col-12">
                 <NewDropdown
-                  data={createDropdownObjects(modalFile)}
+                  data={modalFile}
                   multiple={false}
                   label="Select modal file to use"
                   desc="Name of modal file to use"
@@ -161,7 +151,7 @@ const CategorizationForm = ({
             <div className="row">
               <div className="single-option col-12">
                 <NewDropdown
-                  data={createDropdownObjects(logLevelOptions)}
+                  data={logLevelOptions}
                   multiple={false}
                   label="Select Log Level"
                   desc="Log Level to set"

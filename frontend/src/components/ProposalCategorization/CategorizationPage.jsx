@@ -12,6 +12,7 @@ const CategorizationPage = ({
   renderTableComponent,
   button_label,
   renderFormComponent,
+  logLevelOptions
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -190,6 +191,7 @@ const CategorizationPage = ({
         setCurrentId: setCurrentId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
+        logLevelOptions: logLevelOptions
       })}
       {showTable ? (
         renderTableComponent({

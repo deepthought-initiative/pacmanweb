@@ -19,28 +19,16 @@ const MatchReviewersForm = ({
   showLogs,
   inputFields,
   setInputFields,
-  defaultInputFields,
   setCurrentId,
   setShowLogs,
   startFetchingLogs,
   setLoading,
   preventClick,
-  setShowTable,
+  logLevelOptions,
   loading,
-  currentId,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
 
-  const createDropdownObjects = (dataList) => {
-    return dataList.map((item) => ({
-      cycleNumber: item,
-      label: item.toString(), // Assuming items have a toString method
-      style: {
-        backgroundColor: "",
-      },
-    }));
-  };
-  const logLevelOptions = ["info", "debug", "warning", "critical"];
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
   const [selectedModalError, setSelectedModalError] = useState("");
@@ -197,7 +185,7 @@ const MatchReviewersForm = ({
         <div className="row">
           <div className="single-option col-12">
             <NewDropdown
-              data={createDropdownObjects(modalFile)}
+              data={modalFile}
               multiple={false}
               label="Select modal file to use"
               desc="Name of modal file to use"
@@ -239,7 +227,7 @@ const MatchReviewersForm = ({
         <div className="row">
           <div className="single-option col-12">
             <NewDropdown
-              data={createDropdownObjects(logLevelOptions)}
+              data={logLevelOptions}
               multiple={false}
               label="Select Log Level"
               desc="Log Level to set"

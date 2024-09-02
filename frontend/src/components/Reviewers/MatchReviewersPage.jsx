@@ -13,6 +13,7 @@ const MatchReviewersPage = ({
   renderTableComponent,
   button_label,
   renderFormComponent,
+  logLevelOptions
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -202,6 +203,7 @@ const MatchReviewersPage = ({
         setCurrentId: setCurrentId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
+        logLevelOptions: logLevelOptions
       })}
       {showTable ? (
         renderTableComponent({
