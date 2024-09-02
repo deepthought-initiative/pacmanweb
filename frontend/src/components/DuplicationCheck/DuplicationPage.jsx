@@ -7,7 +7,6 @@ import Logs from "../util/Logs.jsx";
 
 const DuplicationPage = ({
   allCycles,
-  modalFile,
   mode,
   renderTableComponent,
   renderFormComponent,
@@ -204,7 +203,6 @@ const DuplicationPage = ({
     <>
       {renderFormComponent({
         allCycles: allCycles,
-        modalFile: modalFile,
         mode: mode,
         handleFilteringCycles: handleFilteringCycles,
         preventClick: preventClick,
