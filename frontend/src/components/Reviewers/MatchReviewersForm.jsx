@@ -7,7 +7,7 @@ import NewDropdown from "../util/NewDropdown.jsx";
 import TextArea from "../util/TextArea.jsx";
 import Spinner from "react-bootstrap/Spinner";
 import "../../css/otherConfigOptions.css";
-import AlertModal from "../util/AlertBox.jsx";
+import MultiprocessModal from "../util/MultiprocessModal.jsx";
 import InputConfigOption from "../util/InputConfigOption.jsx";
 
 const MatchReviewersForm = ({
@@ -27,7 +27,7 @@ const MatchReviewersForm = ({
   preventClick,
   setShowTable,
   loading,
-  currentId
+  currentId,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
 
@@ -51,15 +51,12 @@ const MatchReviewersForm = ({
   const [logLevelError, setLogLevelError] = useState("");
   const [textAreaError, setTextAreaError] = useState("");
 
-  // Text description for alert modals
-  const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
-
-
-  const updateInputFields = useCallback((key, value) => {
-      setInputFields(prev => ({...prev, [key]: value}));
-    }, [setInputFields]);
+  const updateInputFields = useCallback(
+    (key, value) => {
+      setInputFields((prev) => ({ ...prev, [key]: value }));
+    },
+    [setInputFields]
+  );
 
   const validateFields = () => {
     let noError = true;
@@ -83,8 +80,8 @@ const MatchReviewersForm = ({
       setTextAreaError("Required");
       noError = false;
     }
-    if(!inputFields.logLevel){
-      setLogLevelError("Required")
+    if (!inputFields.logLevel) {
+      setLogLevelError("Required");
     }
     return noError;
   };
@@ -95,7 +92,7 @@ const MatchReviewersForm = ({
     setNumberOfTopReviewersError("");
     setCloseCollaboratorTimeFrameError("");
     setTextAreaError("");
-    setLogLevelError("")
+    setLogLevelError("");
   };
 
   const handleClick = async (event) => {
@@ -143,23 +140,27 @@ const MatchReviewersForm = ({
   return (
     <form>
       <div className="mt-5" id="main-container">
-      {!showLogs && !showTable && <h3>Start a new process</h3>}
-      <div>
-        <div className="row">
-          <NewDropdown
-            data={allCycles}
-            label="Selected Current Cycle"
-            desc="Prefix used throughout script to match with cycle description"
-            inputField={inputFields.currentCycle}
-            multiple={false}
-            setInputField={(value) => updateInputFields("currentCycle", value)}
-            disabled={showTable || showLogs}
-            error={currentCycleError}
-          />
-        </div>
-        {!showLogs && (
-          <div> {/** Use panelist panelist-name-container for css*/}
-            {/* <div className="upload-panelist-file">
+        {!showLogs && !showTable && <h3>Start a new process</h3>}
+        <div>
+          <div className="row">
+            <NewDropdown
+              data={allCycles}
+              label="Selected Current Cycle"
+              desc="Prefix used throughout script to match with cycle description"
+              inputField={inputFields.currentCycle}
+              multiple={false}
+              setInputField={(value) =>
+                updateInputFields("currentCycle", value)
+              }
+              disabled={showTable || showLogs}
+              error={currentCycleError}
+            />
+          </div>
+          {!showLogs && (
+            <div>
+              {" "}
+              {/** Use panelist panelist-name-container for css*/}
+              {/* <div className="upload-panelist-file">
               <div className="border d-flex">
                 <input type="file" />
                 <button className="btn rounded-1" type="submit">
@@ -168,18 +169,20 @@ const MatchReviewersForm = ({
               </div>
             </div>
             <div>OR</div> */}
-            <div className="my-3">
-              <TextArea
-                setValue={(value) => updateInputFields("panelistNames", value)}
-                textAreaError={textAreaError}
-                setTextAreaError={setTextAreaError}
-              />
+              <div className="my-3">
+                <TextArea
+                  setValue={(value) =>
+                    updateInputFields("panelistNames", value)
+                  }
+                  textAreaError={textAreaError}
+                  setTextAreaError={setTextAreaError}
+                />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
-    <div className="separator">Other Options</div>
+      <div className="separator">Other Options</div>
       <div className="all-options">
         <div className="row">
           <div className="single-option col-12">
@@ -199,7 +202,9 @@ const MatchReviewersForm = ({
               label="Select modal file to use"
               desc="Name of modal file to use"
               inputField={inputFields.selectedModal}
-              setInputField={(value) => updateInputFields("selectedModal", value)}
+              setInputField={(value) =>
+                updateInputFields("selectedModal", value)
+              }
               disabled={false}
               error={selectedModalError}
             />
@@ -211,7 +216,9 @@ const MatchReviewersForm = ({
               label="Assignment Number Top Reviewers"
               value={inputFields.numberOfTopReviewers}
               desc="Number of top recommended reviewers"
-              setValue={(value) => updateInputFields("numberOfTopReviewers", value)}
+              setValue={(value) =>
+                updateInputFields("numberOfTopReviewers", value)
+              }
               error={numberOfTopReviewersError}
             />
           </div>
@@ -222,7 +229,9 @@ const MatchReviewersForm = ({
               label="Close Collaborator Time Frame"
               value={inputFields.closeCollaboratorTimeFrame}
               desc="Number of years over which to check close collaborators"
-              setValue={(value) => updateInputFields("closeCollaboratorTimeFrame", value)}
+              setValue={(value) =>
+                updateInputFields("closeCollaboratorTimeFrame", value)
+              }
               error={closeCollaboratorTimeFrameError}
             />
           </div>
@@ -243,13 +252,7 @@ const MatchReviewersForm = ({
         </div>
       </div>
       {modalShow && (
-        <AlertModal
-          show={modalShow}
-          title={multipleRequestAlertTitle}
-          desc={multipleRequestAlertDesc}
-          buttonText="Close"
-          onHide={() => setModalShow(false)}
-        />
+        <MultiprocessModal modalShow={modalShow} setModalShow={setModalShow} />
       )}
       <div className="row mt-5">
         <div className="col-md-6 text-start">
