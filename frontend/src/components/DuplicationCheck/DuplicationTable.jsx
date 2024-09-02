@@ -140,7 +140,7 @@ const DuplicationTable = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-4 col-sm-4">Cycle Number</th>

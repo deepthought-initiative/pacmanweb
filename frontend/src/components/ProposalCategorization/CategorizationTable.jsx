@@ -81,7 +81,7 @@ const CategorizationTable = ({
           <h6 className="my-3">Alternate Categories</h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th scope="col">PACMan Science Category</th>

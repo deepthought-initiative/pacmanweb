@@ -103,7 +103,7 @@ const MatchReviewersTable = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-2 col-sm-1">Proposal Number</th>
@@ -134,7 +134,7 @@ const MatchReviewersTable = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-2 col-sm-1">Reviewer</th>
