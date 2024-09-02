@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
+import CustomToast from "../util/CustomToast"; // Import the CustomToast component
 
 const CategorizationPage = ({
   allCycles,
@@ -12,7 +13,7 @@ const CategorizationPage = ({
   renderTableComponent,
   button_label,
   renderFormComponent,
-  logLevelOptions
+  logLevelOptions,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -31,6 +32,10 @@ const CategorizationPage = ({
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  // Toast state management
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastVariant, setToastVariant] = useState("");
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
@@ -70,7 +75,7 @@ const CategorizationPage = ({
         return;
       }
       let tableCategory = "";
-      if (mode == "PROP") {
+      if (mode === "PROP") {
         tableCategory = "proposal_cat_output";
       }
       try {
@@ -95,22 +100,30 @@ const CategorizationPage = ({
         if (code === 200) {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
+          setToastMessage("Process Successful!");
+          setToastVariant("success");
+          setShowToast(true);
         } else if (code === 204) {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
+          setToastMessage("Duplication file is empty.");
+          setToastVariant("warning");
+          setShowToast(true);
         } else {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
+          setToastMessage("Process Failed!");
+          setToastVariant("danger");
+          setShowToast(true);
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
-        console.log(processStatus);
       } catch (error) {
         setProgressPercentage(100);
         console.error("Error fetching table data:", error);
       }
     },
-    [inputFields, mode, processStatus]
+    [inputFields, mode]
   );
 
   const startFetchingLogs = useCallback(
@@ -166,7 +179,7 @@ const CategorizationPage = ({
 
       await fetchLogs();
     },
-    [fetchTable, setShowTerminateProcess, setLogs, logContainerRef]
+    [fetchTable]
   );
 
   const preventClick = (event) => {
@@ -174,8 +187,34 @@ const CategorizationPage = ({
     return false;
   };
 
+  useEffect(() => {
+    if (progressPercentage === 100) {
+      if (processStatus === 200 || processStatus === 204) {
+        setToastMessage("Process Successful!");
+        setToastVariant("success");
+      } else {
+        setToastMessage("Process Failed!");
+        setToastVariant("danger");
+      }
+      setShowToast(true);
+    }
+  }, [progressPercentage, processStatus]);
+
   return (
     <>
+      {showToast && (
+        <CustomToast
+          showToast={showToast}
+          setShowToast={setShowToast}
+          variant={toastVariant}
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            backgroundColor: "transparent",
+          }}
+        />
+      )}
       {renderFormComponent({
         allCycles: allCycles,
         modalFile: modalFile,
@@ -191,7 +230,7 @@ const CategorizationPage = ({
         setCurrentId: setCurrentId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
-        logLevelOptions: logLevelOptions
+        logLevelOptions: logLevelOptions,
       })}
       {showTable ? (
         renderTableComponent({

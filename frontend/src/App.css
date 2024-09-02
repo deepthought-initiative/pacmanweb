@@ -515,7 +515,7 @@ padding-left: 0;
   grid-auto-rows: minmax(auto, 1fr);
   margin: auto;
   margin-top: 50px;
-  gap: 50px;
+  gap: 35px;
 }
 
 .single-option input,
@@ -803,4 +803,91 @@ textarea{
 .panelist-name-container{
   display: flex;
   align-items: top;
+}
+
+/* Apply styles to the scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+
+/*Toast*/
+.custom-toast {
+  position: fixed;
+  top: 1rem;
+  right: -400px; /* Start off-screen */
+  transition: right 0.7s ease-in-out;
+  width: 350px;
+  margin-left: auto;
+  opacity: 0;
+}
+
+.custom-toast.show {
+  right: 1rem;
+  opacity: 1;
+}
+
+.custom-toast.hide {
+  right: -400px;
+  opacity: 0;
+}
+
+.timer-bar-container {
+  width: 100%;
+  height: 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
+}
+
+.timer-bar {
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  transition: width 0.1s linear;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.custom-toast.show {
+  animation: slideIn 0.7s ease-in-out forwards, fadeIn 0.7s ease-in-out forwards;
+}
+
+.custom-toast.hide {
+  animation: slideOut 0.7s ease-in-out forwards, fadeOut 0.7s ease-in-out forwards;
+}
+
+@keyframes slideIn {
+  from { right: -400px; }
+  to { right: 1rem; }
+}
+
+@keyframes slideOut {
+  from { right: 1rem; }
+  to { right: -400px; }
+}
+
+.custom-toast .toast-body {
+  color: white;
 }

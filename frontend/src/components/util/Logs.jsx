@@ -1,6 +1,4 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import ProgressBar from "react-bootstrap/ProgressBar";
@@ -19,12 +17,11 @@ const Logs = ({
   loading,
   preventClick,
   setShowLogs,
-  showLogs,
   mode,
   currentCycle,
   currentId,
-  showTable,
 }) => {
+
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
