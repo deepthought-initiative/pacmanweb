@@ -2,10 +2,10 @@
 import AlertModal from "./AlertModal";
 
 const MultiprocessModal = ({ modalShow, setModalShow }) => {
-  // Text description for alert modals
   const multipleRequestAlertTitle = "Process Running Elsewhere";
-  const multipleRequestAlertDesc =
-    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.";
+  const multipleRequestAlertDesc = [
+    "It seems you started a process somewhere else. You can move to that tab or start a process here after terminating the process.",
+  ];
 
   return (
     <AlertModal
