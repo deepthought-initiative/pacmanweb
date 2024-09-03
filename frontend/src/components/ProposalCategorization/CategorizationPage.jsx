@@ -12,6 +12,10 @@ const CategorizationPage = ({
   modalFile,
   setModalFile,
   logLevelOptions,
+  showToast,
+  setShowToast,
+  toastVariant,
+  setToastVariant
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -25,15 +29,13 @@ const CategorizationPage = ({
   useEffect(() => {
     if (progressPercentage === 100) {
       if (processStatus === 200 || processStatus === 204) {
-        setToastMessage("Process Successful!");
         setToastVariant("success");
       } else {
-        setToastMessage("Process Failed!");
         setToastVariant("danger");
       }
       setShowToast(true);
     }
-  }, [progressPercentage, processStatus]);
+  }, [progressPercentage, processStatus, setShowToast, setToastVariant]);
 
   return (
     <PageComponent
