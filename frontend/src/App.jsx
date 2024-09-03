@@ -7,8 +7,6 @@ import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationPage from "./components/DuplicationCheck/DuplicationPage";
 import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
-import CategorizationForm from "./components/ProposalCategorization/CategorizationForm";
-import CategorizationTable from "./components/ProposalCategorization/CategorizationTable";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
 import MatchReviewersTable from "./components/Reviewers/MatchReviewersTable";
 import UploadZipForm from "./components/Upload/UploadZip";
@@ -108,7 +106,6 @@ function App() {
             <PrivateRoute>
               <CategorizationPage
                 key="PROP"
-                mode="PROP"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
@@ -117,13 +114,6 @@ function App() {
                 setShowToast={setShowToast}
                 toastVariant={toastVariant}
                 setToastVariant={setToastVariant}
-                renderFormComponent={(props) => (
-                  <CategorizationForm {...props} />
-                )}
-                renderTableComponent={(props) => (
-                  <CategorizationTable {...props} />
-                )}
-                button_label="Categorize Proposals"
               />
             </PrivateRoute>
           }
