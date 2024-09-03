@@ -5,7 +5,6 @@ import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationPage from "./components/DuplicationCheck/DuplicationPage";
-import DuplicationForm from "./components/DuplicationCheck/DuplicationForm";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
 import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
 import MatchReviewersTable from "./components/Reviewers/MatchReviewersTable";
@@ -17,7 +16,6 @@ import PrivateRoute from "./components/util/PrivateRoute";
 import AuthContext from "./context/AuthContext";
 import { useLocation } from "react-router-dom";
 import PageNotFound from "./components/util/PageNotFound";
-import DuplicationTable from "./components/DuplicationCheck/DuplicationTable";
 import MatchReviewersPage from "./components/Reviewers/MatchReviewersPage";
 
 function App() {
@@ -124,18 +122,12 @@ function App() {
             <PrivateRoute>
               <DuplicationPage
                 key="DUP"
-                mode="DUP"
                 allCycles={allCycles}
                 logLevelOptions={logLevelOptions}
                 showToast={showToast}
                 setShowToast={setShowToast}
                 toastVariant={toastVariant}
                 setToastVariant={setToastVariant}
-                renderFormComponent={(props) => <DuplicationForm {...props} />}
-                renderTableComponent={(props) => (
-                  <DuplicationTable {...props} />
-                )}
-                button_label="Find Duplicates"
               />
             </PrivateRoute>
           }
