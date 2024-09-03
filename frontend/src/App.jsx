@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-unused-vars */
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useContext, useState, useCallback } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
@@ -28,6 +28,10 @@ function App() {
   const [usernameContext, setusernameContext] = useState(
     localStorage.getItem("username")
   );
+
+  // Toast state management
+  const [showToast, setShowToast] = useState(false);
+  const [toastVariant, setToastVariant] = useState("");
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -109,6 +113,10 @@ function App() {
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 logLevelOptions={logLevelOptions}
+                showToast={showToast}
+                setShowToast={setShowToast}
+                toastVariant={toastVariant}
+                setToastVariant={setToastVariant}
                 renderFormComponent={(props) => (
                   <CategorizationForm {...props} />
                 )}
@@ -129,6 +137,10 @@ function App() {
                 mode="DUP"
                 allCycles={allCycles}
                 logLevelOptions={logLevelOptions}
+                showToast={showToast}
+                setShowToast={setShowToast}
+                toastVariant={toastVariant}
+                setToastVariant={setToastVariant}
                 renderFormComponent={(props) => <DuplicationForm {...props} />}
                 renderTableComponent={(props) => (
                   <DuplicationTable {...props} />
@@ -148,6 +160,10 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
+                showToast={showToast}
+                setShowToast={setShowToast}
+                toastVariant={toastVariant}
+                setToastVariant={setToastVariant}
                 logLevelOptions={logLevelOptions}
                 renderFormComponent={(props) => (
                   <MatchReviewersForm {...props} />
@@ -172,7 +188,13 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard usernameContext={usernameContext} />
+              <Dashboard
+                showToast={showToast}
+                setShowToast={setShowToast}
+                toastVariant={toastVariant}
+                setToastVariant={setToastVariant}
+                usernameContext={usernameContext}
+              />
             </PrivateRoute>
           }
         />
