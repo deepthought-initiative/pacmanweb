@@ -6,8 +6,8 @@ import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationPage from "./components/DuplicationCheck/DuplicationPage";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
-import MatchReviewersForm from "./components/Reviewers/MatchReviewersForm";
-import MatchReviewersTable from "./components/Reviewers/MatchReviewersTable";
+import MatchReviewersForm from "./components/MatchReviewers/MatchReviewersForm";
+import MatchReviewersTable from "./components/MatchReviewers/MatchReviewersTable";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
@@ -16,7 +16,7 @@ import PrivateRoute from "./components/util/PrivateRoute";
 import AuthContext from "./context/AuthContext";
 import { useLocation } from "react-router-dom";
 import PageNotFound from "./components/util/PageNotFound";
-import MatchReviewersPage from "./components/Reviewers/MatchReviewersPage";
+import MatchReviewersPage from "./components/MatchReviewers/MatchReviewersPage";
 
 function App() {
   const [allCycles, setAllCycles] = useState([]);
