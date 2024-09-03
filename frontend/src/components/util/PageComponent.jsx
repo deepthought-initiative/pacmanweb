@@ -17,10 +17,9 @@ const PageComponent = ({
   logLevelOptions,
   inputFields,
   setInputFields,
-  currentId,
-  setCurrentId,
   defaultInputFields,
 }) => {
+  const [currentTaskId, setCurrentTaskId] = useState()
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -35,14 +34,14 @@ const PageComponent = ({
     useContext(AppContext);
 
   const terminateAllProcesses = useCallback(async () => {
-    if (!currentId) {
+    if (!currentTaskId) {
       return;
     }
-    await fetch(`/api/terminate/${currentId}?mode=${mode}`, {
+    await fetch(`/api/terminate/${currentTaskId}?mode=${mode}`, {
       method: "POST",
     });
     onTerminate();
-  }, [currentId, mode]);
+  }, [currentTaskId, mode]);
 
   useEffect(() => {
     const handleBeforeUnload = async (event) => {
@@ -55,7 +54,7 @@ const PageComponent = ({
   }, [allCycles, terminateAllProcesses]);
 
   const onTerminate = () => {
-    setCurrentId();
+    setCurrentTaskId();
     setShowLogs(false);
     setShowTable(false);
     setProgressPercentage(0);
@@ -214,14 +213,14 @@ const PageComponent = ({
         setInputFields: setInputFields,
         showLogs: showLogs,
         showTable: showTable,
-        setCurrentId: setCurrentId,
+        setCurrentId: setCurrentTaskId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
         logLevelOptions: logLevelOptions,
       })}
       {showTable ? (
         renderTableComponent({
-          currentId: currentId,
+          currentId: currentTaskId,
           currentCycle: inputFields["currentCycle"],
           setShowTable: setShowTable,
           showLogs: showLogs,
@@ -233,7 +232,7 @@ const PageComponent = ({
         })
       ) : showLogs ? (
         <Logs
-          currentId={currentId}
+          currentId={currentTaskId}
           currentCycle={inputFields["currentCycle"]}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}

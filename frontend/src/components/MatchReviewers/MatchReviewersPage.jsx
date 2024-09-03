@@ -23,15 +23,12 @@ const MatchReviewersPage = ({
     selectedModal: "strolger_pacman_model_7cycles.joblib",
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
-  const [currentId, setCurrentId] = useState();
 
   return (
     <PageComponent
       allCycles={allCycles}
       mode="MATCH"
-      currentId={currentId}
       modalFile={modalFile}
-      setCurrentId={setCurrentId}
       logLevelOptions={logLevelOptions}
       inputFields={inputFields}
       setInputFields={setInputFields}

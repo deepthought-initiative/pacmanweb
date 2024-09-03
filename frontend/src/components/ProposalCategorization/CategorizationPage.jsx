@@ -20,15 +20,12 @@ const CategorizationPage = ({
     logLevel: "info",
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
-  const [currentId, setCurrentId] = useState();
 
   return (
     <PageComponent
       allCycles={allCycles}
       mode="PROP"
       modalFile={modalFile}
-      currentId={currentId}
-      setCurrentId={setCurrentId}
       logLevelOptions={logLevelOptions}
       inputFields={inputFields}
       setInputFields={setInputFields}

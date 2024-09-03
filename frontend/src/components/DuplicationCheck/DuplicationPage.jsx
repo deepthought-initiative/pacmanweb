@@ -19,14 +19,10 @@ const DuplicationPage = ({
     logLevel: "info",
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
-  const [currentId, setCurrentId] = useState();
-
   return (
     <PageComponent
       allCycles={allCycles}
       mode="DUP"
-      currentId={currentId}
-      setCurrentId={setCurrentId}
       logLevelOptions={logLevelOptions}
       inputFields={inputFields}
       setInputFields={setInputFields}
