@@ -6,7 +6,7 @@ import ButtonTray from "../util/ButtonTray";
 const CategorizationTable = ({
   setShowTable,
   showTable,
-  currentId,
+  currentTaskId,
   currentCycle,
   showLogs,
   setShowLogs,
@@ -114,7 +114,7 @@ const CategorizationTable = ({
         showLogs={showLogs}
         mode={mode}
         currentCycle={currentCycle}
-        currentId={currentId}
+        currentTaskId={currentTaskId}
       />
     </>
   );

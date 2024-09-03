@@ -10,7 +10,7 @@ const MatchReviewersTable = ({
   onCategorizeAnotherCycle,
   dataToDisplay,
   showTable,
-  currentId,
+  currentTaskId,
   currentCycle,
   showLogs,
   mode,
@@ -169,7 +169,7 @@ const MatchReviewersTable = ({
         showLogs={showLogs}
         mode={mode}
         currentCycle={currentCycle}
-        currentId={currentId}
+        currentTaskId={currentTaskId}
       />
     </>
   );

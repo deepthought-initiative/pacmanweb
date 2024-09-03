@@ -8,11 +8,9 @@ import { DownloadFile } from "./DownloadFile";
 const ButtonTray = ({
   onCategorizeAnotherCycle,
   viewLogs,
-  showTable,
-  showLogs,
   mode,
   currentCycle,
-  currentId,
+  currentTaskId,
 }) => {
   return (
     <div className="button-tray container-fluid p-0">
@@ -20,10 +18,10 @@ const ButtonTray = ({
         Categorize Another Cycle
       </button>
       <DropdownButton id="dropdown-basic-button" title="Download Data">
-        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "csv")}>
+        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentTaskId, currentCycle, mode, "csv")}>
           Download as CSV
         </Dropdown.Item>
-        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentId, currentCycle, mode, "zip")}>
+        <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentTaskId, currentCycle, mode, "zip")}>
           Download as Zip
         </Dropdown.Item>
       </DropdownButton>

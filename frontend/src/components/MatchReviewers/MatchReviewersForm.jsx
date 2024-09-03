@@ -19,7 +19,7 @@ const MatchReviewersForm = ({
   showLogs,
   inputFields,
   setInputFields,
-  setCurrentId,
+  setCurrentTaskId,
   setShowLogs,
   startFetchingLogs,
   setLoading,
@@ -119,7 +119,7 @@ const MatchReviewersForm = ({
         setModalShow(true);
       } else {
         const data = await spawnResponse.json();
-        setCurrentId(data["result_id"]);
+        setCurrentTaskId(data["result_id"]);
         setShowLogs(true);
         setLoading(false);
         await startFetchingLogs(data["result_id"]);
