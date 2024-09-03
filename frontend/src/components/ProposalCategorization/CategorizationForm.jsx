@@ -16,7 +16,7 @@ const CategorizationForm = ({
   showLogs,
   showTable,
   button_label,
-  setCurrentId,
+  setCurrentTaskId,
   setShowLogs,
   startFetchingLogs,
   loading,
@@ -93,7 +93,7 @@ const CategorizationForm = ({
         setModalShow(true);
       } else {
         const data = await spawnResponse.json();
-        setCurrentId(data["result_id"]);
+        setCurrentTaskId(data["result_id"]);
         setShowLogs(true);
         setLoading(false);
         await startFetchingLogs(data["result_id"]);

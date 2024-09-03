@@ -1,5 +1,5 @@
-export const DownloadFile = async (currentId, currentCycle, mode, fileType) => {
-  const Url = `/api/outputs/download/${fileType}/${currentId}?cycle_number=${currentCycle}&mode=${mode}`;
+export const DownloadFile = async (currentTaskId, currentCycle, mode, fileType) => {
+  const Url = `/api/outputs/download/${fileType}/${currentTaskId}?cycle_number=${currentCycle}&mode=${mode}`;
   try {
     const response = await fetch(Url);
     if (!response.ok) {

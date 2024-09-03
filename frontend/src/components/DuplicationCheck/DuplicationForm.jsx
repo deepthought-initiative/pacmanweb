@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import "../../css/searchBox.css";
 import InputConfigOption from "../util/InputConfigOption.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
@@ -14,7 +14,7 @@ const DuplicationForm = ({
   button_label,
   showLogs,
   showTable,
-  setCurrentId,
+  setCurrentTaskId,
   setShowLogs,
   startFetchingLogs,
   loading,
@@ -96,7 +96,7 @@ const DuplicationForm = ({
         setModalShow(true);
       } else {
         const data = await spawnResponse.json();
-        setCurrentId(data["result_id"]);
+        setCurrentTaskId(data["result_id"]);
         setShowLogs(true);
         setLoading(false);
         await startFetchingLogs(data["result_id"]);

@@ -6,15 +6,12 @@ import ButtonTray from "../util/ButtonTray";
 import InputConfigOption from "../util/InputConfigOption";
 
 const DuplicationTable = ({
-  setShowTable,
-  setShowLogs,
   dataToDisplay,
   onCategorizeAnotherCycle,
   currentCycle,
-  showTable,
-  currentId,
-  showLogs,
+  currentTaskId,
   mode,
+  viewLogs,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -44,11 +41,6 @@ const DuplicationTable = ({
   const handleHighlight = (row_id) => {
     setHighlighted((prevId) => (prevId === row_id ? null : row_id));
     setCurrentRow(row_id);
-  };
-
-  const viewLogs = () => {
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   const applySimilarityScoreBgColor = (score) => {
@@ -107,7 +99,6 @@ const DuplicationTable = ({
               value={lowerLimit}
               desc="Scores below this will be marked green"
               setValue={setLowerLimit}
-              disabled={showLogs}
             />
           </div>
         </div>
@@ -118,7 +109,6 @@ const DuplicationTable = ({
               value={upperLimit}
               desc="Scores above this will be marked red"
               setValue={setUpperLimit}
-              disabled={showLogs}
             />
           </div>
         </div>
@@ -204,11 +194,9 @@ const DuplicationTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        showTable={showTable}
-        showLogs={showLogs}
         mode={mode}
         currentCycle={currentCycle}
-        currentId={currentId}
+        currentTaskId={currentTaskId}
       />
     </>
   );

@@ -186,6 +186,11 @@ const PageComponent = ({
     return false;
   };
 
+  const viewLogs = () => {
+    setShowLogs(true);
+    setShowTable(false);
+  };
+
   return (
     <>
       {showToast && (
@@ -213,26 +218,23 @@ const PageComponent = ({
         setInputFields: setInputFields,
         showLogs: showLogs,
         showTable: showTable,
-        setCurrentId: setCurrentTaskId,
+        setCurrentTaskId: setCurrentTaskId,
         setShowLogs: setShowLogs,
         startFetchingLogs: startFetchingLogs,
         logLevelOptions: logLevelOptions,
       })}
       {showTable ? (
         renderTableComponent({
-          currentId: currentTaskId,
+          currentTaskId: currentTaskId,
           currentCycle: inputFields["currentCycle"],
-          setShowTable: setShowTable,
-          showLogs: showLogs,
-          showTable: showTable,
-          setShowLogs: setShowLogs,
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
           mode: mode,
+          viewLogs: viewLogs
         })
       ) : showLogs ? (
         <Logs
-          currentId={currentTaskId}
+          currentTaskId={currentTaskId}
           currentCycle={inputFields["currentCycle"]}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}
