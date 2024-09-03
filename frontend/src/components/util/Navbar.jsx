@@ -48,7 +48,7 @@ const MainNavbar = () => {
       {location.pathname !== "/404" && (
         <Navbar
           collapseOnSelect
-          expand="xl"
+          expand="xxl"
           className="border bg-body-tertiary"
         >
           <Container className="mx-0 container-nav px-0">
@@ -61,7 +61,7 @@ const MainNavbar = () => {
                       key={index}
                       as={Link}
                       to={item.path}
-                      className={`nav-item ms-4${
+                      className={`nav-item ms-3${
                         isItemActive(item.path) ? " active" : ""
                       }`}
                     >
