@@ -24,14 +24,18 @@ const CategorizationForm = ({
   setLoading,
   setInputFields,
   inputFields,
-  logLevelOptions
+  logLevelOptions,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
 
-  // Error variables
-  const [currentCycleError, setCurrentCycleError] = useState("");
-  const [selectedModalError, setSelectedModalError] = useState("");
-  const [logLevelError, setLogLevelError] = useState("");
+  const defaultInputFieldsErrors = {
+    currentCycle: "",
+    selectedModal: "",
+    logLevel: "",
+  };
+  const [inputFieldsErrors, setInputFieldsErrors] = useState(
+    defaultInputFieldsErrors
+  );
 
   const updateInputFields = useCallback(
     (key, value) => {
@@ -40,32 +44,30 @@ const CategorizationForm = ({
     [setInputFields]
   );
 
+  const updateInputFieldsErrors = useCallback((key, value) => {
+    setInputFieldsErrors((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   const validateFields = () => {
     let noError = true;
     if (!inputFields?.currentCycle) {
-      setCurrentCycleError("Required");
+      updateInputFieldsErrors("currentCycle", "Required");
       noError = false;
     }
     if (!inputFields?.selectedModal) {
-      setSelectedModalError("Required");
+      updateInputFieldsErrors("selectedModal", "Required");
       noError = false;
     }
     if (!inputFields?.logLevel) {
-      setLogLevelError("Required");
+      updateInputFieldsErrors("logLevel", "Required");
       noError = false;
     }
     return noError;
   };
 
-  const resetErrors = () => {
-    setCurrentCycleError("");
-    setSelectedModalError("");
-    setLogLevelError("");
-  };
-
   const handleClick = async (event) => {
     event.preventDefault();
-    resetErrors();
+    setInputFieldsErrors(defaultInputFieldsErrors);
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
@@ -117,7 +119,7 @@ const CategorizationForm = ({
                 updateInputFields("currentCycle", value)
               }
               disabled={showLogs || showTable}
-              error={currentCycleError}
+              error={inputFieldsErrors.currentCycle}
             />
           </div>
         </div>
@@ -148,7 +150,7 @@ const CategorizationForm = ({
                     updateInputFields("selectedModal", value)
                   }
                   disabled={false}
-                  error={selectedModalError}
+                  error={inputFieldsErrors.selectedModal}
                 />
               </div>
             </div>
@@ -164,7 +166,7 @@ const CategorizationForm = ({
                     updateInputFields("logLevel", value)
                   }
                   disabled={false}
-                  error={logLevelError}
+                  error={inputFieldsErrors.logLevel}
                 />
               </div>
             </div>

@@ -5,15 +5,12 @@ import ButtonTray from "../util/ButtonTray";
 import ImgTooltip from "../util/Tooltip";
 
 const MatchReviewersTable = ({
-  setShowTable,
-  setShowLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
-  showTable,
   currentTaskId,
   currentCycle,
-  showLogs,
   mode,
+  viewLogs
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -27,11 +24,6 @@ const MatchReviewersTable = ({
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
     setCurrentRow(current_id);
-  };
-
-  const viewLogs = () => {
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   const expo = (num) => {
@@ -165,8 +157,6 @@ const MatchReviewersTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        showTable={showTable}
-        showLogs={showLogs}
         mode={mode}
         currentCycle={currentCycle}
         currentTaskId={currentTaskId}

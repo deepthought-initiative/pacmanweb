@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import "../../css/searchBox.css";
 import NewDropdown from "../util/NewDropdown.jsx";
 import TextArea from "../util/TextArea.jsx";
@@ -28,17 +28,6 @@ const MatchReviewersForm = ({
   loading,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
-
-  // Error variables
-  const [currentCycleError, setCurrentCycleError] = useState("");
-  const [selectedModalError, setSelectedModalError] = useState("");
-  const [numberOfTopReviewersError, setNumberOfTopReviewersError] =
-    useState("");
-  const [closeCollaboratorTimeFrameError, setCloseCollaboratorTimeFrameError] =
-    useState("");
-  const [logLevelError, setLogLevelError] = useState("");
-  const [textAreaError, setTextAreaError] = useState("");
-
   const updateInputFields = useCallback(
     (key, value) => {
       setInputFields((prev) => ({ ...prev, [key]: value }));
@@ -46,22 +35,39 @@ const MatchReviewersForm = ({
     [setInputFields]
   );
 
+  // Error variables
+  const [textAreaError, setTextAreaError] = useState("");
+  const defaultInputFieldsErrors = {
+    currentCycle: "",
+    selectedModal: "",
+    numberOfTopReviewers: "",
+    closeCollaboratorTimeFrame: "",
+    logLevel: "",
+  };
+  const [inputFieldsErrors, setInputFieldsErrors] = useState(
+    defaultInputFieldsErrors
+  );
+
+  const updateInputFieldsErrors = useCallback((key, value) => {
+    setInputFieldsErrors((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
   const validateFields = () => {
     let noError = true;
     if (!inputFields.currentCycle) {
-      setCurrentCycleError("Required");
+      updateInputFieldsErrors("currentCycle", "Required");
       noError = false;
     }
     if (!inputFields.selectedModal) {
-      setSelectedModalError("Required");
+      updateInputFieldsErrors("selectedModal", "Required");
       noError = false;
     }
     if (!inputFields.numberOfTopReviewers) {
-      setNumberOfTopReviewersError("Required");
+      updateInputFieldsErrors("numberOfTopReviewers", "Required");
       noError = false;
     }
     if (!inputFields.closeCollaboratorTimeFrame) {
-      setCloseCollaboratorTimeFrameError("Required");
+      updateInputFieldsErrors("closeCollaboratorTimeFrame", "Required");
       noError = false;
     }
     if (textAreaError) {
@@ -69,23 +75,15 @@ const MatchReviewersForm = ({
       noError = false;
     }
     if (!inputFields.logLevel) {
-      setLogLevelError("Required");
+      updateInputFieldsErrors("logLevel", "Required");
     }
     return noError;
   };
 
-  const resetErrors = () => {
-    setCurrentCycleError("");
-    setSelectedModalError("");
-    setNumberOfTopReviewersError("");
-    setCloseCollaboratorTimeFrameError("");
-    setTextAreaError("");
-    setLogLevelError("");
-  };
-
   const handleClick = async (event) => {
     event.preventDefault();
-    resetErrors();
+    setInputFieldsErrors(defaultInputFieldsErrors)
+    setTextAreaError("");
     const checkErrors = validateFields();
     const params = [
       `mode=${mode}`,
@@ -143,7 +141,7 @@ const MatchReviewersForm = ({
                 updateInputFields("currentCycle", value)
               }
               disabled={showTable || showLogs}
-              error={currentCycleError}
+              error={inputFieldsErrors.currentCycle}
             />
           </div>
           {!showLogs && (
@@ -196,7 +194,7 @@ const MatchReviewersForm = ({
                 updateInputFields("selectedModal", value)
               }
               disabled={false}
-              error={selectedModalError}
+              error={inputFieldsErrors.selectedModal}
             />
           </div>
         </div>
@@ -209,7 +207,7 @@ const MatchReviewersForm = ({
               setValue={(value) =>
                 updateInputFields("numberOfTopReviewers", value)
               }
-              error={numberOfTopReviewersError}
+              error={inputFieldsErrors.numberOfTopReviewers}
             />
           </div>
         </div>
@@ -222,7 +220,7 @@ const MatchReviewersForm = ({
               setValue={(value) =>
                 updateInputFields("closeCollaboratorTimeFrame", value)
               }
-              error={closeCollaboratorTimeFrameError}
+              error={inputFieldsErrors.closeCollaboratorTimeFrame}
             />
           </div>
         </div>
@@ -236,7 +234,7 @@ const MatchReviewersForm = ({
               inputField={inputFields.logLevel}
               setInputField={(value) => updateInputFields("logLevel", value)}
               disabled={false}
-              error={logLevelError}
+              error={inputFieldsErrors.logLevel}
             />
           </div>
         </div>
