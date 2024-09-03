@@ -25,10 +25,6 @@ function App() {
     localStorage.getItem("username")
   );
 
-  // Toast state management
-  const [showToast, setShowToast] = useState(false);
-  const [toastVariant, setToastVariant] = useState("");
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -108,10 +104,6 @@ function App() {
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 logLevelOptions={logLevelOptions}
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
               />
             </PrivateRoute>
           }
@@ -124,10 +116,6 @@ function App() {
                 key="DUP"
                 allCycles={allCycles}
                 logLevelOptions={logLevelOptions}
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
               />
             </PrivateRoute>
           }
@@ -142,10 +130,6 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
                 logLevelOptions={logLevelOptions}
                 renderFormComponent={(props) => (
                   <MatchReviewersForm {...props} />
@@ -170,13 +154,7 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
-                usernameContext={usernameContext}
-              />
+              <Dashboard usernameContext={usernameContext} />
             </PrivateRoute>
           }
         />

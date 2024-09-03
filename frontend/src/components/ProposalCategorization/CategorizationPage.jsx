@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import {useState } from "react";
+import { useState } from "react";
 import "../../css/searchBox.css";
 import PageComponent from "../util/PageComponent.jsx";
-import CategorizationForm from "./CategorizationForm.jsx"
+import CategorizationForm from "./CategorizationForm.jsx";
 import CategorizationTable from "./CategorizationTable";
 
 const CategorizationPage = ({
@@ -12,10 +12,6 @@ const CategorizationPage = ({
   modalFile,
   setModalFile,
   logLevelOptions,
-  showToast,
-  setShowToast,
-  toastVariant,
-  setToastVariant,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -27,29 +23,21 @@ const CategorizationPage = ({
   const [currentId, setCurrentId] = useState();
 
   return (
-      <PageComponent
-        allCycles={allCycles}
-        mode="PROP"
-        modalFile={modalFile}
-        currentId={currentId}
-        setCurrentId={setCurrentId}
-        logLevelOptions={logLevelOptions}
-        inputFields={inputFields}
-        setInputFields={setInputFields}
-        defaultInputFields={defaultInputFields}
-        setModalFile={setModalFile}
-        showToast={showToast}
-        setShowToast={setShowToast}
-        toastVariant={toastVariant}
-        setToastVariant={setToastVariant}
-        renderFormComponent={(props) => (
-          <CategorizationForm {...props} />
-        )}
-        renderTableComponent={(props) => (
-          <CategorizationTable {...props} />
-        )}
-        button_label="Categorize Proposals"
-      />
+    <PageComponent
+      allCycles={allCycles}
+      mode="PROP"
+      modalFile={modalFile}
+      currentId={currentId}
+      setCurrentId={setCurrentId}
+      logLevelOptions={logLevelOptions}
+      inputFields={inputFields}
+      setInputFields={setInputFields}
+      defaultInputFields={defaultInputFields}
+      setModalFile={setModalFile}
+      renderFormComponent={(props) => <CategorizationForm {...props} />}
+      renderTableComponent={(props) => <CategorizationTable {...props} />}
+      button_label="Categorize Proposals"
+    />
   );
 };
 
