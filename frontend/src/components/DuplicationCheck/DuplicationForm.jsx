@@ -23,6 +23,7 @@ const DuplicationForm = ({
   setInputFields,
   inputFields,
   logLevelOptions,
+  updateInputFields
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const bothPastAndCurrentCycles = [
@@ -44,13 +45,6 @@ const DuplicationForm = ({
   const updateInputFieldsErrors = useCallback((key, value) => {
     setInputFieldsErrors((prev) => ({ ...prev, [key]: value }));
   }, []);
-
-  const updateInputFields = useCallback(
-    (key, value) => {
-      setInputFields((prev) => ({ ...prev, [key]: value }));
-    },
-    [setInputFields]
-  );
 
   const validateFields = () => {
     let noError = true;

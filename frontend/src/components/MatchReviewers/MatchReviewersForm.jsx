@@ -26,14 +26,9 @@ const MatchReviewersForm = ({
   preventClick,
   logLevelOptions,
   loading,
+  updateInputFields
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
-  const updateInputFields = useCallback(
-    (key, value) => {
-      setInputFields((prev) => ({ ...prev, [key]: value }));
-    },
-    [setInputFields]
-  );
 
   // Error variables
   const [textAreaError, setTextAreaError] = useState("");
