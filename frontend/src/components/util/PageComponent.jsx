@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "./Logs.jsx";
 import CustomToast from "./CustomToast.jsx";
+import AppContext from "../../context/AppContext.jsx";
 
 const PageComponent = ({
   allCycles,
@@ -14,14 +15,11 @@ const PageComponent = ({
   button_label,
   renderFormComponent,
   logLevelOptions,
-  showToast,
-  setShowToast,
-  toastVariant,
-  setToastVariant,
   inputFields,
   setInputFields,
-  currentId, setCurrentId,
-  defaultInputFields
+  currentId,
+  setCurrentId,
+  defaultInputFields,
 }) => {
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
@@ -32,6 +30,9 @@ const PageComponent = ({
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
+
+  const { showToast, setShowToast, toastVariant, setToastVariant } =
+    useContext(AppContext);
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
