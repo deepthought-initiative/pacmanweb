@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {useState } from "react";
 import "../../css/searchBox.css";
 import PageComponent from "../util/PageComponent.jsx";
 import CategorizationForm from "./CategorizationForm.jsx"

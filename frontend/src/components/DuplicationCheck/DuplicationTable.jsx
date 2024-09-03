@@ -3,14 +3,13 @@
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import InputConfigOption from "../util/InputConfigOption";
 
 const DuplicationTable = ({
   setShowTable,
   setShowLogs,
   dataToDisplay,
   onCategorizeAnotherCycle,
-  lowerLimit,
-  upperLimit,
   currentCycle,
   showTable,
   currentId,
@@ -19,6 +18,8 @@ const DuplicationTable = ({
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
+  const [upperLimit, setUpperLimit] = useState();
+  const [lowerLimit, setLowerLimit] = useState();
 
   const reformatData = (originalData) => {
     const reformattedData = {};
@@ -98,6 +99,30 @@ const DuplicationTable = ({
 
   return (
     <>
+      <div className="all-options">
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Lower Limit for CS Score"
+              value={lowerLimit}
+              desc="Scores below this will be marked green"
+              setValue={setLowerLimit}
+              disabled={showLogs}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Upper Limit for CS Score"
+              value={upperLimit}
+              desc="Scores above this will be marked red"
+              setValue={setUpperLimit}
+              disabled={showLogs}
+            />
+          </div>
+        </div>
+      </div>
       <div
         id="outer-container"
         className="container-fluid border border-1 border-black mt-5"

@@ -19,15 +19,9 @@ const DuplicationForm = ({
   startFetchingLogs,
   loading,
   preventClick,
-  handleFilteringCycles,
   setLoading,
   setInputFields,
   inputFields,
-  filteredCycles,
-  upperLimit,
-  setUpperLimit,
-  lowerLimit,
-  setLowerLimit,
   logLevelOptions
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
@@ -35,6 +29,7 @@ const DuplicationForm = ({
     ...inputFields.pastCycle,
     inputFields.currentCycle ? inputFields.currentCycle : [],
   ];
+  const [filteredCycles, setFilteredCycles] = useState();
 
   // Error variables
   const [currentCycleError, setCurrentCycleError] = useState("");
@@ -105,6 +100,21 @@ const DuplicationForm = ({
     }
   };
 
+  const handleFilteringCycles = (newCurrentCycle) => {
+    const newCycles = allCycles.filter((cycle) => {
+      return cycle.cycleNumber !== newCurrentCycle;
+    });
+    const newPastCycles = inputFields.pastCycle.filter((cycle) => {
+      return cycle !== newCurrentCycle;
+    });
+    setInputFields({
+      ...inputFields,
+      currentCycle: newCurrentCycle,
+      pastCycle: newPastCycles,
+    });
+    setFilteredCycles(newCycles);
+  };
+
   return (
     <form>
       <div className="mt-5" id="main-container">
@@ -138,34 +148,6 @@ const DuplicationForm = ({
               />
             </div>
           </div>
-          {showTable ? (
-            <>
-              <div className="row">
-                <div className="single-option col-12">
-                  <InputConfigOption
-                    label="Lower Limit for CS Score"
-                    value={lowerLimit}
-                    desc="Scores below this will be marked green"
-                    setValue={setLowerLimit}
-                    disabled={showLogs}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                <div className="single-option col-12">
-                  <InputConfigOption
-                    label="Upper Limit for CS Score"
-                    value={upperLimit}
-                    desc="Scores above this will be marked red"
-                    setValue={setUpperLimit}
-                    disabled={showLogs}
-                  />
-                </div>
-              </div>
-            </>
-          ) : (
-            <></>
-          )}
         </div>
       </div>
       {!showTable && !showLogs && (
