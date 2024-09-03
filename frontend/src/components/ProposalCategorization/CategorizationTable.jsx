@@ -4,12 +4,9 @@ import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
 const CategorizationTable = ({
-  setShowTable,
-  showTable,
   currentTaskId,
   currentCycle,
-  showLogs,
-  setShowLogs,
+  viewLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
   mode,
@@ -26,11 +23,6 @@ const CategorizationTable = ({
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
     setCurrentRow(current_id);
-  };
-  const viewLogs = (event) => {
-    event.preventDefault();
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   return (
@@ -110,8 +102,6 @@ const CategorizationTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        showTable={showTable}
-        showLogs={showLogs}
         mode={mode}
         currentCycle={currentCycle}
         currentTaskId={currentTaskId}

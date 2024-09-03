@@ -22,7 +22,7 @@ const DuplicationForm = ({
   setLoading,
   setInputFields,
   inputFields,
-  logLevelOptions
+  logLevelOptions,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const bothPastAndCurrentCycles = [
@@ -32,9 +32,18 @@ const DuplicationForm = ({
   const [filteredCycles, setFilteredCycles] = useState();
 
   // Error variables
-  const [currentCycleError, setCurrentCycleError] = useState("");
-  const [logLevelError, setLogLevelError] = useState("");
-  const [pastCycleError, setPastCycleError] = useState("");
+  const defaultInputFieldsErrors = {
+    currentCycle: "",
+    logLevel: "",
+    pastCycle: "",
+  };
+  const [inputFieldsErrors, setInputFieldsErrors] = useState(
+    defaultInputFieldsErrors
+  );
+
+  const updateInputFieldsErrors = useCallback((key, value) => {
+    setInputFieldsErrors((prev) => ({ ...prev, [key]: value }));
+  }, []);
 
   const updateInputFields = useCallback(
     (key, value) => {
@@ -46,29 +55,23 @@ const DuplicationForm = ({
   const validateFields = () => {
     let noError = true;
     if (!inputFields.currentCycle) {
-      setCurrentCycleError("Required");
+      updateInputFieldsErrors("currentCycle", "Required");
       noError = false;
     }
     if (!inputFields.logLevel) {
-      setLogLevelError("Required");
+      updateInputFieldsErrors("logLevel", "Required");
       noError = false;
     }
     if (inputFields.pastCycle.length === 0) {
-      setPastCycleError("Select at least one");
+      updateInputFieldsErrors("pastCycle", "Select at least one");
       noError = false;
     }
     return noError;
   };
 
-  const resetErrors = () => {
-    setCurrentCycleError("");
-    setPastCycleError("");
-    setLogLevelError("");
-  };
-
   const handleClick = async (event) => {
     event.preventDefault();
-    resetErrors();
+    setInputFieldsErrors(defaultInputFieldsErrors);
     const checkErrors = validateFields();
     if (checkErrors) {
       let spawnResponse;
@@ -134,7 +137,7 @@ const DuplicationForm = ({
                 multiple={false}
                 setInputField={handleFilteringCycles}
                 disabled={showTable || showLogs}
-                error={currentCycleError}
+                error={inputFieldsErrors.currentCycle}
               />
             </div>
           </div>
@@ -148,7 +151,7 @@ const DuplicationForm = ({
                 multiple={true}
                 setInputField={(value) => updateInputFields("pastCycle", value)}
                 disabled={showTable || showLogs}
-                error={pastCycleError}
+                error={inputFieldsErrors.pastCycle}
               />
             </div>
           </div>
@@ -180,16 +183,16 @@ const DuplicationForm = ({
                     updateInputFields("logLevel", value)
                   }
                   disabled={false}
-                  error={logLevelError}
+                  error={inputFieldsErrors.logLevel}
                 />
               </div>
             </div>
           </div>
           {modalShow && (
             <MultiprocessModal
-            modalShow={modalShow}
-            setModalShow={setModalShow}
-          />
+              modalShow={modalShow}
+              setModalShow={setModalShow}
+            />
           )}
           <div className="row mt-5">
             <div className="col-md-6 text-start">
