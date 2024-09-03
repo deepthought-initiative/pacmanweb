@@ -23,6 +23,7 @@ const CategorizationForm = ({
   preventClick,
   setLoading,
   setInputFields,
+  updateInputFields,
   inputFields,
   logLevelOptions,
 }) => {
@@ -35,13 +36,6 @@ const CategorizationForm = ({
   };
   const [inputFieldsErrors, setInputFieldsErrors] = useState(
     defaultInputFieldsErrors
-  );
-
-  const updateInputFields = useCallback(
-    (key, value) => {
-      setInputFields((prev) => ({ ...prev, [key]: value }));
-    },
-    [setInputFields]
   );
 
   const updateInputFieldsErrors = useCallback((key, value) => {

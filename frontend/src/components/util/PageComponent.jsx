@@ -191,6 +191,13 @@ const PageComponent = ({
     setShowTable(false);
   };
 
+  const updateInputFields = useCallback(
+    (key, value) => {
+      setInputFields((prev) => ({ ...prev, [key]: value }));
+    },
+    [setInputFields]
+  );
+
   return (
     <>
       {showToast && (
@@ -216,6 +223,7 @@ const PageComponent = ({
         button_label: button_label,
         inputFields: inputFields,
         setInputFields: setInputFields,
+        updateInputFields: updateInputFields,
         showLogs: showLogs,
         showTable: showTable,
         setCurrentTaskId: setCurrentTaskId,
