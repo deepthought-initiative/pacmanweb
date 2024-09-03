@@ -24,10 +24,6 @@ function App() {
     localStorage.getItem("username")
   );
 
-  // Toast state management
-  const [showToast, setShowToast] = useState(false);
-  const [toastVariant, setToastVariant] = useState("");
-
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -132,10 +128,6 @@ function App() {
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
                 logLevelOptions={logLevelOptions}
               />
             </PrivateRoute>
@@ -153,13 +145,7 @@ function App() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard
-                showToast={showToast}
-                setShowToast={setShowToast}
-                toastVariant={toastVariant}
-                setToastVariant={setToastVariant}
-                usernameContext={usernameContext}
-              />
+              <Dashboard usernameContext={usernameContext} />
             </PrivateRoute>
           }
         />

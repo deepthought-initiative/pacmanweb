@@ -12,10 +12,6 @@ const CategorizationPage = ({
   modalFile,
   setModalFile,
   logLevelOptions,
-  showToast,
-  setShowToast,
-  toastVariant,
-  setToastVariant,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
