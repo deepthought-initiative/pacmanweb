@@ -6,8 +6,6 @@ import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
 import DuplicationPage from "./components/DuplicationCheck/DuplicationPage";
 import CategorizationPage from "./components/ProposalCategorization/CategorizationPage";
-import MatchReviewersForm from "./components/MatchReviewers/MatchReviewersForm";
-import MatchReviewersTable from "./components/MatchReviewers/MatchReviewersTable";
 import UploadZipForm from "./components/Upload/UploadZip";
 import Login from "./components/util/LoginPage";
 import Logout from "./components/util/Logout";
@@ -126,18 +124,10 @@ function App() {
             <PrivateRoute>
               <MatchReviewersPage
                 key="MATCH"
-                mode="MATCH"
                 allCycles={allCycles}
                 modalFile={modalFile}
                 setModalFile={setModalFile}
                 logLevelOptions={logLevelOptions}
-                renderFormComponent={(props) => (
-                  <MatchReviewersForm {...props} />
-                )}
-                renderTableComponent={(props) => (
-                  <MatchReviewersTable {...props} />
-                )}
-                button_label="Match Reviewers"
               />
             </PrivateRoute>
           }

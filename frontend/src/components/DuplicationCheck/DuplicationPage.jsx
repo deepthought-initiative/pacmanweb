@@ -9,11 +9,7 @@ import DuplicationTable from "./DuplicationTable";
 
 const DuplicationPage = ({
   allCycles,
-  logLevelOptions,
-  showToast,
-  setShowToast,
-  toastVariant,
-  setToastVariant,
+  logLevelOptions
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -35,10 +31,6 @@ const DuplicationPage = ({
       inputFields={inputFields}
       setInputFields={setInputFields}
       defaultInputFields={defaultInputFields}
-      showToast={showToast}
-      setShowToast={setShowToast}
-      toastVariant={toastVariant}
-      setToastVariant={setToastVariant}
       renderFormComponent={(props) => <DuplicationForm {...props} />}
       renderTableComponent={(props) => <DuplicationTable {...props} />}
       button_label="Find Duplicates"

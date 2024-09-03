@@ -79,6 +79,10 @@ const DuplicationForm = ({
         `main_test_cycle=${inputFields.currentCycle}`,
         `log_level=${inputFields.logLevel}`,
       ];
+      // const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
+      // if (runNameParam !== "") {
+      //   params.push(`run_name=${runNameParam}`);
+      // }
       const query = params.join("&");
       const Url = `/api/run_pacman?${query}`;
       spawnResponse = await fetch(Url, {
