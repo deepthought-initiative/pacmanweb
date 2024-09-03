@@ -94,13 +94,15 @@ const MatchReviewersForm = ({
       `assignment_number_top_reviewers=${inputFields.numberOfTopReviewers}`,
       `close_collaborator_time_frame=${inputFields.closeCollaboratorTimeFrame}`,
       `log_level=${inputFields.logLevel}`,
-      `assignment_number_top_reviewers=${inputFields.numberOfTopReviewers}`,
     ];
     if (inputFields.panelistNames.length !== 0) {
       params.push("panelist_names", inputFields.panelistNames);
       params.push("panelist_names_mode", "append");
     }
-
+    // const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
+    // if (runNameParam !== "") {
+    //   params.push(`run_name=${runNameParam}`);
+    // }
     const query = params.join("&");
     const url = `/api/run_pacman?${query}`;
     if (checkErrors) {
