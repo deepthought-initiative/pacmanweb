@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
+import CustomToast from "../util/CustomToast";
 
 const DuplicationPage = ({
   allCycles,
@@ -11,7 +12,11 @@ const DuplicationPage = ({
   renderTableComponent,
   renderFormComponent,
   button_label,
-  logLevelOptions
+  logLevelOptions,
+  showToast,
+  setShowToast,
+  toastVariant,
+  setToastVariant,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -200,8 +205,32 @@ const DuplicationPage = ({
     return false;
   };
 
+  useEffect(() => {
+    if (progressPercentage === 100) {
+      if (processStatus === 200 || processStatus === 204) {
+        setToastVariant("success");
+      } else {
+        setToastVariant("danger");
+      }
+      setShowToast(true);
+    }
+  }, [progressPercentage, processStatus, setShowToast, setToastVariant]);
+
   return (
     <>
+      {showToast && (
+        <CustomToast
+          showToast={showToast}
+          setShowToast={setShowToast}
+          variant={toastVariant}
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            backgroundColor: "transparent",
+          }}
+        />
+      )}
       {renderFormComponent({
         allCycles: allCycles,
         mode: mode,
@@ -222,7 +251,7 @@ const DuplicationPage = ({
         setUpperLimit: setUpperLimit,
         lowerLimit: lowerLimit,
         setLowerLimit: setLowerLimit,
-        logLevelOptions: logLevelOptions
+        logLevelOptions: logLevelOptions,
       })}
       {showTable ? (
         renderTableComponent({

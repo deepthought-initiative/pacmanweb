@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs.jsx";
-import CustomToast from "../util/CustomToast"; // Import the CustomToast component
+import CustomToast from "../util/CustomToast";
 
 const CategorizationPage = ({
   allCycles,
@@ -14,6 +14,10 @@ const CategorizationPage = ({
   button_label,
   renderFormComponent,
   logLevelOptions,
+  showToast,
+  setShowToast,
+  toastVariant,
+  setToastVariant
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -32,10 +36,6 @@ const CategorizationPage = ({
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
-  // Toast state management
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastVariant, setToastVariant] = useState("");
 
   const terminateAllProcesses = useCallback(async () => {
     if (!currentId) {
@@ -100,19 +100,16 @@ const CategorizationPage = ({
         if (code === 200) {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
-          setToastMessage("Process Successful!");
           setToastVariant("success");
           setShowToast(true);
         } else if (code === 204) {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
-          setToastMessage("Duplication file is empty.");
-          setToastVariant("warning");
+          setToastVariant("success");
           setShowToast(true);
         } else {
           setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-          setToastMessage("Process Failed!");
           setToastVariant("danger");
           setShowToast(true);
         }
@@ -190,15 +187,13 @@ const CategorizationPage = ({
   useEffect(() => {
     if (progressPercentage === 100) {
       if (processStatus === 200 || processStatus === 204) {
-        setToastMessage("Process Successful!");
         setToastVariant("success");
       } else {
-        setToastMessage("Process Failed!");
         setToastVariant("danger");
       }
       setShowToast(true);
     }
-  }, [progressPercentage, processStatus]);
+  }, [progressPercentage, processStatus, setShowToast, setToastVariant]);
 
   return (
     <>

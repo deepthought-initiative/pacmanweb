@@ -4,7 +4,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "../util/Logs";
-
+import CustomToast from "../util/CustomToast";
 
 const MatchReviewersPage = ({
   allCycles,
@@ -13,7 +13,11 @@ const MatchReviewersPage = ({
   renderTableComponent,
   button_label,
   renderFormComponent,
-  logLevelOptions
+  logLevelOptions,
+  showToast,
+  setShowToast,
+  toastVariant,
+  setToastVariant
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -185,8 +189,32 @@ const MatchReviewersPage = ({
     return false;
   };
 
+  useEffect(() => {
+    if (progressPercentage === 100) {
+      if (processStatus === 200 || processStatus === 204) {
+        setToastVariant("success");
+      } else {
+        setToastVariant("danger");
+      }
+      setShowToast(true);
+    }
+  }, [progressPercentage, processStatus, setShowToast, setToastVariant]);
+
   return (
     <>
+              {showToast && (
+        <CustomToast
+          showToast={showToast}
+          setShowToast={setShowToast}
+          variant={toastVariant}
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            backgroundColor: "transparent",
+          }}
+        />
+      )}
       {renderFormComponent({
         allCycles: allCycles,
         modalFile: modalFile,
