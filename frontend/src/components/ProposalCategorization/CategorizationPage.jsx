@@ -15,7 +15,7 @@ const CategorizationPage = ({
   showToast,
   setShowToast,
   toastVariant,
-  setToastVariant
+  setToastVariant,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
