@@ -19,7 +19,7 @@ const PageComponent = ({
   setInputFields,
   defaultInputFields,
 }) => {
-  const [currentTaskId, setCurrentTaskId] = useState()
+  const [currentTaskId, setCurrentTaskId] = useState();
   const [showTable, setShowTable] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
   const [logs, setLogs] = useState([]);
@@ -33,6 +33,18 @@ const PageComponent = ({
   const { showToast, setShowToast, toastVariant, setToastVariant } =
     useContext(AppContext);
 
+  const onTerminate = useCallback(() => {
+    setCurrentTaskId();
+    setShowLogs(false);
+    setShowTable(false);
+    setProgressPercentage(0);
+    setLogs([]);
+    setShowTerminateProcess(true);
+    setProcessStatus();
+    setInputFields(defaultInputFields);
+    setLoading(false);
+  }, [defaultInputFields, setInputFields]);
+
   const terminateAllProcesses = useCallback(async () => {
     if (!currentTaskId) {
       return;
@@ -41,7 +53,7 @@ const PageComponent = ({
       method: "POST",
     });
     onTerminate();
-  }, [currentTaskId, mode]);
+  }, [currentTaskId, mode, onTerminate]);
 
   useEffect(() => {
     const handleBeforeUnload = async (event) => {
@@ -52,18 +64,6 @@ const PageComponent = ({
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [allCycles, terminateAllProcesses]);
-
-  const onTerminate = () => {
-    setCurrentTaskId();
-    setShowLogs(false);
-    setShowTable(false);
-    setProgressPercentage(0);
-    setLogs([]);
-    setShowTerminateProcess(true);
-    setProcessStatus();
-    setInputFields(defaultInputFields);
-    setLoading(false);
-  };
 
   const fetchTable = useCallback(
     async (curId) => {
@@ -122,61 +122,57 @@ const PageComponent = ({
         console.error("Error fetching table data:", error);
       }
     },
-    [inputFields, mode]
+    [inputFields, mode, setShowToast, setToastVariant]
   );
 
   const startFetchingLogs = useCallback(
     async (curId) => {
       let reconnectFrequencySeconds = 1;
-      const fetchLogs = async () => {
-        try {
-          const eventSource = new EventSource(`/api/stream/${curId}`);
-          eventSource.onopen = () => {
-            setShowTerminateProcess(true);
-          };
-          eventSource.onmessage = async (event) => {
-            const newLog = event.data;
-            if (newLog.includes("STARTING RUN")) {
-              setProgressPercentage(10);
-            }
-            if (newLog.includes("Log file can be found")) {
-              setProgressPercentage(50);
-            }
-            if (
-              newLog.includes("PROCESS COMPLETE") ||
-              newLog.includes("run complete")
-            ) {
-              await fetchTable(curId);
-              eventSource.close();
-              setShowTerminateProcess(false);
-              return; // Exit after process completion
-            }
-            setLogs((prevLogs) => [...prevLogs, newLog]);
-            logContainerRef.current.scrollTop =
-              logContainerRef.current.scrollHeight;
-          };
-          eventSource.onerror = (error) => {
-            console.error("EventSource failed:", error);
+      try {
+        const eventSource = new EventSource(`/api/stream/${curId}`);
+        eventSource.onopen = () => {
+          setShowTerminateProcess(true);
+        };
+        eventSource.onmessage = async (event) => {
+          const newLog = event.data;
+          if (newLog.includes("STARTING RUN")) {
+            setProgressPercentage(10);
+          }
+          if (newLog.includes("Log file can be found")) {
+            setProgressPercentage(50);
+          }
+          if (
+            newLog.includes("PROCESS COMPLETE") ||
+            newLog.includes("run complete")
+          ) {
+            await fetchTable(curId);
+            eventSource.close();
             setShowTerminateProcess(false);
-            reconnectFrequencySeconds = Math.min(
-              reconnectFrequencySeconds * 2,
-              64
-            );
-            setTimeout(
-              () => startFetchingLogs(curId),
-              reconnectFrequencySeconds * 1000
-            );
-          };
-        } catch (error) {
-          console.error("Error fetching logs:", error);
+            return; // Exit after process completion
+          }
+          setLogs((prevLogs) => [...prevLogs, newLog]);
+          logContainerRef.current.scrollTop =
+            logContainerRef.current.scrollHeight;
+        };
+        eventSource.onerror = (error) => {
+          console.error("EventSource failed:", error);
+          setShowTerminateProcess(false);
+          reconnectFrequencySeconds = Math.min(
+            reconnectFrequencySeconds * 2,
+            64
+          );
           setTimeout(
             () => startFetchingLogs(curId),
             reconnectFrequencySeconds * 1000
           );
-        }
-      };
-
-      await fetchLogs();
+        };
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+        setTimeout(
+          () => startFetchingLogs(curId),
+          reconnectFrequencySeconds * 1000
+        );
+      }
     },
     [fetchTable]
   );
@@ -238,7 +234,7 @@ const PageComponent = ({
           onCategorizeAnotherCycle: onTerminate,
           dataToDisplay: dataToDisplay,
           mode: mode,
-          viewLogs: viewLogs
+          viewLogs: viewLogs,
         })
       ) : showLogs ? (
         <Logs
