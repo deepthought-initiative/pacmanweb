@@ -261,7 +261,7 @@ class MatchRev:
     def make_main_table(self):
         data = self.read_panelists()
         if isinstance(data, dict):
-            return {"value": f"panelist file not accessible for this cycle."}
+            return {"value": f"Panelist file not accessible for this cycle. Please verify cycle data."}
         data = data.drop(
             columns=[item for item in data.columns if item.endswith("_prob")]
             + ["encoded_model_classification"]
@@ -270,11 +270,18 @@ class MatchRev:
         return data.T.to_dict()
 
     def complete_response(self):
-        return {
+        main_table = self.make_main_table()
+        response = {
             "Main Table": self.make_main_table(),
             "Proposal Assignments": self.read_matches(),
             "Conflicts": self.read_conflicts(),
-        }, 200
+        }
+        if not isinstance(main_table, dict):
+            return response, 200
+        
+        # data not there, expected failure
+        return response, 400
+
 
     def get_complete_data_as_csv(self):
         main_table = pd.DataFrame(self.make_main_table()).T
