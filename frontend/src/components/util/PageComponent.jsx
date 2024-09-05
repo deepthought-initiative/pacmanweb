@@ -6,6 +6,7 @@ import "../../css/searchBox.css";
 import Logs from "./Logs.jsx";
 import CustomToast from "./CustomToast.jsx";
 import AppContext from "../../context/AppContext.jsx";
+import { UNSAFE_NavigationContext as NavigationContext } from "react-router-dom";
 
 const PageComponent = ({
   allCycles,
@@ -194,6 +195,53 @@ const PageComponent = ({
     [setInputFields]
   );
 
+  function useConfirmExit(confirmExit, when = true) {
+    const { navigator } = useContext(NavigationContext);
+
+    useEffect(() => {
+      if (!when) {
+        return;
+      }
+
+      const push = navigator.push;
+
+      navigator.push = (...args) => {
+        const result = confirmExit();
+        if (result !== false) {
+          push(...args);
+        }
+      };
+
+      return () => {
+        navigator.push = push;
+      };
+    }, [navigator, confirmExit, when]);
+  }
+
+  function usePrompt(message, when = true) {
+    useEffect(() => {
+      const handleBeforeUnload = (event) => {
+        event.preventDefault();
+        event.returnValue = message;
+        return "";
+      };
+      if (when) {
+        window.addEventListener("beforeunload", handleBeforeUnload);
+      }
+      return () => {
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+      };
+    }, [message, when]);
+
+    const confirmExit = useCallback(() => {
+      const confirm = window.confirm(message);
+      if (confirm) {
+        terminateAllProcesses();
+      }
+      return confirm;
+    }, [message]);
+    useConfirmExit(confirmExit, when);
+  }
   return (
     <>
       {showToast && (
@@ -239,6 +287,7 @@ const PageComponent = ({
       ) : showLogs ? (
         <Logs
           currentTaskId={currentTaskId}
+          usePrompt={usePrompt}
           currentCycle={inputFields["currentCycle"]}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}
