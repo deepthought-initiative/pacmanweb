@@ -26,7 +26,7 @@ const MatchReviewersForm = ({
   preventClick,
   logLevelOptions,
   loading,
-  updateInputFields
+  updateInputFields,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
 
@@ -77,7 +77,7 @@ const MatchReviewersForm = ({
 
   const handleClick = async (event) => {
     event.preventDefault();
-    setInputFieldsErrors(defaultInputFieldsErrors)
+    setInputFieldsErrors(defaultInputFieldsErrors);
     setTextAreaError("");
     const checkErrors = validateFields();
     const params = [
@@ -124,23 +124,22 @@ const MatchReviewersForm = ({
     <form>
       <div className="mt-3" id="main-container">
         {!showLogs && !showTable && <h3>Start a new process</h3>}
-        <div>
-            <NewDropdown
-              data={allCycles}
-              label="Selected Current Cycle"
-              desc="Prefix used throughout script to match with cycle description"
-              inputField={inputFields.currentCycle}
-              multiple={false}
-              setInputField={(value) =>
-                updateInputFields("currentCycle", value)
-              }
-              disabled={showTable || showLogs}
-              error={inputFieldsErrors.currentCycle}
-            />
-          {!showLogs && (
-            <div>
-              {/** Use panelist panelist-name-container for css*/}
-              {/* <div className="upload-panelist-file">
+        <NewDropdown
+          data={allCycles}
+          label="Selected Current Cycle"
+          desc="Prefix used throughout script to match with cycle description"
+          inputField={inputFields.currentCycle}
+          multiple={false}
+          setInputField={(value) => updateInputFields("currentCycle", value)}
+          disabled={showTable || showLogs}
+          error={inputFieldsErrors.currentCycle}
+        />
+      </div>
+      {!showLogs && !showTable && (
+        <>
+          <div>
+            {/** Use panelist panelist-name-container for css*/}
+            {/* <div className="upload-panelist-file">
               <div className="border d-flex">
                 <input type="file" />
                 <button className="btn rounded-1" type="submit">
@@ -149,21 +148,16 @@ const MatchReviewersForm = ({
               </div>
             </div>
             <div>OR</div> */}
-              <div className="my-3">
-                <TextArea
-                  setValue={(value) =>
-                    updateInputFields("panelistNames", value)
-                  }
-                  textAreaError={textAreaError}
-                  setTextAreaError={setTextAreaError}
-                />
-              </div>
+            <div className="my-3">
+              <TextArea
+                setValue={(value) => updateInputFields("panelistNames", value)}
+                textAreaError={textAreaError}
+                setTextAreaError={setTextAreaError}
+              />
             </div>
-          )}
-        </div>
-      </div>
-      <div className="separator">Other Options</div>
-      <div className="all-options">
+          </div>
+          <div className="separator">Other Options</div>
+          <div className="all-options">
             <InputConfigOption
               label="Enter Run name(optional)"
               value={inputFields.setRunName}
@@ -210,29 +204,34 @@ const MatchReviewersForm = ({
               disabled={false}
               error={inputFieldsErrors.logLevel}
             />
-      </div>
-      {modalShow && (
-        <MultiprocessModal modalShow={modalShow} setModalShow={setModalShow} />
+          </div>
+          {modalShow && (
+            <MultiprocessModal
+              modalShow={modalShow}
+              setModalShow={setModalShow}
+            />
+          )}
+          <div className="row mt-5">
+            <div className="col-md-6 text-start">
+              <button
+                className="btn form-page-button rounded-0"
+                onClick={loading ? preventClick : handleClick}
+                disabled={showLogs || showTable}
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  </>
+                ) : (
+                  button_label
+                )}
+              </button>
+            </div>
+          </div>
+        </>
       )}
-      <div className="row mt-5">
-        <div className="col-md-6 text-start">
-          <button
-            className="btn form-page-button rounded-0"
-            onClick={loading ? preventClick : handleClick}
-            disabled={showLogs || showTable}
-          >
-            {loading ? (
-              <>
-                <Spinner animation="border" role="status">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </>
-            ) : (
-              button_label
-            )}
-          </button>
-        </div>
-      </div>
     </form>
   );
 };

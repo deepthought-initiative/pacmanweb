@@ -10,7 +10,7 @@ const MatchReviewersTable = ({
   currentTaskId,
   currentCycle,
   mode,
-  viewLogs
+  viewLogs,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -66,22 +66,24 @@ const MatchReviewersTable = ({
                   Object.entries(dataToDisplay["Main Table"]).map(
                     ([key, value]) => (
                       <tr
-                        onClick={() =>
-                          handleHighlight(value["fname"])
-                        }
-                        className={
-                          highlighted === value["fname"] ? "highlighted" : ""
-                        }
+                        onClick={() => handleHighlight(key)}
+                        className={highlighted === key ? "highlighted" : ""}
                         key={key}
                       >
                         <td className="text-break" scope="row">
-                          {value["fname"].toUpperCase()}
+                          {value && value.fname
+                            ? value.fname.toUpperCase()
+                            : ""}
                         </td>
                         <td className="text-break">
-                          {value["model_classification"]}
+                          {value ? value.model_classification : ""}
                         </td>
-                        <td className="text-break">{expo(value["prob"])}</td>
-                        <td className="text-break">{value["nrecords"]}</td>
+                        <td className="text-break">
+                          {value ? expo(value.prob) : ""}
+                        </td>
+                        <td className="text-break">
+                          {value ? value.nrecords : ""}
+                        </td>
                       </tr>
                     )
                   )}
