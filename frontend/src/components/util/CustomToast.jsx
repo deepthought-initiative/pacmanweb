@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import ToastContainer from "react-bootstrap/ToastContainer";
 
@@ -11,26 +11,16 @@ const CustomToast = ({ variant, showToast, setShowToast }) => {
     switch (variant) {
       case "success":
         return {
-          header: "Process Completed",
-          body: "The Process was completed successfully.",
-          icon: "✅",
+          body: "✅ Process Successful",
         };
       case "danger":
         return {
-          header: "Process Failed",
-          body: "An error occurred. Please try again.",
-          icon: "❌",
-        };
-      default:
-        return {
-          header: "Notification",
-          body: "",
-          icon: "ℹ️",
+         body: "⚠️ Process Failed",
         };
     }
   };
 
-  const { header, body, icon } = getToastContent();
+  const { body } = getToastContent();
 
   useEffect(() => {
     let timer;
@@ -48,7 +38,7 @@ const CustomToast = ({ variant, showToast, setShowToast }) => {
             clearInterval(progressTimer);
             return 0;
           }
-          return prevProgress - (100 / 30);
+          return prevProgress - 100 / 30;
         });
       }, 100);
     }
@@ -64,21 +54,12 @@ const CustomToast = ({ variant, showToast, setShowToast }) => {
         bg={variant}
         show={showToast}
         onClose={() => setIsVisible(false)}
-        className={`custom-toast ${isVisible ? 'show' : 'hide'}`}
+        className={`custom-toast ${isVisible ? "show" : "hide"}`}
       >
-        <Toast.Header>
-          <span className="me-2">{icon}</span>
-          <strong className="me-auto">{header}</strong>
-        </Toast.Header>
-        <Toast.Body
-          className={variant === "danger" ? "text-white" : undefined}
-        >
+        <Toast.Body className={variant === "danger" ? "text-white" : undefined}>
           {body}
           <div className="timer-bar-container">
-            <div 
-              className="timer-bar" 
-              style={{ width: `${progress}%` }}
-            />
+            <div className="timer-bar" style={{ width: `${progress}%` }} />
           </div>
         </Toast.Body>
       </Toast>
