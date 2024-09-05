@@ -99,71 +99,51 @@ const CategorizationForm = ({
 
   return (
     <form>
-      <div className="mt-5" id="main-container">
+      <div className="mt-3" id="main-container">
         {!showLogs && !showTable && <h3>Start a new process</h3>}
-        <div>
-          <div className="row">
-            <NewDropdown
-              data={allCycles}
-              label="Selected Current Cycle"
-              desc="Prefix used throughout script to match with cycle description"
-              inputField={inputFields["currentCycle"]}
-              multiple={false}
-              setInputField={(value) =>
-                updateInputFields("currentCycle", value)
-              }
-              disabled={showLogs || showTable}
-              error={inputFieldsErrors.currentCycle}
-            />
-          </div>
-        </div>
+        <NewDropdown
+          data={allCycles}
+          label="Selected Current Cycle"
+          desc="Prefix used throughout script to match with cycle description"
+          inputField={inputFields["currentCycle"]}
+          multiple={false}
+          setInputField={(value) => updateInputFields("currentCycle", value)}
+          disabled={showLogs || showTable}
+          error={inputFieldsErrors.currentCycle}
+        />
       </div>
       {!showLogs && !showTable && (
         <>
           <div className="separator">Other Options</div>
           <div className="all-options">
-            <div className="row">
-              <div className="single-option col-12">
-                <InputConfigOption
-                  label="Enter Run name(optional)"
-                  value={inputFields["runName"]}
-                  desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
-                  setValue={(value) => updateInputFields("runName", value)}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="single-option col-12">
-                <NewDropdown
-                  data={modalFile}
-                  multiple={false}
-                  label="Select modal file to use"
-                  desc="Name of modal file to use"
-                  inputField={inputFields["selectedModal"]}
-                  setInputField={(value) =>
-                    updateInputFields("selectedModal", value)
-                  }
-                  disabled={false}
-                  error={inputFieldsErrors.selectedModal}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="single-option col-12">
-                <NewDropdown
-                  data={logLevelOptions}
-                  multiple={false}
-                  label="Select Log Level"
-                  desc="Log Level to set"
-                  inputField={inputFields["logLevel"]}
-                  setInputField={(value) =>
-                    updateInputFields("logLevel", value)
-                  }
-                  disabled={false}
-                  error={inputFieldsErrors.logLevel}
-                />
-              </div>
-            </div>
+              <InputConfigOption
+                label="Enter Run name(optional)"
+                value={inputFields["runName"]}
+                desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+                setValue={(value) => updateInputFields("runName", value)}
+              />
+              <NewDropdown
+                data={modalFile}
+                multiple={false}
+                label="Select modal file to use"
+                desc="Name of modal file to use"
+                inputField={inputFields["selectedModal"]}
+                setInputField={(value) =>
+                  updateInputFields("selectedModal", value)
+                }
+                disabled={false}
+                error={inputFieldsErrors.selectedModal}
+              />
+              <NewDropdown
+                data={logLevelOptions}
+                multiple={false}
+                label="Select Log Level"
+                desc="Log Level to set"
+                inputField={inputFields["logLevel"]}
+                setInputField={(value) => updateInputFields("logLevel", value)}
+                disabled={false}
+                error={inputFieldsErrors.logLevel}
+              />
           </div>
           {modalShow && (
             <MultiprocessModal
@@ -176,6 +156,7 @@ const CategorizationForm = ({
               <button
                 className="btn form-page-button rounded-0"
                 onClick={loading ? preventClick : handleClick}
+                disabled={showLogs || showTable}
               >
                 {loading ? (
                   <>

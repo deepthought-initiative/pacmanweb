@@ -122,10 +122,9 @@ const MatchReviewersForm = ({
 
   return (
     <form>
-      <div className="mt-5" id="main-container">
+      <div className="mt-3" id="main-container">
         {!showLogs && !showTable && <h3>Start a new process</h3>}
         <div>
-          <div className="row">
             <NewDropdown
               data={allCycles}
               label="Selected Current Cycle"
@@ -138,10 +137,8 @@ const MatchReviewersForm = ({
               disabled={showTable || showLogs}
               error={inputFieldsErrors.currentCycle}
             />
-          </div>
           {!showLogs && (
             <div>
-              {" "}
               {/** Use panelist panelist-name-container for css*/}
               {/* <div className="upload-panelist-file">
               <div className="border d-flex">
@@ -167,18 +164,12 @@ const MatchReviewersForm = ({
       </div>
       <div className="separator">Other Options</div>
       <div className="all-options">
-        <div className="row">
-          <div className="single-option col-12">
             <InputConfigOption
               label="Enter Run name(optional)"
               value={inputFields.setRunName}
               desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
               setValue={(value) => updateInputFields("runName", value)}
             />
-          </div>
-        </div>
-        <div className="row">
-          <div className="single-option col-12">
             <NewDropdown
               data={modalFile}
               multiple={false}
@@ -191,10 +182,6 @@ const MatchReviewersForm = ({
               disabled={false}
               error={inputFieldsErrors.selectedModal}
             />
-          </div>
-        </div>
-        <div className="row">
-          <div className="single-option col-12">
             <InputConfigOption
               label="Assignment Number Top Reviewers"
               value={inputFields.numberOfTopReviewers}
@@ -204,10 +191,6 @@ const MatchReviewersForm = ({
               }
               error={inputFieldsErrors.numberOfTopReviewers}
             />
-          </div>
-        </div>
-        <div className="row">
-          <div className="single-option col-12">
             <InputConfigOption
               label="Close Collaborator Time Frame"
               value={inputFields.closeCollaboratorTimeFrame}
@@ -217,10 +200,6 @@ const MatchReviewersForm = ({
               }
               error={inputFieldsErrors.closeCollaboratorTimeFrame}
             />
-          </div>
-        </div>
-        <div className="row">
-          <div className="single-option col-12">
             <NewDropdown
               data={logLevelOptions}
               multiple={false}
@@ -231,8 +210,6 @@ const MatchReviewersForm = ({
               disabled={false}
               error={inputFieldsErrors.logLevel}
             />
-          </div>
-        </div>
       </div>
       {modalShow && (
         <MultiprocessModal modalShow={modalShow} setModalShow={setModalShow} />
@@ -242,6 +219,7 @@ const MatchReviewersForm = ({
           <button
             className="btn form-page-button rounded-0"
             onClick={loading ? preventClick : handleClick}
+            disabled={showLogs || showTable}
           >
             {loading ? (
               <>

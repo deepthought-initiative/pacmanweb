@@ -63,7 +63,7 @@ const NewDropdown = ({
           ? inputField.length > 0
             ? inputField.join(", ")
             : " "
-          : inputField || " "}
+          : <div className="input-field-selected-value">{inputField}</div> || " "}
         <div className={`triangle ${dropdownOpen ? "reverse" : ""}`}></div>
       </div>
       <div className="option-header">
