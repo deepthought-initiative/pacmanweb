@@ -248,6 +248,26 @@ th {
   color: #333;
 }
 
+.input-field-selected-value {
+  max-width: 400px;
+  width: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+@media (max-width: 1000px) {
+  .input-field-selected-value {
+    max-width: 300px;
+  }
+}
+@media (min-width: 1400px) {
+  .input-field-selected-value {
+    max-width: 600px;
+  }
+}
+
 .required{
   border: 2px solid red;
   font-family: 'manrope';
@@ -318,7 +338,7 @@ h3{
 .custom-form-label{
   position: absolute;
   top: -9px;
-  left: 30px;
+  left: 21px;
   background-color: white;
   padding-left: 3px;
   padding-right: 3px;
@@ -398,7 +418,8 @@ h3{
 .input-group input {
   height: 50px;
   font-size: 16px;
-  font-weight: 900;
+  font-weight: bold;
+  border-color: #858C94 !important;
 }
 
 .form-control{
@@ -497,7 +518,6 @@ padding-left: 0;
 }
 
 /*Download dropdowns*/
-
 #dropdown-basic-button{
   background-color: #7A8E99;
   border-radius: 0;
@@ -507,26 +527,17 @@ padding-left: 0;
   background-color: #7A8E99;
 }
 
-
 .all-options {
   position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: minmax(auto, 1fr);
   margin: auto;
-  margin-top: 50px;
+  margin-top: 40px;
   gap: 35px;
 }
 
-.single-option input,
-.single-option label {
-  display: flex;
-  border-color: #858C94 !important;
-}
-
-
 /*Admin Dashboard*/
-
 .user-list-container {
   margin-top: 50px;
   width: 80%;
@@ -890,4 +901,5 @@ textarea{
 
 .custom-toast .toast-body {
   color: white;
+  text-align: left;
 }
