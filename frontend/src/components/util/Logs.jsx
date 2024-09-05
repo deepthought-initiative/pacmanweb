@@ -5,6 +5,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import Spinner from "react-bootstrap/Spinner";
 import { DownloadFile } from "./DownloadFile";
 
+
 const Logs = ({
   setShowTable,
   onTerminate,
@@ -18,16 +19,15 @@ const Logs = ({
   preventClick,
   setShowLogs,
   mode,
+  usePrompt,
   currentCycle,
   currentTaskId,
 }) => {
-
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
     setShowLogs(false);
   };
-
   const variant =
     progressPercentage < 100
       ? ""
@@ -41,6 +41,8 @@ const Logs = ({
       : processStatus === 200 || processStatus === 204
       ? "Process Successful!"
       : "Process Failed!";
+
+  usePrompt("A process is running. Do you really want to leave?", progressPercentage < 100);
 
   return (
     <>
@@ -99,10 +101,20 @@ const Logs = ({
             See Results
           </button>
           <DropdownButton id="dropdown-basic-button" title="Download Data">
-            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentTaskId, currentCycle, mode, "csv")}>
+            <Dropdown.Item
+              className="download-option"
+              onClick={() =>
+                DownloadFile(currentTaskId, currentCycle, mode, "csv")
+              }
+            >
               Download as CSV
             </Dropdown.Item>
-            <Dropdown.Item className="download-option" onClick={() => DownloadFile(currentTaskId, currentCycle, mode, "zip")}>
+            <Dropdown.Item
+              className="download-option"
+              onClick={() =>
+                DownloadFile(currentTaskId, currentCycle, mode, "zip")
+              }
+            >
               Download as Zip
             </Dropdown.Item>
           </DropdownButton>
