@@ -11,7 +11,6 @@ services:
       - .env.prod
     ports: 
       - "8080:8080"
-    command: npm run start
     depends_on:
       - backend
 
