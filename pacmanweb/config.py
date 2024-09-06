@@ -12,7 +12,9 @@ class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
     ENV_NAME = os.getenv('ENV_NAME')
 
-    SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex())
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    if not SECRET_KEY:
+        SECRET_KEY = secrets.token_hex()
     TEST_ADS_API_KEY = os.getenv('ADS_DEV_KEY')
     if not TEST_ADS_API_KEY:
         raise ValueError("No ADS key provided. Please edit your environment file.")
