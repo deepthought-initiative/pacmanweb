@@ -14,6 +14,11 @@ class Config:
 
     SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex())
     TEST_ADS_API_KEY = os.getenv('ADS_DEV_KEY')
+    if not TEST_ADS_API_KEY:
+        raise ValueError("No ADS key provided. Please edit your environment file.")
+
+    if not ENV_NAME:
+        raise ValueError("No ENV_NAME provided. Please edit your environment file.")
 
     CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
     CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
