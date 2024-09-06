@@ -2,6 +2,7 @@ import os
 import pathlib
 import yaml
 from dotenv import load_dotenv
+import secrets
 
 # Load the appropriate .env file based on the MODE
 MODE = os.getenv('MODE', 'dev')
@@ -11,12 +12,12 @@ class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
     ENV_NAME = os.getenv('ENV_NAME')
 
-    SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(32))
+    SECRET_KEY = os.getenv('SECRET_KEY', secrets.token_hex())
     TEST_ADS_API_KEY = os.getenv('ADS_DEV_KEY')
 
     CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
     CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
-    SUBPROCESS_COMMANDS = f'conda run -n {ENV_NAME} python run_pacman.py'
+    SUBPROCESS_COMMANDS = os.getenv('SUBPROCESS_COMMANDS')
 
     # celery config
     CELERY = {}
