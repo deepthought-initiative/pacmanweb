@@ -1,44 +1,22 @@
-import json
 import os
 import pathlib
 import yaml
+from dotenv import load_dotenv
 
-# or prod
-MODE = "prod"
-
+# Load the appropriate .env file based on the MODE
+MODE = os.getenv('MODE', 'dev')
+load_dotenv(f'../.env.{MODE}')
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
-    ENV_NAME = ""
+    ENV_NAME = os.getenv('ENV_NAME')
 
-    secrets_fpath = ROOTDIR.parent / "secrets.json"
-    with open(secrets_fpath, "r") as secrets:
-        CREDS = json.load(secrets)
+    SECRET_KEY = os.getenv('SECRET_KEY', os.urandom(32))
+    TEST_ADS_API_KEY = os.getenv('ADS_DEV_KEY')
 
-    # will surpass the environment variable
-    if CREDS.get("ENV_NAME", None):
-        ENV_NAME = CREDS["ENV_NAME"]
-
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    TEST_ADS_API_KEY = CREDS["ADS_DEV_KEY"]
-    ENV_NAME = CREDS["ENV_NAME"]
-
-    if MODE == "prod":
-        CELERY_RESULT_BACKEND = "redis://redis:6379/0"
-        CELERY_BROKER_URL = f"amqp://guest:guest@rabbitmq:5672"
-        ENV_NAME = "base"  # env needs to be base for docker
-        SUBPROCESS_COMMANDS = f"micromamba run -n {ENV_NAME}  python run_pacman.py"
-
-    if MODE == "dev":
-        CELERY_RESULT_BACKEND = "redis://"
-        CELERY_BROKER_URL = f"pyamqp://"
-        SUBPROCESS_COMMANDS = f"conda run -n {ENV_NAME}  python run_pacman.py"
-
-    if not SECRET_KEY:
-        try:
-            SECRET_KEY = CREDS.get("SECRET_KEY", os.urandom(32))
-        except KeyError:
-            raise ValueError("No SECRET_KEY found in secrets.json or in path")
+    CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+    CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+    SUBPROCESS_COMMANDS = f'conda run -n {ENV_NAME} python run_pacman.py'
 
     # celery config
     CELERY = {}
