@@ -7,6 +7,7 @@ import InputConfigOption from "../util/InputConfigOption.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
 import MultiprocessModal from "../util/MultiprocessModal.jsx";
 import Spinner from "react-bootstrap/Spinner";
+import { runPacman } from "../util/Api.jsx";
 
 const DuplicationForm = ({
   allCycles,
@@ -23,7 +24,7 @@ const DuplicationForm = ({
   setInputFields,
   inputFields,
   logLevelOptions,
-  updateInputFields
+  updateInputFields,
 }) => {
   const [modalShow, setModalShow] = useState(false); // for showing alert when running multiple processes at the same time
   const bothPastAndCurrentCycles = [
@@ -68,35 +69,25 @@ const DuplicationForm = ({
     setInputFieldsErrors(defaultInputFieldsErrors);
     const checkErrors = validateFields();
     if (checkErrors) {
-      let spawnResponse;
       setLoading(true);
-      const params = [
-        `mode=${mode}`,
-        `past_cycles=${bothPastAndCurrentCycles.toString()}`,
-        `main_test_cycle=${inputFields.currentCycle}`,
-        `log_level=${inputFields.logLevel}`,
-      ];
-      // const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
-      // if (runNameParam !== "") {
-      //   params.push(`run_name=${runNameParam}`);
-      // }
-      const query = params.join("&");
-      const Url = `/api/run_pacman?${query}`;
-      spawnResponse = await fetch(Url, {
-        method: "GET",
-        headers: {
-          Authorization: "Basic " + btoa("default:barebones"),
-          "Content-Type": "application/json",
-        },
-      });
-      if (spawnResponse.status === 429) {
-        setModalShow(true);
-      } else {
-        const data = await spawnResponse.json();
-        setCurrentTaskId(data["result_id"]);
+      try {
+        let paramsObject = {
+          mode: inputFields.mode,
+          main_test_cycle: inputFields.currentCycle,
+          past_cycles: bothPastAndCurrentCycles,
+          log_level: inputFields.logLevel,
+        };
+        if (inputFields.runName) {
+          paramsObject["run_name"] = inputFields.runName;
+        }
+        const result_id = await runPacman(paramsObject);
+        setCurrentTaskId(result_id);
         setShowLogs(true);
         setLoading(false);
-        await startFetchingLogs(data["result_id"]);
+        await startFetchingLogs(result_id);
+      } catch (e) {
+        console.log(e);
+        setModalShow(true);
       }
     }
   };
@@ -118,69 +109,51 @@ const DuplicationForm = ({
 
   return (
     <form>
-      <div className="mt-5" id="main-container">
+      <div className="mt-3" id="main-container">
         {!showLogs && !showTable && <h3>Start a new process</h3>}
         <div className="all-options">
-          <div className="row">
-            <div className="single-option col-12">
-              <NewDropdown
-                data={allCycles}
-                label="Selected Current Cycle"
-                desc="Prefix used throughout script to match with cycle description"
-                inputField={inputFields.currentCycle}
-                multiple={false}
-                setInputField={handleFilteringCycles}
-                disabled={showTable || showLogs}
-                error={inputFieldsErrors.currentCycle}
-              />
-            </div>
-          </div>
-          <div className="row">
-            <div className="single-option col-12">
-              <NewDropdown
-                data={filteredCycles}
-                label="Selected Past Cycle(Multiple)"
-                desc="Cycle prefixes of past cycles"
-                inputField={inputFields.pastCycle}
-                multiple={true}
-                setInputField={(value) => updateInputFields("pastCycle", value)}
-                disabled={showTable || showLogs}
-                error={inputFieldsErrors.pastCycle}
-              />
-            </div>
-          </div>
+          <NewDropdown
+            data={allCycles}
+            label="Selected Current Cycle"
+            desc="Prefix used throughout script to match with cycle description"
+            inputField={inputFields.currentCycle}
+            multiple={false}
+            setInputField={handleFilteringCycles}
+            disabled={showTable || showLogs}
+            error={inputFieldsErrors.currentCycle}
+          />
+          <NewDropdown
+            data={filteredCycles}
+            label="Selected Past Cycle(Multiple)"
+            desc="Cycle prefixes of past cycles"
+            inputField={inputFields.pastCycle}
+            multiple={true}
+            setInputField={(value) => updateInputFields("pastCycle", value)}
+            disabled={showTable || showLogs}
+            error={inputFieldsErrors.pastCycle}
+          />
         </div>
       </div>
       {!showTable && !showLogs && (
         <>
           <div className="separator">Other Options</div>
           <div className="all-options">
-            <div className="row">
-              <div className="single-option col-12">
-                <InputConfigOption
-                  label="Enter Run name(optional)"
-                  value={inputFields.runName}
-                  desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
-                  setValue={(value) => updateInputFields("runName", value)}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="single-option col-12">
-                <NewDropdown
-                  data={logLevelOptions}
-                  multiple={false}
-                  label="Select Log Level"
-                  desc="Log Level to set"
-                  inputField={inputFields.logLevel}
-                  setInputField={(value) =>
-                    updateInputFields("logLevel", value)
-                  }
-                  disabled={false}
-                  error={inputFieldsErrors.logLevel}
-                />
-              </div>
-            </div>
+            <InputConfigOption
+              label="Enter Run name(optional)"
+              value={inputFields.runName}
+              desc="Name for specific run of the PACMan code (e.g.,'Telescope_Cycle4b' as an example)"
+              setValue={(value) => updateInputFields("runName", value)}
+            />
+            <NewDropdown
+              data={logLevelOptions}
+              multiple={false}
+              label="Select Log Level"
+              desc="Log Level to set"
+              inputField={inputFields.logLevel}
+              setInputField={(value) => updateInputFields("logLevel", value)}
+              disabled={false}
+              error={inputFieldsErrors.logLevel}
+            />
           </div>
           {modalShow && (
             <MultiprocessModal
@@ -193,6 +166,7 @@ const DuplicationForm = ({
               <button
                 className="btn form-page-button rounded-0"
                 onClick={loading ? preventClick : handleClick}
+                disabled={showLogs || showTable}
               >
                 {loading ? (
                   <>

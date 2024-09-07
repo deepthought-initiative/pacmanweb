@@ -15,14 +15,14 @@ const DuplicationPage = ({
     currentCycle: "",
     runName: "",
     pastCycle: [],
-    selectedModal: "strolger_pacman_model_7cycles.joblib",
     logLevel: "info",
+    mode: "DUP"
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
   return (
     <PageComponent
       allCycles={allCycles}
-      mode="DUP"
+      mode={inputFields.mode}
       logLevelOptions={logLevelOptions}
       inputFields={inputFields}
       setInputFields={setInputFields}

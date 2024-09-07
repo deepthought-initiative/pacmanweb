@@ -10,9 +10,12 @@ const InputConfigOption = ({
   error,
   disabled,
 }) => {
-  const handleOnChange = useCallback((event) => {
-    setValue(event.target.value);
-  }, [setValue]);
+  const handleOnChange = useCallback(
+    (event) => {
+      setValue(event.target.value);
+    },
+    [setValue]
+  );
   return (
     <div className="dropdown-container">
       <div className="option-header">

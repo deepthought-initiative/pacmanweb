@@ -5,7 +5,6 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 import Spinner from "react-bootstrap/Spinner";
 import { DownloadFile } from "./DownloadFile";
 
-
 const Logs = ({
   setShowTable,
   onTerminate,
