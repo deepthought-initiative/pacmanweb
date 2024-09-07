@@ -77,17 +77,17 @@ const DuplicationForm = ({
           past_cycles: bothPastAndCurrentCycles,
           log_level: inputFields.logLevel,
         };
-        if (inputFields.runName) {
+        const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
+        if (runNameParam !== "") {
           paramsObject["run_name"] = inputFields.runName;
         }
-        const result_id = await runPacman(paramsObject);
+        const result_id = await runPacman(paramsObject, setModalShow);
         setCurrentTaskId(result_id);
         setShowLogs(true);
         setLoading(false);
         await startFetchingLogs(result_id);
       } catch (e) {
         console.log(e);
-        setModalShow(true);
       }
     }
   };
