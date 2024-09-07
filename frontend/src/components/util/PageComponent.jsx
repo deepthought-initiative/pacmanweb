@@ -149,7 +149,7 @@ const PageComponent = ({
             await fetchTable(curId);
             eventSource.close();
             setShowTerminateProcess(false);
-            return; // Exit after process completion
+            return;
           }
           setLogs((prevLogs) => [...prevLogs, newLog]);
           logContainerRef.current.scrollTop =
