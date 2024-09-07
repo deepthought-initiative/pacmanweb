@@ -9,6 +9,7 @@ import Spinner from "react-bootstrap/Spinner";
 import "../../css/otherConfigOptions.css";
 import MultiprocessModal from "../util/MultiprocessModal.jsx";
 import InputConfigOption from "../util/InputConfigOption.jsx";
+import { runPacman } from "../util/Api.jsx";
 
 const MatchReviewersForm = ({
   allCycles,
@@ -80,42 +81,32 @@ const MatchReviewersForm = ({
     setInputFieldsErrors(defaultInputFieldsErrors);
     setTextAreaError("");
     const checkErrors = validateFields();
-    const params = [
-      `mode=${mode}`,
-      `main_test_cycle=${inputFields.currentCycle}`,
-      `modelfile=${inputFields.selectedModal}`,
-      `assignment_number_top_reviewers=${inputFields.numberOfTopReviewers}`,
-      `close_collaborator_time_frame=${inputFields.closeCollaboratorTimeFrame}`,
-      `log_level=${inputFields.logLevel}`,
-    ];
-    if (inputFields.panelistNames.length !== 0) {
-      params.push("panelist_names", inputFields.panelistNames);
-      params.push("panelist_names_mode", "append");
-    }
-    // const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
-    // if (runNameParam !== "") {
-    //   params.push(`run_name=${runNameParam}`);
-    // }
-    const query = params.join("&");
-    const url = `/api/run_pacman?${query}`;
     if (checkErrors) {
-      let spawnResponse;
       setLoading(true);
-      spawnResponse = await fetch(url, {
-        method: "GET",
-        headers: {
-          Authorization: "Basic " + btoa("default:barebones"),
-          "Content-Type": "application/json",
-        },
-      });
-      if (spawnResponse.status === 429) {
-        setModalShow(true);
-      } else {
-        const data = await spawnResponse.json();
-        setCurrentTaskId(data["result_id"]);
+      try {
+        let paramsObject = {
+          mode: inputFields.mode,
+          main_test_cycle: inputFields.currentCycle,
+          modelfile: inputFields.selectedModal,
+          assignment_number_top_reviewers: inputFields.numberOfTopReviewers,
+          close_collaborator_time_frame: inputFields.closeCollaboratorTimeFrame,
+          log_level: inputFields.logLevel,
+        };
+        if (inputFields.panelistNames.length !== 0) {
+          paramsObject["panelist_names"] = inputFields.panelistNames;
+          paramsObject["panelist_names_mode"] = "append";
+        }
+        const runNameParam = inputFields.runName.trim().replace(/\s+/g, "_");
+        if (runNameParam !== "") {
+          paramsObject["run_name"] = inputFields.runName;
+        }
+        const result_id = await runPacman(paramsObject, setModalShow);
+        setCurrentTaskId(result_id);
         setShowLogs(true);
         setLoading(false);
-        await startFetchingLogs(data["result_id"]);
+        await startFetchingLogs(result_id);
+      } catch (e) {
+        console.log(e);
       }
     }
   };

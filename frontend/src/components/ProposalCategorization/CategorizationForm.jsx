@@ -8,6 +8,7 @@ import Spinner from "react-bootstrap/Spinner";
 import "../../css/otherConfigOptions.css";
 import MultiprocessModal from "../util/MultiprocessModal.jsx";
 import InputConfigOption from "../util/InputConfigOption.jsx";
+import { runPacman } from "../util/Api.jsx";
 
 const CategorizationForm = ({
   allCycles,
@@ -64,35 +65,25 @@ const CategorizationForm = ({
     setInputFieldsErrors(defaultInputFieldsErrors);
     const checkErrors = validateFields();
     if (checkErrors) {
-      let spawnResponse;
       setLoading(true);
-      const params = [
-        `mode=${mode}`,
-        `main_test_cycle=${inputFields["currentCycle"]}`,
-        `modelfile=${inputFields["selectedModal"]}`,
-        `log_level=${inputFields["logLevel"]}`,
-      ];
-      // const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
-      // if (runNameParam !== "") {
-      //   params.push(`run_name=${runNameParam}`);
-      // }
-      const query = params.join("&");
-      const Url = `/api/run_pacman?${query}`;
-      spawnResponse = await fetch(Url, {
-        method: "GET",
-        headers: {
-          Authorization: "Basic " + btoa("default:barebones"),
-          "Content-Type": "application/json",
-        },
-      });
-      if (spawnResponse.status === 429) {
-        setModalShow(true);
-      } else {
-        const data = await spawnResponse.json();
-        setCurrentTaskId(data["result_id"]);
+      try{
+        let paramsObject = {
+          mode: inputFields.mode,
+          main_test_cycle: inputFields.currentCycle,
+          modelfile: inputFields.selectedModal,
+          log_level: inputFields.logLevel
+        };
+        const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
+        if (runNameParam !== "") {
+          paramsObject["run_name"] = inputFields.runName;
+        }
+        const result_id = await runPacman(paramsObject, setModalShow);
+        setCurrentTaskId(result_id);
         setShowLogs(true);
         setLoading(false);
-        await startFetchingLogs(data["result_id"]);
+        await startFetchingLogs(result_id);
+      } catch(e) {
+        console.log(e);
       }
     }
   };

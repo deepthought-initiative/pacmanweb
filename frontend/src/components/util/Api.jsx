@@ -1,4 +1,4 @@
-export const runPacman = async (inputFields) => {
+export const runPacman = async (inputFields, setModalShow) => {
   const params = new URLSearchParams();
   Object.entries(inputFields).forEach(([key, value]) => {
     params.append(key, value);
@@ -12,9 +12,13 @@ export const runPacman = async (inputFields) => {
       "Content-Type": "application/json",
     },
   });
+  if (spawnResponse.status === 429) {
+    setModalShow(true);
+  }
   if (!spawnResponse.ok) {
     throw new Error(spawnResponse);
   }
-  const data = await spawnResponse.json();
-  return data["result_id"];
+
+    const data = await spawnResponse.json();
+    return data["result_id"];
 };
