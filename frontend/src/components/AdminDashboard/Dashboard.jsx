@@ -160,7 +160,7 @@ const Dashboard = ({ usernameContext }) => {
         </div>
       </div>
       <div className="admin-table-container">
-        <Table className="admin-table" bordered hover>
+        <table className="container-fluid secondary-table">
           <thead>
             <tr>
               <th>#</th>
@@ -193,7 +193,7 @@ const Dashboard = ({ usernameContext }) => {
               </tr>
             ))}
           </tbody>
-        </Table>
+        </table>
       </div>
       {show && (
         <EditUserModal
