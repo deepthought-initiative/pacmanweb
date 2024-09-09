@@ -3,7 +3,7 @@
 
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
-import { DownloadFile } from "./DownloadFile";
+import { DownloadFile } from "./Api";
 
 const ButtonTray = ({
   onCategorizeAnotherCycle,

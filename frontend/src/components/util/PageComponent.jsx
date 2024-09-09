@@ -7,6 +7,7 @@ import Logs from "./Logs.jsx";
 import CustomToast from "./CustomToast.jsx";
 import AppContext from "../../context/AppContext.jsx";
 import { UNSAFE_NavigationContext as NavigationContext } from "react-router-dom";
+import { fetchTableData, terminateCurrentProcess } from "./Api.jsx";
 
 const PageComponent = ({
   allCycles,
@@ -50,9 +51,7 @@ const PageComponent = ({
     if (!currentTaskId) {
       return;
     }
-    await fetch(`/api/terminate/${currentTaskId}?mode=${mode}`, {
-      method: "POST",
-    });
+    terminateCurrentProcess(currentTaskId, mode)
     onTerminate();
   }, [currentTaskId, mode, onTerminate]);
 
@@ -71,47 +70,25 @@ const PageComponent = ({
       if (!curId) {
         return;
       }
-      let tableCategory = "";
-      if (mode === "PROP") {
-        tableCategory = "proposal_cat_output";
-      }
-      if (mode == "DUP") {
-        tableCategory = "duplicates_output";
-      }
-      if (mode == "MATCH") {
-        tableCategory = "match_reviewers_output";
-      }
       try {
-        const tableResponse = await fetch(
-          `/api/outputs/${tableCategory}/${curId}?cycle_number=${inputFields["currentCycle"]}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: { Authorization: "Basic " + btoa("default:barebones") },
-          }
+        const { tabularData, code } = await fetchTableData(
+          mode,
+          curId,
+          inputFields["currentCycle"],
+          setProgressPercentage
         );
-        if (!tableResponse.ok) {
-          setProgressPercentage(100);
-          throw new Error(
-            `Failed to fetch table data: ${tableResponse.statusText}`
-          );
-        }
-        const tableData = await tableResponse.json();
-        const [tabularData, code] = tableData;
         setDataToDisplay(tabularData);
         setProcessStatus(code);
+        setProgressPercentage(100);
         if (code === 200) {
-          setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
           setToastVariant("success");
           setShowToast(true);
         } else if (code === 204) {
-          setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
           setToastVariant("success");
           setShowToast(true);
         } else {
-          setProgressPercentage(100);
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
           setToastVariant("danger");
           setShowToast(true);
@@ -119,7 +96,6 @@ const PageComponent = ({
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
       } catch (error) {
-        setProgressPercentage(100);
         console.error("Error fetching table data:", error);
       }
     },
