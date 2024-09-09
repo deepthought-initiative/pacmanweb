@@ -1,13 +1,17 @@
 /* eslint-disable react/prop-types */
 import { useCallback } from "react";
 import ErrorMessage from "../util/ErrorMessage.jsx";
+import ShowPasswordIcon from "../../assets/show.png";
+import HidePasswordIcon from "../../assets/hide.png";
 
-const InputConfigOption = ({
+const PasswordInput = ({
   label,
   value,
   setValue,
   error,
   desc,
+  showPassword,
+  toggleShowPassword,
   disabled,
 }) => {
   const handleOnChange = useCallback(
@@ -16,25 +20,40 @@ const InputConfigOption = ({
     },
     [setValue]
   );
+
   return (
     <div className="dropdown-container">
       <div className="option-header">
         <label
           className={`custom-input-form-label ${
             disabled ? "label-disabled" : ""
-          } `}
+          }`}
         >
           {label}
         </label>
       </div>
       <div className={`input-group`}>
         <input
+          type={showPassword ? "text" : "password"}
           value={value}
           onChange={handleOnChange}
-          type="text"
-          className={`rounded-0 custom ${disabled ? "disabled" : ""} ${error ? "required" : ""}`}
+          className={`password-input custom rounded-0 ${
+            error ? "required" : ""
+          }${disabled ? "disabled" : ""}`}
           disabled={disabled}
+          autoFocus
         />
+        <button
+          onClick={toggleShowPassword}
+          type="button"
+          className="show-password-btn"
+          disabled={disabled}
+        >
+          <img
+            src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
+            alt="Toggle Password Visibility"
+          />
+        </button>
       </div>
       <div className="option-header">
         <div className="form-text text-start ms-4">{desc}</div>
@@ -44,4 +63,4 @@ const InputConfigOption = ({
   );
 };
 
-export default InputConfigOption;
+export default PasswordInput;

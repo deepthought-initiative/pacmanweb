@@ -165,8 +165,8 @@ th {
 .error-container>img {
   border-radius: 50%;
   overflow: hidden;
-  height: 10px;
-  width: 10px;
+  height: 12px;
+  width: 12px;
   object-fit: cover;
   object-position: center;
 }
@@ -269,7 +269,7 @@ th {
 }
 
 .required{
-  border: 2px solid red;
+  border: 2px solid red !important;
   font-family: 'manrope';
 }
 
@@ -419,7 +419,13 @@ h3{
   height: 50px;
   font-size: 16px;
   font-weight: bold;
-  border-color: #858C94 !important;
+}
+
+input[type="text"].custom {
+  border-color: #858C94;
+}
+input[type="password"].custom {
+  border-color: #858C94;
 }
 
 .form-control{
@@ -575,7 +581,7 @@ padding-left: 0;
 
 .show-password-btn {
   position: absolute;
-  top: 67%;
+  top: 50%;
   right: 8px; /*set 35 px when there is an error*/
   transform: translateY(-50%);
   background: transparent;
@@ -902,4 +908,11 @@ textarea{
 .custom-toast .toast-body {
   color: white;
   text-align: left;
+}
+
+/**/
+.user-form{
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
 }

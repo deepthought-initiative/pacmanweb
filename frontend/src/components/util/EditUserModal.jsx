@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
@@ -10,6 +10,8 @@ import Row from "react-bootstrap/Row";
 import HidePasswordIcon from "../../assets/hide.png";
 import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
+import InputConfigOption from "./InputConfigOption";
+import PasswordInput from "./PasswordInput";
 
 // eslint-disable-next-line react/prop-types
 const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
@@ -182,31 +184,31 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   };
 
   const handleAddNewUser = () => {
-    if (updatedUser.username === "" || updatedUser.password === "") {
-      setUsernameError(updatedUser.username === "");
+    let noError = true
+    if (updatedUser.username === "") {
       setUsernameErrorMessage(" Username is required.");
-      setPasswordError(updatedUser.password === "");
+      noError = false
+    }
+    if (updatedUser.password === "") {
       setPasswordErrorMessage(" Password is required.");
-      return;
+      noError = false
     }
     if (/\s|\t|\n/.test(updatedUser.password)) {
       setPasswordErrorMessage(
-        "Password cannot have white spaces, tabs or new line characters"
+        "No white spaces, tabs or new line characters"
       );
-      setPasswordError(true);
-      return;
-    } else {
-      setPasswordError(false);
+      noError = false
     }
-
     if (updatedUser.username !== "") {
       const isUsernamePresent = allUsers.some(
         (user) => user.username === updatedUser.username
       );
       if (isUsernamePresent) {
-        setUsernameError(true);
         setUsernameErrorMessage("Username already exists");
-      } else {
+        noError = false
+      }
+    }
+    if (noError){
         setConfirmationMessage(
           `Are you sure you want to add this user?
 
@@ -215,7 +217,6 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         );
         setShowConfirmationModal(true);
         setShowEditModal(false);
-      }
     }
   };
 
@@ -223,6 +224,13 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     setShowConfirmationModal(false);
     setShowEditModal(true);
   };
+
+  const updateInputFields = useCallback(
+    (key, value) => {
+      setUpdatedUser((prev) => ({ ...prev, [key]: value }));
+    },
+    [setUpdatedUser]
+  );
 
   return (
     <>
@@ -236,66 +244,26 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
+            <Form className="user-form">
               {mode === "add" && (
-                <Form.Group className="mb-3" controlId="Form.Username">
-                  <Form.Label>
-                    <strong>Username</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    autoFocus
-                    value={updatedUser.username}
-                    onChange={handleUsernameChange}
-                    isInvalid={usernameError}
-                  />
-                  {usernameError && (
-                    <Form.Control.Feedback type="invalid">
-                      {usernameErrorMessage}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
+                <InputConfigOption
+                  label="Username"
+                  value={updatedUser.username}
+                  desc="Enter the username"
+                  setValue={(value) => updateInputFields("username", value)}
+                  error={usernameErrorMessage}
+                />
               )}
-              <Form.Group
-                className="mb-3 password-input-wrapper"
-                controlId="Form.NewPassword"
-              >
-                <Form.Label>
-                  <strong>
-                    {mode === "edit" ? "New Password" : "Password"}
-                  </strong>
-                </Form.Label>
-                <div className="password-input-container">
-                  <Form.Control
-                    type={showPassword ? "text" : "password"}
-                    autoFocus
-                    value={updatedUser.password}
-                    onChange={handlePasswordChange}
-                    isInvalid={passwordError}
-                    className="password-input"
-                  />
-                  <button
-                    onClick={handleShowPassword}
-                    type="button"
-                    className="show-password-btn"
-                    style={passwordError ? { right: "35px" } : {}}
-                  >
-                    <img
-                      src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
-                      alt="Show Password"
-                    />
-                  </button>
-                </div>
-                <div className="password-feedback-container">
-                  {passwordError && (
-                    <div className="password-feedback-container">
-                      <Form.Control.Feedback type="invalid">
-                        {passwordErrorMessage}
-                      </Form.Control.Feedback>
-                    </div>
-                  )}
-                </div>
-              </Form.Group>
+              <PasswordInput
+                label={mode === "edit" ? "New Password" : "Password"}
+                value={updatedUser.password}
+                setValue={(value) => updateInputFields("password", value)}
+                error={passwordErrorMessage}
+                desc={mode === "edit" ? "Enter new password" : "Enter password"}
+                showPassword={showPassword}
+                toggleShowPassword={handleShowPassword}
+                disabled={false}
+              />
               {selectedUser["username"] !== "mainadmin" && (
                 <Form.Group
                   as={Row}
