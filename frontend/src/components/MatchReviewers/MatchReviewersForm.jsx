@@ -14,12 +14,10 @@ import { runPacman } from "../util/Api.jsx";
 const MatchReviewersForm = ({
   allCycles,
   modalFile,
-  mode,
   button_label,
   showTable,
   showLogs,
   inputFields,
-  setInputFields,
   setCurrentTaskId,
   setShowLogs,
   startFetchingLogs,

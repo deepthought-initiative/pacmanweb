@@ -13,7 +13,6 @@ import { runPacman } from "../util/Api.jsx";
 const CategorizationForm = ({
   allCycles,
   modalFile,
-  mode,
   showLogs,
   showTable,
   button_label,
@@ -23,7 +22,6 @@ const CategorizationForm = ({
   loading,
   preventClick,
   setLoading,
-  setInputFields,
   updateInputFields,
   inputFields,
   logLevelOptions,

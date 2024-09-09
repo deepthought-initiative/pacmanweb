@@ -21,13 +21,14 @@ const MatchReviewersPage = ({
     closeCollaboratorTimeFrame: 3,
     logLevel: "info",
     selectedModal: "strolger_pacman_model_7cycles.joblib",
+    mode: "MATCH"
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
 
   return (
     <PageComponent
       allCycles={allCycles}
-      mode="MATCH"
+      mode={inputFields.mode}
       modalFile={modalFile}
       logLevelOptions={logLevelOptions}
       inputFields={inputFields}
