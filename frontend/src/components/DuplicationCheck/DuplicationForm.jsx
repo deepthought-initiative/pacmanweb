@@ -11,7 +11,6 @@ import { runPacman } from "../util/Api.jsx";
 
 const DuplicationForm = ({
   allCycles,
-  mode,
   button_label,
   showLogs,
   showTable,
