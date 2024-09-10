@@ -48,19 +48,6 @@ const UploadZipForm = () => {
 
   return (
     <>
-      {showToast && (
-        <CustomToast
-          showToast={showToast}
-          setShowToast={setShowToast}
-          variant={toastVariant}
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            backgroundColor: "transparent",
-          }}
-        />
-      )}
       <div className="instructions-container">
         <ul className="instructions-list">
           <li>The contents of the zip file:</li>

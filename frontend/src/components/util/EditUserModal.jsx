@@ -34,6 +34,9 @@ const EditUserModal = ({
   // Function for showing toasts
   const { showToastMessage } = useContext(ToastContext);
 
+  // Function for showing toasts
+  const { showToastMessage } = useContext(ToastContext);
+
   useEffect(() => {
     setUpdatedUser({
       username: selectedUser?.username || "",
