@@ -83,7 +83,6 @@ services:
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
-    user: celery_user  # Assuming this user is created in the Dockerfile
     healthcheck:
       test: ["CMD", "celery", "-A", "pacmanweb.celery_app", "inspect", "ping", "-d", "celery@$$HOSTNAME"]
       interval: 300s
