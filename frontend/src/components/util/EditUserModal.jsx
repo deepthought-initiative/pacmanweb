@@ -1,21 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-import HidePasswordIcon from "../../assets/hide.png";
-import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
 import InputConfigOption from "./InputConfigOption";
 import PasswordInput from "./PasswordInput";
+import ToastContext from "../../context/ToastContext.jsx";
 
 // eslint-disable-next-line react/prop-types
 const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
-  const [processStatusCode, setProcessStatusCode] = useState();
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);
@@ -24,11 +20,12 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     isadmin: selectedUser?.isadmin || false,
     password: selectedUser?.password || "",
   });
-  const [usernameError, setUsernameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  // Function for showing toasts
+  const { showToastMessage } = useContext(ToastContext);
 
   useEffect(() => {
     setUpdatedUser({
@@ -42,16 +39,6 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     setShow(false);
     setShowConfirmationModal(false);
     setShowEditModal(false);
-  };
-
-  const handleUsernameChange = (event) => {
-    setUpdatedUser({ ...updatedUser, username: event.target.value });
-    setUsernameError(false);
-  };
-
-  const handlePasswordChange = (event) => {
-    setUpdatedUser({ ...updatedUser, password: event.target.value });
-    setPasswordError(false);
   };
 
   const handleAdminStatusChange = (event) => {
@@ -69,13 +56,7 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
 
   const handleSaveChanges = async () => {
     if (/\s|\t|\n/.test(updatedUser.password)) {
-      setPasswordErrorMessage(
-        "Password cannot have white spaces, tabs or new line characters"
-      );
-      setPasswordError(true);
-      return;
-    } else {
-      setPasswordError(false);
+      setPasswordErrorMessage("No white spaces, tabs or new line characters");
     }
 
     if (hasChanged) {
@@ -123,12 +104,11 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         });
 
         if (!response.ok) {
-          setProcessStatusCode(400);
+          showToastMessage("danger", "Failed to edit user!");
         } else {
-          setProcessStatusCode(200);
+          showToastMessage("success", "Updated info successfully!");
           if (mode === "edit") {
             handleClose();
-            window.location.reload();
           } else {
             alert(
               `User "${updatedUser.username}" (${
@@ -172,11 +152,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
       });
 
       if (!response.ok) {
-        setProcessStatusCode(400);
+        showToastMessage("danger", "Failed to edit user!");
       } else {
-        setProcessStatusCode(200);
+        showToastMessage("success", "Updated info successfully!");
         handleClose();
-        window.location.reload();
       }
     } catch (error) {
       console.error("Error updating user:", error);
@@ -184,20 +163,18 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
   };
 
   const handleAddNewUser = () => {
-    let noError = true
+    let noError = true;
     if (updatedUser.username === "") {
       setUsernameErrorMessage(" Username is required.");
-      noError = false
+      noError = false;
     }
     if (updatedUser.password === "") {
       setPasswordErrorMessage(" Password is required.");
-      noError = false
+      noError = false;
     }
     if (/\s|\t|\n/.test(updatedUser.password)) {
-      setPasswordErrorMessage(
-        "No white spaces, tabs or new line characters"
-      );
-      noError = false
+      setPasswordErrorMessage("No white spaces, tabs or new line characters");
+      noError = false;
     }
     if (updatedUser.username !== "") {
       const isUsernamePresent = allUsers.some(
@@ -205,18 +182,18 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
       );
       if (isUsernamePresent) {
         setUsernameErrorMessage("Username already exists");
-        noError = false
+        noError = false;
       }
     }
-    if (noError){
-        setConfirmationMessage(
-          `Are you sure you want to add this user?
+    if (noError) {
+      setConfirmationMessage(
+        `Are you sure you want to add this user?
 
           - Username: ${updatedUser.username}
           - Admin status: ${updatedUser.isadmin ? "Admin" : "Normal user"}`
-        );
-        setShowConfirmationModal(true);
-        setShowEditModal(false);
+      );
+      setShowConfirmationModal(true);
+      setShowEditModal(false);
     }
   };
 

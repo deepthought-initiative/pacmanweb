@@ -5,16 +5,16 @@ import "./App.css";
 import App from "./App.jsx";
 import { AuthContextProvider } from "./context/AuthContext.jsx";
 import { BrowserRouter } from "react-router-dom";
-import { AppContextProvider } from "./context/AppContext.jsx";
+import { ToastContextProvider } from "./context/ToastContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthContextProvider>
-      <AppContextProvider>
+      <ToastContextProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </AppContextProvider>
+      </ToastContextProvider>
     </AuthContextProvider>
   </React.StrictMode>
 );
