@@ -16,11 +16,16 @@ services:
 
   redis:
     image: redis:7-alpine
-    restart: always
+    # restart: always
     ports:
       - '6379:6379'
     volumes:
       - redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_MAXMEMORY=500mb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
 
   rabbitmq:
     image: rabbitmq:3-management
