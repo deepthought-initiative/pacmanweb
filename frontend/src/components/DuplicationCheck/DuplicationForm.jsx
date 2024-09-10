@@ -76,7 +76,7 @@ const DuplicationForm = ({
           past_cycles: bothPastAndCurrentCycles,
           log_level: inputFields.logLevel,
         };
-        const runNameParam = inputFields.runName.trim().replace(/\s+/g, '_');
+        const runNameParam = inputFields.runName.trim().replace(/\s+/g, "_");
         if (runNameParam !== "") {
           paramsObject["run_name"] = inputFields.runName;
         }

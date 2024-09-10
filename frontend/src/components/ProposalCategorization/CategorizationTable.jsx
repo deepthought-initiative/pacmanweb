@@ -33,7 +33,7 @@ const CategorizationTable = ({
       >
         <div className="col-md-9">
           <h6 className="my-3">All Proposals</h6>
-          <div className="table-container">
+          <div className="table-container" data-testid="table-container">
             <table className="container-fluid">
               <thead>
                 <tr>
