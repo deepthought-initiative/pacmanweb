@@ -125,7 +125,6 @@ services:
       - rabbitmq
       - celery
       - backend
-    user: flower_user  # Assuming this user is created in the Dockerfile
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5555"]
       interval: 300s
