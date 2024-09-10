@@ -1,60 +1,80 @@
-version: '3.8'
+version: '3.9'
+
 services:
   frontend:
-    container_name: frontend
     build:
       context: ./frontend
       dockerfile: Dockerfile
     volumes:
-      - react_build:/frontend/dist 
+      - pacmanweb-react-build:/frontend/dist
     env_file:
       - .env.prod
-    ports: 
-      - "8080:8080"
+    expose:
+      - "8080"
     depends_on:
       - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
+    user: node
 
   redis:
-    image: redis:7-alpine
-    # restart: always
-    ports:
-      - '6379:6379'
+    image: redis:7.0.11-alpine
+    restart: always
+    expose:
+      - "6379"
     volumes:
-      - redis_data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - pacmanweb-redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
     command: redis-server /usr/local/etc/redis/redis.conf
     environment:
       - REDIS_MAXMEMORY=500mb
       - REDIS_MAXMEMORY_POLICY=allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     restart: always
+    env_file:
+      - .env.prod
     environment:
       - REDIS_HOSTS=local:redis:6379
-    ports:
-      - '8081:8081'
+      # - HTTP_USER=${REDIS_COMMANDER_USER}
+      # - HTTP_PASSWORD=${REDIS_COMMANDER_PASSWORD}
+    expose:
+      - "8081"
     depends_on:
       - redis
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.9-management
     restart: always
-    ports:
-      - '5672:5672'
-      - '15672:15672'
+    expose:
+      - "5672"
+      - "15672"
     hostname: pacmanweb-rabbit
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - pacmanweb-rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
 
   celery:
-    container_name: celery
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
+    image: pacmanweb-celery:${VERSION:-latest}
     volumes:
       - .:/app
-      - ./.env.prod:/app/.env
+      - ./.env.prod:/app/.env:ro
     env_file:
       - .env.prod
     command: celery -A pacmanweb.celery_app worker --loglevel=info -c 10 -E
@@ -63,59 +83,68 @@ services:
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
+    user: celery_user  # Assuming this user is created in the Dockerfile
+    healthcheck:
+      test: ["CMD", "celery", "-A", "pacmanweb.celery_app", "inspect", "ping", "-d", "celery@$$HOSTNAME"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
 
   backend:
-    container_name: backend
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
-      - .:/app
-      - ./.env.prod:/app/.env
-    ports:
-      - 8000:8000
+      - ./pacmanweb:/app/pacmanweb
+      - ./.env.prod:/app/.env:ro
+    expose:
+      - "8000"
     env_file:
       - .env.prod
     depends_on:
       - redis
       - rabbitmq
       - celery
-    command: gunicorn 'pacmanweb:create_app()' --access-logfile=- --bind 0.0.0.0:8000 --timeout 120 --worker-class gevent
+    command: gunicorn 'pacmanweb:create_app()' --bind 0.0.0.0:8000 --timeout 120 --worker-class gevent --access-logfile /var/log/gunicorn/access.log --error-logfile /var/log/gunicorn/error.log
     environment:
       - PYTHONUNBUFFERED=1
 
   flower:
-    container_name: flower
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
-      - .:/app
-      - ./.env.prod:/app/.env
+      - ./pacmanweb:/app/pacmanweb
+      - ./.env.prod:/app/.env:ro
     env_file:
       - .env.prod
-    command: celery -A pacmanweb.celery_app flower
-    ports:
-      - '5555:5555'
+    command: celery -A pacmanweb.celery_app flower --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD}
+    expose:
+      - "5555"
     depends_on:
       - redis
       - rabbitmq
       - celery
       - backend
+    user: flower_user  # Assuming this user is created in the Dockerfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
 
   nginx:
-    image: nginx:latest
+    image: nginx:1.21-alpine
     ports:
       - "443:443"
       - "80:80"
     volumes:
-      # - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/default.conf:rw
-      - ./nginx/templates:/etc/nginx/templates:rw
+      - ./nginx/templates:/etc/nginx/templates:ro
       - ./nginx/htpasswd:/etc/nginx/htpasswd:ro
       - ./nginx/htpasswd_docs:/etc/nginx/htpasswd_docs:ro
       - ./nginx/ssl:/etc/nginx/ssl:ro
-      - react_build:/var/www/frontend
-      - docs_build:/usr/share/nginx/docs
+      - pacmanweb-react-build:/var/www/frontend:ro
+      - pacmanweb-docs-build:/usr/share/nginx/docs:ro
     environment: 
       - DOMAIN_NAME=yourdomain.com
       - SSL_CERT_FILE=/path/to/your/certificate.crt
@@ -128,9 +157,24 @@ services:
       - celery
       - redis
       - flower
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 300s
+      timeout: 10s
+      retries: 3
 
 volumes:
-  react_build:
-  docs_build:
-  redis_data:
-  rabbitmq_data:
+  pacmanweb-react-build:
+    driver: local
+  pacmanweb-docs-build:
+    driver: local
+  pacmanweb-redis-data:
+    driver: local
+  pacmanweb-rabbitmq-data:
+    driver: local
+
+secrets:
+  ssl_cert:
+    file: ./path/to/certificate.crt
+  ssl_key:
+    file: ./path/to/private.key
