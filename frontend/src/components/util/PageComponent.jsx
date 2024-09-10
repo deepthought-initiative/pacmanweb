@@ -4,10 +4,9 @@
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import "../../css/searchBox.css";
 import Logs from "./Logs.jsx";
-import CustomToast from "./CustomToast.jsx";
-import AppContext from "../../context/AppContext.jsx";
 import { UNSAFE_NavigationContext as NavigationContext } from "react-router-dom";
 import { fetchTableData, terminateCurrentProcess } from "./Api.jsx";
+import ToastContext from "../../context/ToastContext.jsx";
 
 const PageComponent = ({
   allCycles,
@@ -32,8 +31,8 @@ const PageComponent = ({
   const logContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
-  const { showToast, setShowToast, toastVariant, setToastVariant } =
-    useContext(AppContext);
+  // Function for showing toasts
+  const { showToastMessage } = useContext(ToastContext);
 
   const onTerminate = useCallback(() => {
     setCurrentTaskId();
@@ -51,7 +50,7 @@ const PageComponent = ({
     if (!currentTaskId) {
       return;
     }
-    terminateCurrentProcess(currentTaskId, mode)
+    terminateCurrentProcess(currentTaskId, mode);
     onTerminate();
   }, [currentTaskId, mode, onTerminate]);
 
@@ -82,16 +81,13 @@ const PageComponent = ({
         setProgressPercentage(100);
         if (code === 200) {
           setLogs((prevLogs) => [...prevLogs, "PROCESS SUCCESSFUL"]);
-          setToastVariant("success");
-          setShowToast(true);
+          showToastMessage("success", "Process completed successfully!");
         } else if (code === 204) {
           setLogs((prevLogs) => [...prevLogs, "DUPLICATION FILE IS EMPTY."]);
-          setToastVariant("success");
-          setShowToast(true);
+          showToastMessage("success", "Process completed successfully!");
         } else {
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-          setToastVariant("danger");
-          setShowToast(true);
+          showToastMessage("success", "Process failed!");
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;
@@ -99,7 +95,7 @@ const PageComponent = ({
         console.error("Error fetching table data:", error);
       }
     },
-    [inputFields, mode, setShowToast, setToastVariant]
+    [inputFields, mode, showToastMessage]
   );
 
   const startFetchingLogs = useCallback(
@@ -220,19 +216,6 @@ const PageComponent = ({
   }
   return (
     <>
-      {showToast && (
-        <CustomToast
-          showToast={showToast}
-          setShowToast={setShowToast}
-          variant={toastVariant}
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            backgroundColor: "transparent",
-          }}
-        />
-      )}
       {renderFormComponent({
         allCycles: allCycles,
         modalFile: modalFile,

@@ -2,17 +2,17 @@ import { useState, useContext } from "react";
 import "../../css/Upload.css";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import AppContext from "../../context/AppContext";
-import CustomToast from "../util/CustomToast";
+import ToastContext from "../../context/ToastContext"
 
 const UploadZipForm = () => {
   const [zipFile, setZipFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
-  const { showToast, setShowToast, toastVariant, setToastVariant } =
-    useContext(AppContext);
-
+  
+  // Function for showing toasts
+  const { showToastMessage } = useContext(ToastContext);
+  
   const handleFileChange = (event) => {
     setZipFile(event.target.files[0]);
   };
@@ -36,13 +36,11 @@ const UploadZipForm = () => {
       }
       const message = await response.json();
       setUploadError(message["response"]);
-      setShowToast(true);
-      setToastVariant("success");
+      showToastMessage("success", "File uploaded successfully!")
     } catch (error) {
       console.error("Error uploading file:", error);
       setUploadError("Failed to upload file");
-      setShowToast(true);
-      setToastVariant("danger");
+      showToastMessage("danger", "Failed to upload file!")
     } finally {
       setUploading(false);
     }
@@ -50,19 +48,6 @@ const UploadZipForm = () => {
 
   return (
     <>
-      {showToast && (
-        <CustomToast
-          showToast={showToast}
-          setShowToast={setShowToast}
-          variant={toastVariant}
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            backgroundColor: "transparent",
-          }}
-        />
-      )}
       <div className="instructions-container">
         <ul className="instructions-list">
           <li>The contents of the zip file:</li>

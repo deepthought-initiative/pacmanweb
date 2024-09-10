@@ -1,6 +1,6 @@
-/* eslint-disable no-inner-declarations */
 /* eslint-disable no-unused-vars */
-import { useEffect, useContext, useState, useCallback } from "react";
+/* eslint-disable no-inner-declarations */
+import { useEffect, useContext, useState } from "react";
 import { Route, Routes, useNavigate, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/AdminDashboard/Dashboard";
