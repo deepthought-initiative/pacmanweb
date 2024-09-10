@@ -57,6 +57,7 @@ const NewDropdown = ({
         className={`option-display ${error ? "required" : ""} ${
           disabled ? "disabled" : ""
         }`}
+        data-testid={`dropdown-${label}`}
         onClick={handleDropdownToggle}
       >
         {multiple
@@ -80,6 +81,7 @@ const NewDropdown = ({
                   onClick={() =>
                     handleOptionClick(value.cycleNumber || value.label)
                   }
+                  data-testid={`dropdown-cycle-option-${value.cycleNumber}`}
                   className={
                     multiple
                       ? inputField.includes(value.cycleNumber || value.label)
