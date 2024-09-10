@@ -172,9 +172,3 @@ volumes:
     driver: local
   pacmanweb-rabbitmq-data:
     driver: local
-
-secrets:
-  ssl_cert:
-    file: ./path/to/certificate.crt
-  ssl_key:
-    file: ./path/to/private.key
