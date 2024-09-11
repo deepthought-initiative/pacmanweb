@@ -33,59 +33,6 @@ def exists(username):
         else:
             return {'value': 'User is not admin but exists'}, 200
 
-
-@admin_bp.route("/edit_users", methods=["POST"])
-@login_required
-@admin_only
-def register_update_user():
-    username = request.form["username"]
-    newuserdata = {
-            "username": username,
-    }
-
-    if f'user_{username}'.encode('utf-8') not in redis_instance.keys('*'):
-        # this means adding a new user
-        if not (
-            request.form.get("password", None)
-            and request.form.get("isadmin", None)
-        ):
-            return {
-                "value": "New user detected. Please send keys- password, isadmin if adding a new user."
-            }, 401
-        userdata = {}
-    else:
-        # user already exists, check for overwrite key
-        if request.form.get("overwrite", None) not in ["True", "true"]:
-            return {
-            "value": "This user is already there, pass an overwrite key if you wish to overwrite."
-        }, 401
-        userdata = redis_instance.hgetall(f"user_{username}")
-        userdata = {key.decode('utf-8'): value.decode('utf-8') for key, value in userdata.items()}
-
-    # edit password and admin status
-    password = request.form.get("password", None)
-    if password:
-        encoded_pass = generate_password_hash(password, method="pbkdf2:sha256")
-        newuserdata["password"] = encoded_pass
-    
-    
-
-    # lookout for bad isadmin values
-    isadmin = request.form.get("isadmin", None)
-    if isadmin:
-        if isadmin in ["true", "True"]:
-            isadmin = True
-        elif isadmin in ["false", "False"] or isadmin is None:
-            isadmin = False
-        else:
-            return {"value": "isadmin can only be True or False"}, 401
-        newuserdata["admin"] = str(isadmin)
-
-    # newuserdata overwrites userdata in case of conflict
-    userdata = userdata | newuserdata
-    redis_instance.hset(f'user_{username}', mapping=userdata)
-    return {"value": f"New user {username} added/updated."}, 201
-
 @admin_bp.route("/edit_user", methods=["POST"])
 @login_required
 @admin_only
@@ -129,16 +76,55 @@ def edit_user():
 
     return {"value": f"User {username} updated.", "user_data": userdata}, 200
 
+@admin_bp.route("/add_user", methods=["POST"])
+@login_required
+@admin_only
+def add_user():
+    username = request.form["username"]
+
+    if f'user_{username}'.encode('utf-8') in redis_instance.keys('*'):
+        return {
+            "value": "User already exists. Use edit_user to update."
+        }, 409
+
+    # Ensure required fields are present
+    password = request.form.get("password", None)
+    isadmin = request.form.get("isadmin", None)
+
+    if not (password and isadmin is not None):
+        return {
+            "value": "New user detected. Please send keys - password, isadmin."
+        }, 400
+
+    # Create new user data
+    encoded_pass = generate_password_hash(password, method="pbkdf2:sha256")
+    newuserdata = {
+        "username": username,
+        "password": encoded_pass,
+        "admin": isadmin in ["true", "True"]
+    }
+
+    # Store new user data in Redis
+    redis_instance.hset(f'user_{username}', mapping=newuserdata)
+
+    # Remove password from the response
+    newuserdata.pop("password", None)
+
+    return {"value": f"New user {username} added.", "user_data": newuserdata}, 201
+
 @admin_bp.route("/delete_user", methods=["POST"])
 @login_required
 @admin_only
 def delete_user():
     username = request.form["username"]
     if f'user_{username}'.encode('utf-8') in redis_instance.keys('*'):
+          # Retrieve existing user data
+        userdata = redis_instance.hgetall(f"user_{username}")
+        userdata = {key.decode('utf-8'): value.decode('utf-8') for key, value in userdata.items()}
         redis_instance.delete(f'user_{username}'.encode('utf-8'))
     else:
         return {"value": "Username not found"}, 401
-    return {"value": f"User {username} deleted."}, 200
+    return {"value": f"User {username} deleted.", "user_data": userdata}, 200
 
 
 @admin_bp.route("/return_users", methods=["GET"])
