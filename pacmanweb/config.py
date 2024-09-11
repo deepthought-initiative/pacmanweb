@@ -4,7 +4,7 @@ import yaml
 from dotenv import load_dotenv
 import secrets
 
-load_dotenv(f'../.env')
+load_dotenv(f'.env')
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
