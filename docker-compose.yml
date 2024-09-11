@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     volumes:
       - pacmanweb-react-build:/frontend/dist
-    env_file:
-      - .env.prod
     expose:
       - "8080"
 
@@ -33,8 +31,6 @@ services:
   redis-commander:
     image: rediscommander/redis-commander:latest
     restart: always
-    env_file:
-      - .env.prod
     environment:
       - REDIS_HOSTS=local:redis:6379
       - HTTP_USER=${REDIS_COMMANDER_USER}
@@ -65,9 +61,7 @@ services:
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
       - .:/app
-      - ./.env.prod:/app/.env:ro
-    env_file:
-      - .env.prod
+      - ./.env:/app/.env:ro
     command: celery -A pacmanweb.celery_app worker --loglevel=info -c 10 -E
     depends_on:
       - redis
@@ -86,11 +80,9 @@ services:
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
       - ./pacmanweb:/app/pacmanweb
-      - ./.env.prod:/app/.env:ro
+      - ./.env:/app/.env:ro
     expose:
       - "8000"
-    env_file:
-      - .env.prod
     depends_on:
       - redis
       - rabbitmq
@@ -105,9 +97,7 @@ services:
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
       - ./pacmanweb:/app/pacmanweb
-      - ./.env.prod:/app/.env:ro
-    env_file:
-      - .env.prod
+      - ./.env:/app/.env:ro
     command: celery -A pacmanweb.celery_app flower
     expose:
       - "5555"
@@ -135,11 +125,9 @@ services:
       - pacmanweb-react-build:/var/www/frontend:ro
       - pacmanweb-docs-build:/usr/share/nginx/docs:ro
     environment: 
-      - DOMAIN_NAME=yourdomain.com
-      - SSL_CERT_FILE=/path/to/your/certificate.crt
-      - SSL_KEY_FILE=/path/to/your/private.key
-    env_file:
-      - .env.prod
+      - DOMAIN_NAME=${DOMAIN_NAME}
+      - SSL_CERT_FILE=${SSL_CERT_FILE}
+      - SSL_KEY_FILE=${SSL_KEY_FILE}
     depends_on:
       - backend
       - frontend  
