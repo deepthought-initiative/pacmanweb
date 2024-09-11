@@ -62,6 +62,7 @@ services:
     volumes:
       - .:/app
       - ./.env:/app/.env:ro
+      - ./PACMan:/app/PACMan:rw
     command: celery -A pacmanweb.celery_app worker --loglevel=info -c 10 -E
     depends_on:
       - redis
@@ -81,6 +82,7 @@ services:
     volumes:
       - ./pacmanweb:/app/pacmanweb
       - ./.env:/app/.env:ro
+      - ./PACMan:/app/PACMan:rw
     expose:
       - "8000"
     depends_on:
