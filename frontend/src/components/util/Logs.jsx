@@ -54,6 +54,7 @@ const Logs = ({
       <div
         ref={logContainerRef}
         id="log-container"
+        data-testid="log-container"
         className="container-fluid mt-4"
       >
         {logs.map((log, index) => (

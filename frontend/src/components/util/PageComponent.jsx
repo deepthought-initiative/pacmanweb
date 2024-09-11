@@ -102,6 +102,7 @@ const PageComponent = ({
     async (curId) => {
       let reconnectFrequencySeconds = 1;
       try {
+        console.log("event source id", curId);
         const eventSource = new EventSource(`/api/stream/${curId}`);
         eventSource.onopen = () => {
           setShowTerminateProcess(true);
