@@ -4,9 +4,7 @@ import yaml
 from dotenv import load_dotenv
 import secrets
 
-# Load the appropriate .env file based on the MODE
-MODE = os.getenv('MODE', 'dev')
-load_dotenv(f'../.env.{MODE}')
+load_dotenv(f'../.env')
 
 class Config:
     ROOTDIR = pathlib.Path(__file__).resolve().parent
