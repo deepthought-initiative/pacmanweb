@@ -86,6 +86,48 @@ def register_update_user():
     redis_instance.hset(f'user_{username}', mapping=userdata)
     return {"value": f"New user {username} added/updated."}, 201
 
+@admin_bp.route("/edit_user", methods=["POST"])
+@login_required
+@admin_only
+def edit_user():
+    username = request.form["username"]
+    
+    if f'user_{username}'.encode('utf-8') not in redis_instance.keys('*'):
+        return {
+            "value": "User does not exist. Please add the user first."
+        }, 404
+    # user already exists, check for overwrite key
+    if request.form.get("overwrite", None) not in ["True", "true"]:
+        return {
+        "value": "This user is already there, pass an overwrite key if you wish to overwrite."
+    }, 401
+    # Retrieve existing user data
+    userdata = redis_instance.hgetall(f"user_{username}")
+    userdata = {key.decode('utf-8'): value.decode('utf-8') for key, value in userdata.items()}
+
+    # Edit password if provided
+    password = request.form.get("password", None)
+    if password:
+        encoded_pass = generate_password_hash(password, method="pbkdf2:sha256")
+        userdata["password"] = encoded_pass
+
+    # Handle admin status
+    isadmin = request.form.get("isadmin", None)
+    if isadmin is not None:
+        if isadmin in ["true", "True"]:
+            userdata["admin"] = "True"
+        elif isadmin in ["false", "False"]:
+            userdata["admin"] = "False"
+        else:
+            return {"value": "isadmin can only be True or False"}, 401
+
+    # Update user data in Redis
+    redis_instance.hset(f'user_{username}', mapping=userdata)
+    
+    # Remove password from the response
+    userdata.pop("password", None)
+
+    return {"value": f"User {username} updated.", "user_data": userdata}, 200
 
 @admin_bp.route("/delete_user", methods=["POST"])
 @login_required
