@@ -28,7 +28,7 @@ def exists(username):
         return {'value': 'User not found'}, 404
     else:
         user_data = redis_instance.hgetall(f"user_{username}")
-        if user_data[b"admin"] == b"True":
+        if user_data[b"isadmin"] == b"True":
             return {'value': 'User is admin and exists'}, 200
         else:
             return {'value': 'User is not admin but exists'}, 200
@@ -62,9 +62,9 @@ def edit_user():
     isadmin = request.form.get("isadmin", None)
     if isadmin is not None:
         if isadmin in ["true", "True"]:
-            userdata["admin"] = "True"
+            userdata["isadmin"] = "True"
         elif isadmin in ["false", "False"]:
-            userdata["admin"] = "False"
+            userdata["isadmin"] = "False"
         else:
             return {"value": "isadmin can only be True or False"}, 401
 
@@ -101,7 +101,7 @@ def add_user():
     newuserdata = {
         "username": username,
         "password": encoded_pass,
-        "admin": isadmin in ["true", "True"]
+        "isadmin": str(isadmin in ["true", "True"])
     }
 
     # Store new user data in Redis
@@ -136,6 +136,6 @@ def return_user_data():
         user_data = redis_instance.hgetall(key)
         result.append({
             "username": user_data[b"username"].decode('utf-8'),
-            "isadmin": user_data[b"admin"].decode('utf-8')
+            "isadmin": user_data[b"isadmin"].decode('utf-8')
         })
     return result

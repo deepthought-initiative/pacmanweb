@@ -11,7 +11,7 @@ import PasswordInput from "./PasswordInput";
 import ToastContext from "../../context/ToastContext.jsx";
 
 // eslint-disable-next-line react/prop-types
-const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
+const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers, setAllUsers }) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);
@@ -54,49 +54,45 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     updatedUser.isadmin !== selectedUser.isadmin ||
     updatedUser.password !== "";
 
-  const handleSaveChanges = async () => {
+  const handleEditUser = async () => {
+    let noWhiteSpace = true;
     if (/\s|\t|\n/.test(updatedUser.password)) {
+      noWhiteSpace = false;
       setPasswordErrorMessage("No white spaces, tabs or new line characters");
     }
 
-    if (hasChanged) {
-      // Ask for confirmation before saving changes
-      setConfirmationMessage(
-        `Are you sure you want to update the information for this user?
-
-      Changes:
-      - Admin status: ${
-        updatedUser.isadmin !== selectedUser.isadmin
-          ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
-              updatedUser.isadmin ? "Admin" : "Normal user"
-            }`
-          : "No change"
+    if (noWhiteSpace) {
+      if (hasChanged) {
+        // Ask for confirmation before saving changes
+        setConfirmationMessage(
+          `Are you sure you want to update the information for this user?
+  
+        Changes:
+        - Admin status: ${
+          updatedUser.isadmin !== selectedUser.isadmin
+            ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
+                updatedUser.isadmin ? "Admin" : "Normal user"
+              }`
+            : "No change"
+        }
+  
+        - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
+        );
+        setShowConfirmationModal(true);
+        setShowEditModal(false);
       }
+    }
+  };
 
-      - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
-      );
-      setShowConfirmationModal(true);
-      setShowEditModal(false);
-    } else {
+  const handleConfirmation = async () => {
+    setShowConfirmationModal(false);
+    if (mode === "ADD") {
       try {
         const formData = new FormData();
         formData.append("username", updatedUser.username);
         formData.append("isadmin", updatedUser.isadmin);
         formData.append("password", updatedUser.password);
-
-        const ifExists = await fetch(
-          `/api/admin/ifexists/${selectedUser.username}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: { Authorization: "Basic " + btoa("default:barebones") },
-          }
-        );
-        if (ifExists.ok) {
-          formData.append("overwrite", true);
-        }
-
-        const response = await fetch("/api/admin/edit_users", {
+        const response = await fetch("/api/admin/add_user", {
           method: "POST",
           body: formData,
           credentials: "include",
@@ -104,29 +100,20 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         });
 
         if (!response.ok) {
-          showToastMessage("danger", "Failed to edit user!");
+          showToastMessage("danger", "Failed to add user!");
         } else {
-          showToastMessage("success", "Updated info successfully!");
-          if (mode === "edit") {
-            handleClose();
-          } else {
-            alert(
-              `User "${updatedUser.username}" (${
-                updatedUser.isadmin ? "Admin" : "Normal user"
-              }) added successfully.`
-            );
-            handleClose();
-          }
+          const addedUser = await response.json();
+          let addedUserData = addedUser.user_data;
+          addedUserData.isadmin = addedUserData.isadmin === "True" || addedUserData.isadmin === "true";
+          setAllUsers((prev) => [...prev, addedUserData]);
+          showToastMessage("success", `Added user ${addedUserData.username}`);
+          handleClose();
         }
       } catch (error) {
-        console.error("Error updating user:", error);
+        console.error("Error adding user:", error);
       }
     }
-  };
-
-  const handleConfirmation = async () => {
-    setShowConfirmationModal(false);
-    try {
+    if (mode === "EDIT") {
       const formData = new FormData();
       formData.append("username", updatedUser.username);
       formData.append("isadmin", updatedUser.isadmin);
@@ -144,25 +131,37 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         formData.append("overwrite", true);
       }
 
-      const response = await fetch("/api/admin/edit_users", {
+      const response = await fetch("/api/admin/edit_user", {
         method: "POST",
         body: formData,
         credentials: "include",
         headers: { Authorization: "Basic " + btoa("default:barebones") },
       });
-
       if (!response.ok) {
         showToastMessage("danger", "Failed to edit user!");
       } else {
+        const editedUser = await response.json();
+        const editedUserData = editedUser.user_data;
+        console.log("user data", editedUserData)
+        const newUsers = allUsers.map((user) => {
+          if (user.username === editedUserData.username) {
+            return {
+              username: editedUserData.username,
+              isadmin: editedUserData.isadmin === "True" || editedUserData.isadmin === "true"
+            };
+          } else {
+            return user;
+          }
+        });
+        setAllUsers(newUsers)
+        console.log("after edit", allUsers)
         showToastMessage("success", "Updated info successfully!");
         handleClose();
       }
-    } catch (error) {
-      console.error("Error updating user:", error);
     }
   };
 
-  const handleAddNewUser = () => {
+  const validateFields = () => {
     let noError = true;
     if (updatedUser.username === "") {
       setUsernameErrorMessage(" Username is required.");
@@ -185,7 +184,12 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         noError = false;
       }
     }
-    if (noError) {
+    return noError;
+  };
+
+  const handleAddNewUser = () => {
+    const inputFieldsValidated = validateFields();
+    if (inputFieldsValidated) {
       setConfirmationMessage(
         `Are you sure you want to add this user?
 
@@ -215,14 +219,14 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
         <Modal show={show} backdrop="static" onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {mode === "edit"
+              {mode === "EDIT"
                 ? `Editing credentials for ${selectedUser.username}`
                 : "Create New User"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form className="user-form">
-              {mode === "add" && (
+              {mode === "ADD" && (
                 <InputConfigOption
                   label="Username"
                   value={updatedUser.username}
@@ -232,11 +236,11 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
                 />
               )}
               <PasswordInput
-                label={mode === "edit" ? "New Password" : "Password"}
+                label={mode === "EDIT" ? "New Password" : "Password"}
                 value={updatedUser.password}
                 setValue={(value) => updateInputFields("password", value)}
                 error={passwordErrorMessage}
-                desc={mode === "edit" ? "Enter new password" : "Enter password"}
+                desc={mode === "EDIT" ? "Enter new password" : "Enter password"}
                 showPassword={showPassword}
                 toggleShowPassword={handleShowPassword}
                 disabled={false}
@@ -279,10 +283,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
           <Modal.Footer>
             <Button
               variant="primary"
-              onClick={mode === "edit" ? handleSaveChanges : handleAddNewUser}
+              onClick={mode === "EDIT" ? handleEditUser : handleAddNewUser}
               disabled={!hasChanged}
             >
-              {mode === "edit" ? "Save Changes" : "Create User"}
+              {mode === "EDIT" ? "Save Changes" : "Create User"}
             </Button>
           </Modal.Footer>
         </Modal>

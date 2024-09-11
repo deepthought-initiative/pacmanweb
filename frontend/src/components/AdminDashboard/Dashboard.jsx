@@ -2,11 +2,8 @@
 /* eslint-disable no-unused-vars */
 import { useCallback, useEffect, useState, useContext } from "react";
 import Form from "react-bootstrap/Form";
-import InputGroup from "react-bootstrap/InputGroup";
-import Table from "react-bootstrap/Table";
 import UserDelete from "../../assets/UserDelete.png";
 import UserEdit from "../../assets/UserEdit.png";
-import SearchIcon from "../../assets/search.png";
 import DeleteUserModal from "../util/DeleteUserModal";
 import EditUserModal from "../util/EditUserModal";
 import ToastContext from "../../context/ToastContext.jsx";
@@ -15,8 +12,6 @@ const Dashboard = ({ usernameContext }) => {
   const [show, setShow] = useState(false);
   const [mode, setMode] = useState();
   const [deleteModal, setDeleteModal] = useState(false);
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [userType, setUserType] = useState("All");
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState({
@@ -30,11 +25,11 @@ const Dashboard = ({ usernameContext }) => {
 
   const handleShow = (newMode, user) => {
     setSelectedUser(user);
-    if (newMode.toLowerCase() == "delete") {
+    if (newMode === "DELETE") {
       setDeleteModal(true);
     } else {
       setShow(true);
-      setMode(newMode.toLowerCase());
+      setMode(newMode);
     }
   };
 
@@ -44,10 +39,9 @@ const Dashboard = ({ usernameContext }) => {
       const all_users_json = await fetchUsers.json();
       const fixedAllUsers = all_users_json.map((user) => ({
         ...user,
-        isadmin: user.isadmin === "True",
+        isadmin: user.isadmin === "True" || user.isadmin === "true",
       }));
       setAllUsers(fixedAllUsers);
-      setFilteredUsers(fixedAllUsers);
     }
     fetchAllUsers();
   }, []);
@@ -60,37 +54,29 @@ const Dashboard = ({ usernameContext }) => {
       body: formData,
     });
     if (response.ok) {
-      showToastMessage("success", "User deleted successfully!")
+      const deletedUser = await response.json();
+      const deletedUsername = deletedUser.user_data.username;
+      const newUsers = allUsers.filter(
+        (item) => item.username !== deletedUsername
+      );
+      setAllUsers(newUsers);
+      setDeleteModal(false);
+      showToastMessage("success", `Deleted user ${deletedUsername}`);
     }
   };
 
-  const filterUsers = useCallback(
-    (userType, searchTerm) => {
-      let userTypeFilters;
-      if (userType === "Admins") {
-        userTypeFilters = allUsers.filter((user) => user.isadmin);
-      } else if (userType == "Users") {
-        userTypeFilters = allUsers.filter((user) => !user.isadmin);
-      } else {
-        userTypeFilters = allUsers;
-      }
-      setFilteredUsers(
-        userTypeFilters.filter((user) =>
-          user.username.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-    },
-    [allUsers]
-  );
+  let filteredUsers;
+  if (userType === "Admins") {
+    filteredUsers = allUsers.filter((user) => user.isadmin);
+  } else if (userType == "Users") {
+    filteredUsers = allUsers.filter((user) => !user.isadmin);
+  } else {
+    filteredUsers = allUsers;
+  }
 
-  const filterUserByStatus = useCallback(
-    (event) => {
-      const newUserType = event.target.value;
-      setUserType(newUserType);
-      filterUsers(newUserType, searchTerm);
-    },
-    [filterUsers, searchTerm]
-  );
+  const filterUserByStatus = useCallback((event) => {
+    setUserType(event.target.value);
+  }, []);
 
   return (
     <>
@@ -162,7 +148,7 @@ const Dashboard = ({ usernameContext }) => {
                     <div className="user-edit-options">
                       <img
                         src={UserEdit}
-                        onClick={() => handleShow("edit", user)}
+                        onClick={() => handleShow("EDIT", user)}
                       />
                       {user["username"] !== usernameContext &&
                         user["username"] !== "mainadmin" && (
@@ -186,6 +172,7 @@ const Dashboard = ({ usernameContext }) => {
             selectedUser={selectedUser}
             key={selectedUser?.username}
             allUsers={allUsers}
+            setAllUsers={setAllUsers}
           />
         )}
         {deleteModal && (
