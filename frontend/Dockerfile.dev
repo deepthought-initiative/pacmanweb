@@ -1,0 +1,6 @@
+FROM node:21-alpine3.18
+WORKDIR /frontend
+COPY package*.json ./
+RUN npm install
+RUN npm install rollup
+CMD ["npm", "run", "dev"]
