@@ -9,9 +9,17 @@ import ConfirmationModal from "./ConfirmationModal";
 import InputConfigOption from "./InputConfigOption";
 import PasswordInput from "./PasswordInput";
 import ToastContext from "../../context/ToastContext.jsx";
+import { AddUser, EditUser } from "./Api.jsx";
 
 // eslint-disable-next-line react/prop-types
-const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers, setAllUsers }) => {
+const EditUserModal = ({
+  show,
+  setShow,
+  mode,
+  selectedUser,
+  allUsers,
+  setAllUsers,
+}) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);
@@ -61,11 +69,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers, setAllUser
       setPasswordErrorMessage("No white spaces, tabs or new line characters");
     }
 
-    if (noWhiteSpace) {
-      if (hasChanged) {
-        // Ask for confirmation before saving changes
-        setConfirmationMessage(
-          `Are you sure you want to update the information for this user?
+    if (noWhiteSpace && hasChanged) {
+      // Ask for confirmation before saving changes
+      setConfirmationMessage(
+        `Are you sure you want to update the information for this user?
   
         Changes:
         - Admin status: ${
@@ -77,48 +84,33 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers, setAllUser
         }
   
         - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
-        );
-        setShowConfirmationModal(true);
-        setShowEditModal(false);
-      }
+      );
+      setShowConfirmationModal(true);
+      setShowEditModal(false);
     }
   };
 
   const handleConfirmation = async () => {
     setShowConfirmationModal(false);
+    const formData = new FormData();
+    formData.append("username", updatedUser.username);
+    formData.append("isadmin", updatedUser.isadmin);
+    formData.append("password", updatedUser.password);
     if (mode === "ADD") {
       try {
-        const formData = new FormData();
-        formData.append("username", updatedUser.username);
-        formData.append("isadmin", updatedUser.isadmin);
-        formData.append("password", updatedUser.password);
-        const response = await fetch("/api/admin/add_user", {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        });
-
-        if (!response.ok) {
-          showToastMessage("danger", "Failed to add user!");
-        } else {
-          const addedUser = await response.json();
-          let addedUserData = addedUser.user_data;
-          addedUserData.isadmin = addedUserData.isadmin === "True" || addedUserData.isadmin === "true";
-          setAllUsers((prev) => [...prev, addedUserData]);
-          showToastMessage("success", `Added user ${addedUserData.username}`);
-          handleClose();
-        }
+        const addedUser = await AddUser(formData);
+        let addedUserData = addedUser.user_data;
+        addedUserData.isadmin =
+          addedUserData.isadmin === "True" || addedUserData.isadmin === "true";
+        setAllUsers((prev) => [...prev, addedUserData]);
+        showToastMessage("success", `Added user ${addedUserData.username}`);
+        handleClose();
       } catch (error) {
         console.error("Error adding user:", error);
+        showToastMessage("danger", "Failed to add user!");
       }
     }
     if (mode === "EDIT") {
-      const formData = new FormData();
-      formData.append("username", updatedUser.username);
-      formData.append("isadmin", updatedUser.isadmin);
-      formData.append("password", updatedUser.password);
-
       const ifExists = await fetch(
         `/api/admin/ifexists/${selectedUser.username}`,
         {
@@ -130,33 +122,26 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers, setAllUser
       if (ifExists.ok) {
         formData.append("overwrite", true);
       }
-
-      const response = await fetch("/api/admin/edit_user", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-        headers: { Authorization: "Basic " + btoa("default:barebones") },
-      });
-      if (!response.ok) {
-        showToastMessage("danger", "Failed to edit user!");
-      } else {
-        const editedUser = await response.json();
+      try {
+        const editedUser = await EditUser(formData)
         const editedUserData = editedUser.user_data;
-        console.log("user data", editedUserData)
         const newUsers = allUsers.map((user) => {
           if (user.username === editedUserData.username) {
             return {
               username: editedUserData.username,
-              isadmin: editedUserData.isadmin === "True" || editedUserData.isadmin === "true"
+              isadmin:
+                editedUserData.isadmin === "True" ||
+                editedUserData.isadmin === "true",
             };
           } else {
             return user;
           }
         });
-        setAllUsers(newUsers)
-        console.log("after edit", allUsers)
-        showToastMessage("success", "Updated info successfully!");
+        setAllUsers(newUsers);
+        showToastMessage("success", `Updated user ${editedUserData.username}`);
         handleClose();
+      } catch (error) {
+        showToastMessage("danger", "Failed to edit user!");
       }
     }
   };
