@@ -69,11 +69,6 @@ services:
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
-    healthcheck:
-      test: ["CMD", "celery", "-A", "pacmanweb.celery_app", "inspect", "ping", "-d", "celery@$$HOSTNAME"]
-      interval: 300s
-      timeout: 10s
-      retries: 3
 
   backend:
     build:
@@ -108,11 +103,6 @@ services:
       - rabbitmq
       - celery
       - backend
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5555"]
-      interval: 300s
-      timeout: 10s
-      retries: 3
 
   nginx:
     image: nginx:1.21-alpine
