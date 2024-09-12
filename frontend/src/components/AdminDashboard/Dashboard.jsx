@@ -7,6 +7,7 @@ import UserEdit from "../../assets/UserEdit.png";
 import DeleteUserModal from "../util/DeleteUserModal";
 import EditUserModal from "../util/EditUserModal";
 import ToastContext from "../../context/ToastContext.jsx";
+import { DeleteUser, FetchUsers } from "../util/Api.jsx";
 
 const Dashboard = ({ usernameContext }) => {
   const [show, setShow] = useState(false);
@@ -35,33 +36,36 @@ const Dashboard = ({ usernameContext }) => {
 
   useEffect(() => {
     async function fetchAllUsers() {
-      const fetchUsers = await fetch("/api/admin/return_users");
-      const all_users_json = await fetchUsers.json();
-      const fixedAllUsers = all_users_json.map((user) => ({
+      const users = await FetchUsers()
+      const fixedAllUsers = users.map((user) => ({
         ...user,
-        isadmin: user.isadmin === "True" || user.isadmin === "true",
+        isadmin: user.isadmin.toLowerCase() === "true",
       }));
       setAllUsers(fixedAllUsers);
     }
-    fetchAllUsers();
+    try{
+      fetchAllUsers();
+    } catch(e){
+      console.log(e)
+      showToastMessage("danger", "Error fetching users!")
+    }
   }, []);
 
   const handleDeleteUser = async () => {
     const formData = new FormData();
     formData.append("username", selectedUser.username);
-    const response = await fetch("/api/admin/delete_user", {
-      method: "POST",
-      body: formData,
-    });
-    if (response.ok) {
-      const deletedUser = await response.json();
-      const deletedUsername = deletedUser.user_data.username;
-      const newUsers = allUsers.filter(
-        (item) => item.username !== deletedUsername
-      );
-      setAllUsers(newUsers);
-      setDeleteModal(false);
-      showToastMessage("success", `Deleted user ${deletedUsername}`);
+    try {
+        const deletedUser = await DeleteUser(formData)
+        const deletedUsername = deletedUser.user_data.username;
+        const newUsers = allUsers.filter(
+          (item) => item.username !== deletedUsername
+        );
+        setAllUsers(newUsers);
+        setDeleteModal(false);
+        showToastMessage("success", `Deleted user ${deletedUsername}`);
+    } catch(e) {
+      console.log(`Error deleting user`, e)
+      showToastMessage("danger", `Error deleting this user!`);
     }
   };
 

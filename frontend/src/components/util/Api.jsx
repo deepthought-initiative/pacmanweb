@@ -1,3 +1,4 @@
+// Process APIs
 export const runPacman = async (inputFields, setModalShow) => {
   const params = new URLSearchParams();
   Object.entries(inputFields).forEach(([key, value]) => {
@@ -56,26 +57,31 @@ export const fetchTableData = async (
   return { tabularData, code };
 };
 
-export const terminateCurrentProcess = async(currentTaskId, mode) => {
+export const terminateCurrentProcess = async (currentTaskId, mode) => {
   await fetch(`/api/terminate/${currentTaskId}?mode=${mode}`, {
     method: "POST",
   });
-}
+};
 
-export const DownloadFile = async (currentTaskId, currentCycle, mode, fileType) => {
+export const DownloadFile = async (
+  currentTaskId,
+  currentCycle,
+  mode,
+  fileType
+) => {
   const Url = `/api/outputs/download/${fileType}/${currentTaskId}?cycle_number=${currentCycle}&mode=${mode}`;
   try {
     const response = await fetch(Url);
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
     const fileName = response.headers.get("content-disposition").split("=")[1];
     let blob;
-    if (fileType == "csv" && mode !== "MATCH"){
-        const data = await response.text();
-        blob = new Blob([data], { type: "text/csv" });
+    if (fileType == "csv" && mode !== "MATCH") {
+      const data = await response.text();
+      blob = new Blob([data], { type: "text/csv" });
     } else {
-        blob = await response.blob();
+      blob = await response.blob();
     }
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -87,4 +93,42 @@ export const DownloadFile = async (currentTaskId, currentCycle, mode, fileType) 
   } catch (error) {
     console.error("There was a problem with the fetch operation:", error);
   }
+};
+
+// Admin Dashboard APIs
+export const AddUser = async (formData) => {
+  const response = await fetch("/api/admin/add_user", {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+    headers: { Authorization: "Basic " + btoa("default:barebones") },
+  });
+  const jsonResponse = await response.json();
+  return jsonResponse;
+};
+
+export const EditUser = async (formData) => {
+  const response = await fetch("/api/admin/edit_user", {
+    method: "POST",
+    body: formData,
+    credentials: "include",
+    headers: { Authorization: "Basic " + btoa("default:barebones") },
+  });
+  const jsonResponse = await response.json();
+  return jsonResponse;
+};
+
+export const FetchUsers = async () => {
+  const fetchUsers = await fetch("/api/admin/return_users");
+  const jsonUsers = await fetchUsers.json();
+  return jsonUsers;
+};
+
+export const DeleteUser = async (formData) => {
+  const response = await fetch("/api/admin/delete_user", {
+    method: "POST",
+    body: formData,
+  });
+  const jsonResponse = await response.json();
+  return jsonResponse;
 };
