@@ -1,77 +1,92 @@
-version: "3.8"
+version: '3.9'
+
 services:
   frontend:
-    container_name: frontend
     build:
       context: ./frontend
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     volumes:
       - ./frontend:/frontend
       - /frontend/node_modules
-      - ./.env.dev:/frontend/.env
+      - ./.env:/frontend/.env
     environment:
       - CHOKIDAR_USEPOLLING=true
     ports:
-      - "8080:8080"
+      - '8080:8080'
     command: npm run dev
-    depends_on:
-      - backend
-
+  
   redis:
-    image: redis:7-alpine
+    image: redis:7.0.11-alpine
     ports:
       - '6379:6379'
     volumes:
-      - redis_data:/data
+      - pacmanweb-redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_MAXMEMORY=500mb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
 
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.9-management
+    restart: always
     ports:
       - '5672:5672'
       - '15672:15672'
     hostname: pacmanweb-rabbit
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - pacmanweb-rabbitmq-data:/var/lib/rabbitmq
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - '8081:8081'
+    depends_on:
+      - redis
 
   celery:
-    container_name: celery
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
       - .:/app
-    env_file:
-      - .env.dev
-    command: celery -A pacmanweb.celery_app worker --loglevel=info -E
+      - ./.env:/app/.env:ro
+      - ./PACMan:/app/PACMan:rw
+    command: celery -A pacmanweb.celery_app worker --loglevel=info -c 10 -E
     depends_on:
       - redis
       - rabbitmq
+    environment:
+      - PYTHONUNBUFFERED=1
 
   backend:
-    container_name: backend
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
-      - .:/app
-    env_file:
-      - .env.dev
+      - ./pacmanweb:/app/pacmanweb
+      - ./.env:/app/.env:ro
+      - ./PACMan:/app/PACMan:rw
     ports:
       - 8000:8000
     depends_on:
       - redis
       - rabbitmq
+      - celery
     command: flask --app pacmanweb run --host 0.0.0.0 --port 8000 --debug
+    environment:
+      - PYTHONUNBUFFERED=1
 
   flower:
-    container_name: flower
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
     volumes:
-      - .:/app
-    env_file:
-      - .env.dev
+      - ./pacmanweb:/app/pacmanweb
+      - ./.env:/app/.env:ro
     command: celery -A pacmanweb.celery_app flower
     ports:
       - '5555:5555'
@@ -82,7 +97,12 @@ services:
       - backend
 
 volumes:
-  react_build:
-  docs_build:
-  redis_data:
-  rabbitmq_data:
+  pacmanweb-react-build:
+    driver: local
+  pacmanweb-docs-build:
+    driver: local
+  pacmanweb-redis-data:
+    driver: local
+  pacmanweb-rabbitmq-data:
+    driver: local
+
