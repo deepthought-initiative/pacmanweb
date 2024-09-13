@@ -63,7 +63,7 @@ const PageComponent = ({
         const { tabularData, code } = await fetchTableData(
           mode,
           curId,
-          inputFields["currentCycle"],
+          inputFields,
           setProgressPercentage
         );
         setDataToDisplay(tabularData);

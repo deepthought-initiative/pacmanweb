@@ -27,10 +27,11 @@ export const runPacman = async (inputFields, setModalShow) => {
 export const fetchTableData = async (
   mode,
   curId,
-  currentCycle,
+  inputFields,
   setProgressPercentage
 ) => {
   let tableCategory = "";
+  let dirName = "";
   if (mode === "PROP") {
     tableCategory = "proposal_cat_output";
   }
@@ -40,8 +41,15 @@ export const fetchTableData = async (
   if (mode == "MATCH") {
     tableCategory = "match_reviewers_output";
   }
+
+  if (inputFields.runName) {
+    dirName = inputFields.runName;
+  } else {
+    dirName = curId;
+  }
+
   const tableResponse = await fetch(
-    `/api/outputs/${tableCategory}/${curId}?cycle_number=${currentCycle}`,
+    `/api/outputs/${tableCategory}/${dirName}?cycle_number=${inputFields.currentCycle}`,
     {
       method: "GET",
       credentials: "include",
