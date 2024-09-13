@@ -1,9 +1,9 @@
 import base64
-import os
 import redis
 from celery import Celery
 from flask import Flask
 from flask_login import LoginManager
+from werkzeug.security import generate_password_hash
 
 from .config import Config
 
@@ -16,10 +16,9 @@ celery_app = Celery(
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 # redis_instance.flushall()
 
-# TODO: make this more secret
 redis_instance.hset('user_mainadmin', mapping={
     "username": "mainadmin",
-    "password": "pbkdf2:sha256:600000$TjyKD8HG3DPP3ayF$5d54ab3893935b8d9a3d236fe35098868324ae9b4606f1d3ceeb85cf04b12e38",
+    "password": generate_password_hash(Config.MAINADMIN_USER_PASSWORD),
     "admin": "True"
 })
 
