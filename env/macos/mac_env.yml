@@ -1,0 +1,170 @@
+name: pacmanweb
+channels:
+  # - astropy
+  # - http://ssb.stsci.edu/astroconda
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex
+  # - _openmp_mutex
+  - alabaster
+  - attrs
+  - babel
+  - backcall
+  - bleach
+  - ca-certificates
+  - catalogue
+  - certifi
+  - cffi
+  - chardet
+  - click
+  - cloudpickle
+  - cryptography
+  - cycler
+  - cymem
+  - cython-blis
+  - cytoolz
+  - dask
+  - dask-core
+  - dbus
+  # - decorator
+  - defusedxml
+  - distributed
+  - docutils
+  - entrypoints
+  - expat
+  - fontconfig
+  - freetype
+  - fsspec
+  - gettext
+  - glib
+  - gst-plugins-base
+  - gstreamer
+  - heapdict
+  - icu
+  - idna
+  # - imagesize
+  - importlib_metadata
+  - jedi
+  - joblib
+  - jpeg
+  - json5
+  - jsonschema
+  - kiwisolver
+  # - libblas
+  # - libcblas
+  - libclang
+  - libffi
+  # - libgcc-ng
+  - libgfortran-ng
+  # - libgomp
+  - libiconv
+  # - liblapack
+  # - libllvm9
+  - libopenblas
+  - libpng
+  - libsodium
+  # - libstdcxx-ng
+  - libtiff
+  - libuuid
+  - libxcb
+  # - libxkbcommon
+  - libxml2
+  - locket
+  - lz4-c
+  - matplotlib
+  - matplotlib-base
+  - mistune
+  - msgpack-python
+  # - murmurhash
+  - nbconvert
+  - nbformat
+  - ncurses
+  # - notebook
+  - nspr
+  - nss
+  - numpy
+  - olefile
+  - openssl
+  - packaging
+  - pandas
+  # - pandoc
+  # - pandocfilters
+  - parso
+  - partd
+  - pcre
+  - pexpect
+  - pickleshare
+  # - pillow
+  - pip
+  - plac
+  - preshed
+  # - prometheus_client
+  - prompt_toolkit
+  - psutil
+  - pthread-stubs
+  - ptyprocess
+  - pycparser
+  - pygments
+  - pyopenssl
+  - pyparsing
+  # - pyqt
+  - pyrsistent
+  - pysocks
+  - python-dateutil
+  - pytz
+  - pyyaml
+  - pyzmq
+  # - qt
+  - readline
+  - requests
+  - scikit-learn
+  - scipy
+  - send2trash
+  - setuptools
+  - six
+  # - snowballstemmer
+  # - sortedcontainers
+  - spacy
+  - sqlite
+  # - srsly
+  - tblib
+  - terminado
+  - testpath
+  - thinc
+  - tk
+  - toolz
+  - tornado
+  - tqdm
+  - traitlets
+  - urllib3
+  - wasabi
+  - wcwidth
+  - webencodings
+  - wheel
+  # - xorg-libxau
+  # - xorg-libxdmcp
+  - xz
+  - yaml
+  - zeromq
+  - zict
+  # - zipp
+  - zlib
+  - zstd
+  - flask
+  - python=3.11
+  - pytest
+  # - ruff
+  - flask-login
+  - python-dotenv
+  - redis-py
+  - celery
+  - pandas
+  - gunicorn
+#   - pip:
+#     - ads
+#     - fingerprint
+#     # - pyqt5-sip
+#     # - pyqtwebengine
+# prefix: /user/nmiles/miniconda3/envs/pacman_linux
+
