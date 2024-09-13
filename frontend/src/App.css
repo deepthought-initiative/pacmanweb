@@ -471,6 +471,14 @@ input[type="password"].custom {
   border-bottom: 9px solid #7A8E99;
   border-radius: 20%;
 }
+.error-sign{
+  position: absolute;
+  top: 26px;
+  right: 20px;
+  transform: translateY(-50%);
+  border-radius: 20%;
+  width: 20px;
+}
 
 .score-high{
   background-color: #FFBABA;
