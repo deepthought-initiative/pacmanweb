@@ -7,9 +7,9 @@ parts:
     - file: usage/user_management
 - caption: Deployment
   chapters:
-    - file: deployment/prerequisites
-    - file: deployment/production
-    - file: deployment/local
+    - file: deployment/deployment
+    # - file: deployment/production
+    # - file: deployment/local
 - caption: Code
   chapters:
     - file: code/api_run
