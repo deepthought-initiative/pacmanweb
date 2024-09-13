@@ -192,9 +192,10 @@ const PageComponent = ({
 
   function usePrompt(message, when = true) {
     useEffect(() => {
-      const handleBeforeUnload = (event) => {
+      const handleBeforeUnload = async (event) => {
         event.preventDefault();
         event.returnValue = message;
+        await terminateAllProcesses();
         return "";
       };
       if (when) {
@@ -214,6 +215,7 @@ const PageComponent = ({
     }, [message]);
     useConfirmExit(confirmExit, when);
   }
+  
   return (
     <>
       {renderFormComponent({

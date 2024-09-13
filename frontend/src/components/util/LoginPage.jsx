@@ -1,13 +1,23 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import "../../css/LoginPage.css";
 import { useNavigate } from "react-router-dom";
+import InputConfigOption from "./InputConfigOption";
+import PasswordInput from "./PasswordInput";
 import AuthContext from "../../context/AuthContext";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [userCredentials, setUserCredentials] = useState({
+    username: "",
+    password: "",
+  });
+  const updateUserCredentials = useCallback(
+    (key, value) => {
+      setUserCredentials((prev) => ({ ...prev, [key]: value }));
+    },
+    []
+  );
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setIsLoggedIn, setLoggedInUser } = useContext(AuthContext);
@@ -16,20 +26,20 @@ const Login = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("creds", btoa(`${username}:${password}`));
+      formData.append("creds", btoa(`${userCredentials.username}:${userCredentials.password}`));
       const response = await fetch(`/api/login`, {
         method: "POST",
         body: formData,
       });
-      const userInfo = await response.json()
+      const userInfo = await response.json();
       if (!response.ok) {
         setError("Invalid username or password");
       } else {
         localStorage.setItem("loggedIn", "true");
-        setIsLoggedIn(true)
-        setLoggedInUser(userInfo)
+        setIsLoggedIn(true);
+        setLoggedInUser(userInfo);
         navigate("/categorize");
-        localStorage.setItem("username", username);
+        localStorage.setItem("username", userCredentials.username);
       }
     } catch (error) {
       console.error("Error during login:", error);
@@ -41,23 +51,21 @@ const Login = () => {
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="input-container">
-            <label>Username:</label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-          <div className="input-container">
-            <label>Password:</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
+        <form onSubmit={handleSubmit} className="user-form">
+          <InputConfigOption
+            label="Username"
+            value={userCredentials.username}
+            desc="Enter the username"
+            setValue={(value) => updateUserCredentials("username", value)}
+          />
+
+          <PasswordInput
+            label="Password"
+            value={userCredentials.password}
+            setValue={(value) => updateUserCredentials("password", value)}
+            desc="Enter password"
+            disabled={false}
+          />
           <button className="submit-button" type="submit">
             Login
           </button>
