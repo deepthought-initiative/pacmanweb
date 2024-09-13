@@ -4,7 +4,7 @@ import yaml
 from dotenv import load_dotenv
 import secrets
 
-load_dotenv(f'.env')
+load_dotenv('.env')
 
 class Config:
     MAINADMIN_USER_PASSWORD = os.getenv('MAINADMIN_USER_PASSWORD')

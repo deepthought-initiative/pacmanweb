@@ -1,20 +1,15 @@
 import base64
 import pathlib
-import subprocess
 import time
 import pandas as pd
 
 import redis
-from celery import shared_task
 from celery.result import AsyncResult
 from flask import (
     Blueprint,
     Response,
     flash,
-    g,
-    json,
     jsonify,
-    redirect,
     request,
     stream_with_context,
 )

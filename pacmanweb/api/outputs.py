@@ -1,10 +1,7 @@
-import ast
 import json
-import pathlib
 import re
 import zipfile
-from collections import defaultdict
-from io import BytesIO, StringIO
+from io import StringIO
 from os import R_OK, access, stat
 
 import pandas as pd
@@ -261,7 +258,7 @@ class MatchRev:
     def make_main_table(self):
         data = self.read_panelists()
         if isinstance(data, dict):
-            return {"value": f"panelist file not accessible for this cycle."}
+            return {"value": "panelist file not accessible for this cycle."}
         data = data.drop(
             columns=[item for item in data.columns if item.endswith("_prob")]
             + ["encoded_model_classification"]

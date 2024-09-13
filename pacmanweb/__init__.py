@@ -1,5 +1,4 @@
 import base64
-import os
 import redis
 from celery import Celery
 from flask import Flask
