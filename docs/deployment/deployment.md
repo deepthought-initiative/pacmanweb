@@ -57,6 +57,11 @@ REACT_APP_API_URL=http://0.0.0.0:8000
 ```{WARNING}
 Do not use `.env.dev` as the template file for production!
 ```
+
+```{Note}
+For macos users please follow the instructions on pacmanweb/Dockerfile in additon to below instructions. Linux users just need to edit the .env file. 
+```
+
 For production deployment:
 1. Make a copy of `.env.prod` and enter your values. Make sure there is a password for the the main admin user.
 2. For SSL, generate a certificate and key pair and move those to nginx/ssl folder. Provide the name of both in `SSL_CERT_FILE` and `SSL_KEY_FILE` respectfully.
