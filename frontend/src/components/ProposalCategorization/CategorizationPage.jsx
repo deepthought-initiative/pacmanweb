@@ -18,12 +18,13 @@ const CategorizationPage = ({
     runName: "",
     selectedModal: "strolger_pacman_model_7cycles.joblib",
     logLevel: "info",
-    mode:"PROP"
+    mode: "PROP",
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
 
   return (
     <PageComponent
+      key={allCycles.join(",")}
       allCycles={allCycles}
       mode={inputFields.mode}
       modalFile={modalFile}

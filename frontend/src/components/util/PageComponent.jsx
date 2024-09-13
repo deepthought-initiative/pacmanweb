@@ -54,16 +54,6 @@ const PageComponent = ({
     onTerminate();
   }, [currentTaskId, mode, onTerminate]);
 
-  useEffect(() => {
-    const handleBeforeUnload = async (event) => {
-      await terminateAllProcesses();
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [allCycles, terminateAllProcesses]);
-
   const fetchTable = useCallback(
     async (curId) => {
       if (!curId) {
@@ -87,7 +77,7 @@ const PageComponent = ({
           showToastMessage("success", "Process completed successfully!");
         } else {
           setLogs((prevLogs) => [...prevLogs, "PROCESS FAILED"]);
-          showToastMessage("success", "Process failed!");
+          showToastMessage("danger", "Process failed!");
         }
         logContainerRef.current.scrollTop =
           logContainerRef.current.scrollHeight;

@@ -48,7 +48,7 @@ const CustomToast = ({ variant, message, showToast, setShowToast }) => {
     >
       <Toast.Header>
         <strong className="me-auto">
-          {variant === "success" ? "Success" : "Error"}
+          {variant === "success" ? "Success" : "danger"}
         </strong>
       </Toast.Header>
       <Toast.Body className={variant === "danger" ? "text-white" : undefined}>

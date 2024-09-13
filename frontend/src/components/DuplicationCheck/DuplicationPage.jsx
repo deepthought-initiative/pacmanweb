@@ -21,6 +21,7 @@ const DuplicationPage = ({
   const [inputFields, setInputFields] = useState(defaultInputFields);
   return (
     <PageComponent
+      key={allCycles.join(",")}
       allCycles={allCycles}
       mode={inputFields.mode}
       logLevelOptions={logLevelOptions}

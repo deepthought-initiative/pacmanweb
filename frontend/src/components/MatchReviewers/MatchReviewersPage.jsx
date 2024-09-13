@@ -11,7 +11,7 @@ const MatchReviewersPage = ({
   allCycles,
   logLevelOptions,
   modalFile,
-  setModalFile
+  setModalFile,
 }) => {
   const defaultInputFields = {
     currentCycle: "",
@@ -21,12 +21,13 @@ const MatchReviewersPage = ({
     closeCollaboratorTimeFrame: 3,
     logLevel: "info",
     selectedModal: "strolger_pacman_model_7cycles.joblib",
-    mode: "MATCH"
+    mode: "MATCH",
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
 
   return (
     <PageComponent
+      key={allCycles.join(",")}
       allCycles={allCycles}
       mode={inputFields.mode}
       modalFile={modalFile}
@@ -34,12 +35,8 @@ const MatchReviewersPage = ({
       inputFields={inputFields}
       setInputFields={setInputFields}
       defaultInputFields={defaultInputFields}
-      renderFormComponent={(props) => (
-        <MatchReviewersForm {...props} />
-      )}
-      renderTableComponent={(props) => (
-        <MatchReviewersTable {...props} />
-      )}
+      renderFormComponent={(props) => <MatchReviewersForm {...props} />}
+      renderTableComponent={(props) => <MatchReviewersTable {...props} />}
       button_label="Match Reviewers"
       setModalFile={setModalFile}
     />

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "../../css/searchBox.css";
 import InputConfigOption from "../util/InputConfigOption.jsx";
 import NewDropdown from "../util/NewDropdown.jsx";
@@ -30,7 +30,7 @@ const DuplicationForm = ({
     ...inputFields.pastCycle,
     inputFields.currentCycle ? inputFields.currentCycle : [],
   ];
-  const [filteredCycles, setFilteredCycles] = useState();
+  const [filteredCycles, setFilteredCycles] = useState(allCycles);
 
   // Error variables
   const defaultInputFieldsErrors = {

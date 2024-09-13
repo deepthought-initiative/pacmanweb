@@ -66,8 +66,8 @@ const MatchReviewersTable = ({
                   Object.entries(dataToDisplay["Main Table"]).map(
                     ([key, value]) => (
                       <tr
-                        onClick={() => handleHighlight(key)}
-                        className={highlighted === key ? "highlighted" : ""}
+                        onClick={() => handleHighlight(value.fname)}
+                        className={highlighted === value.fname ? "highlighted" : ""}
                         key={key}
                       >
                         <td className="text-break" scope="row">
