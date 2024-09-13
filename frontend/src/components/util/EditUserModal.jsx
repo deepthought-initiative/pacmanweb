@@ -30,7 +30,6 @@ const EditUserModal = ({
   });
   const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   // Function for showing toasts
   const { showToastMessage } = useContext(ToastContext);
@@ -53,9 +52,7 @@ const EditUserModal = ({
     setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
   };
 
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+
 
   const hasChanged =
     updatedUser.username !== selectedUser.username ||
@@ -148,29 +145,48 @@ const EditUserModal = ({
 
   const validateFields = () => {
     let noError = true;
-    if (updatedUser.username === "") {
-      setUsernameErrorMessage(" Username is required.");
-      noError = false;
-    }
-    if (updatedUser.password === "") {
-      setPasswordErrorMessage(" Password is required.");
-      noError = false;
-    }
-    if (/\s|\t|\n/.test(updatedUser.password)) {
-      setPasswordErrorMessage("No white spaces, tabs or new line characters");
-      noError = false;
-    }
-    if (updatedUser.username !== "") {
-      const isUsernamePresent = allUsers.some(
-        (user) => user.username === updatedUser.username
-      );
-      if (isUsernamePresent) {
-        setUsernameErrorMessage("Username already exists");
+
+    // Check for empty username
+    if (updatedUser.username.trim() === "") {
+        setUsernameErrorMessage("Username is required.");
         noError = false;
-      }
+    } else {
+        setUsernameErrorMessage("");
+    }
+
+    // Check for empty password
+    if (updatedUser.password.trim() === "") {
+        setPasswordErrorMessage("Password is required.");
+        noError = false;
+    } else {
+        setPasswordErrorMessage("");
+    }
+
+    // Check for whitespace in password
+    if (/\s|\t|\n/.test(updatedUser.password)) {
+        setPasswordErrorMessage("No white spaces, tabs, or new line characters.");
+        noError = false;
+    }
+
+    // Check for whitespace in username
+    if (/\s|\t|\n/.test(updatedUser.username)) {
+        setUsernameErrorMessage("No white spaces, tabs, or new line characters.");
+        noError = false;
+    }
+
+    // Check if username already exists
+    if (updatedUser.username !== "") {
+        const isUsernamePresent = allUsers.some(
+            (user) => user.username === updatedUser.username
+        );
+        if (isUsernamePresent) {
+            setUsernameErrorMessage("Username already exists.");
+            noError = false;
+        }
     }
     return noError;
-  };
+};
+
 
   const handleAddNewUser = () => {
     const inputFieldsValidated = validateFields();
@@ -226,8 +242,6 @@ const EditUserModal = ({
                 setValue={(value) => updateInputFields("password", value)}
                 error={passwordErrorMessage}
                 desc={mode === "EDIT" ? "Enter new password" : "Enter password"}
-                showPassword={showPassword}
-                toggleShowPassword={handleShowPassword}
                 disabled={false}
               />
               {selectedUser["username"] !== "mainadmin" && (
