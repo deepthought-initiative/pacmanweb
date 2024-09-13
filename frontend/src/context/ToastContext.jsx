@@ -1,31 +1,39 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState } from "react";
 import CustomToast from "../components/util/CustomToast";
+import ToastContainer from "react-bootstrap/ToastContainer";
 
 const ToastContext = createContext();
 
 export const ToastContextProvider = ({ children }) => {
-  const [showToast, setShowToast] = useState(false);
-  const [toastVariant, setToastVariant] = useState("");
-  const [toastMessage, setToastMessage] = useState("");
+  const [toasts, setToasts] = useState([]);
 
   const showToastMessage = (variant, message) => {
-    setToastVariant(variant);
-    setToastMessage(message);
-    setShowToast(true);
+    const newToast = { id: Date.now(), variant, message }; // Unique ID for each toast
+    setToasts((prevToasts) => [...prevToasts, newToast]);
   };
 
-  return (
+  const removeToast = (id) => {
+    setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
+  };
+
+return (
     <ToastContext.Provider value={{ showToastMessage }}>
       {children}
-      <CustomToast
-        variant={toastVariant}
-        message={toastMessage}
-        showToast={showToast}
-        setShowToast={setShowToast}
-      />
+      <ToastContainer className="p-3 position-static">
+        {toasts.map((toast) => (
+          <CustomToast
+            key={toast.id}
+            variant={toast.variant}
+            message={toast.message}
+            showToast={true}
+            setShowToast={() => removeToast(toast.id)}
+          />
+        ))}
+      </ToastContainer>
     </ToastContext.Provider>
   );
 };
 
 export default ToastContext;
+

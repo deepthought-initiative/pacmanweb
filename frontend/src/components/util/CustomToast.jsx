@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Toast from "react-bootstrap/Toast";
-import ToastContainer from "react-bootstrap/ToastContainer";
 
 const CustomToast = ({ variant, message, showToast, setShowToast }) => {
   const [progress, setProgress] = useState(100);
@@ -41,31 +40,29 @@ const CustomToast = ({ variant, message, showToast, setShowToast }) => {
   }, [showToast, setShowToast]);
 
   return (
-    <ToastContainer position="top-end" className="p-3">
-      <Toast
-        bg={variant}
-        show={isVisible}
-        onClose={() => setIsVisible(false)}
-        className={`custom-toast ${isVisible ? "show" : "hide"}`}
-      >
-        <Toast.Header>
-          <strong className="me-auto">
-            {variant === "success" ? "Success" : "Error"}
-          </strong>
-        </Toast.Header>
-        <Toast.Body className={variant === "danger" ? "text-white" : undefined}>
-          {variant === "success" ? "✅ " : "⚠️ "}
-          {message}
-        </Toast.Body>
-        <div
-          className="toast-progress"
-          style={{
-            width: `${progress}%`,
-            backgroundColor: variant === "success" ? "green" : "red",
-          }}
-        />
-      </Toast>
-    </ToastContainer>
+    <Toast
+      bg={variant}
+      show={isVisible}
+      onClose={() => setIsVisible(false)}
+      className={`custom-toast ${isVisible ? "show" : "hide"}`}
+    >
+      <Toast.Header>
+        <strong className="me-auto">
+          {variant === "success" ? "Success" : "Error"}
+        </strong>
+      </Toast.Header>
+      <Toast.Body className={variant === "danger" ? "text-white" : undefined}>
+        {variant === "success" ? "✅ " : "⚠️ "}
+        {message}
+      </Toast.Body>
+      <div
+        className="toast-progress"
+        style={{
+          width: `${progress}%`,
+          backgroundColor: variant === "success" ? "green" : "red",
+        }}
+      />
+    </Toast>
   );
 };
 
