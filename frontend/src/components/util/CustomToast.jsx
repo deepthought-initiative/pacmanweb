@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import Toast from "react-bootstrap/Toast";
-import ToastContainer from "react-bootstrap/ToastContainer";
 
 const CustomToast = ({ variant, message, showToast, setShowToast }) => {
   const [progress, setProgress] = useState(100);
