@@ -1,5 +1,5 @@
 body {
-  font-family: 'Manrope';
+  font-family: Manrope;
 }
 
 #root {
@@ -53,7 +53,7 @@ body {
 #log-container>* {
   color: white;
   font-size: 13px;
-  font-family: "Monospace", sans-serif !important;
+  font-family: Monospace, sans-serif !important;
   font-weight: 400;
   font-style: normal !important;
 }
@@ -273,7 +273,7 @@ th {
 
 .required{
   border: 2px solid red !important;
-  font-family: 'manrope';
+  font-family: Manrope;
 }
 
 .expanded {
@@ -755,7 +755,7 @@ padding-left: 0;
 
 /*Form Label*/
 .form-control{
-  font-family: 'Manrope';
+  font-family: Manrope;
   font-size: 1rem;
   font-weight: bold;
 }
