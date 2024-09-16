@@ -74,10 +74,13 @@ services:
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
+      args:
+        - OS_NAME=${OS_NAME}
     volumes:
       - ./pacmanweb:/app/pacmanweb
       - ./.env:/app/.env:ro
       - ./PACMan:/app/PACMan:rw
+      - ./env:/app/env:ro
     expose:
       - "8000"
     depends_on:
@@ -87,6 +90,7 @@ services:
     command: gunicorn 'pacmanweb:create_app()' --bind 0.0.0.0:8000 --timeout 120 --worker-class gevent --access-logfile=-
     environment:
       - PYTHONUNBUFFERED=1
+      - OS_NAME=${OS_NAME}
 
   flower:
     build:

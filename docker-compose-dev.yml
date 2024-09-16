@@ -66,10 +66,13 @@ services:
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
+      args:
+        - OS_NAME=${OS_NAME}
     volumes:
       - ./pacmanweb:/app/pacmanweb
       - ./.env:/app/.env:ro
       - ./PACMan:/app/PACMan:rw
+      - ./env:/app/env:ro
     ports:
       - 8000:8000
     depends_on:
@@ -79,6 +82,7 @@ services:
     command: flask --app pacmanweb run --host 0.0.0.0 --port 8000 --debug
     environment:
       - PYTHONUNBUFFERED=1
+      - OS_NAME=${OS_NAME}
 
   flower:
     build:
