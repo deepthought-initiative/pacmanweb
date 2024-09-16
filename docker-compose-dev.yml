@@ -51,16 +51,20 @@ services:
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
+      args:
+        - OS_NAME=${OS_NAME}
     volumes:
       - .:/app
       - ./.env:/app/.env:ro
       - ./PACMan:/app/PACMan:rw
+      - ./env:/app/env:ro
     command: celery -A pacmanweb.celery_app worker --loglevel=info -c 10 -E
     depends_on:
       - redis
       - rabbitmq
     environment:
       - PYTHONUNBUFFERED=1
+      - OS_NAME=${OS_NAME}
 
   backend:
     build:
@@ -88,9 +92,12 @@ services:
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
+      args:
+        - OS_NAME=${OS_NAME}
     volumes:
       - ./pacmanweb:/app/pacmanweb
       - ./.env:/app/.env:ro
+      - ./env:/app/env:ro
     command: celery -A pacmanweb.celery_app flower
     ports:
       - '5555:5555'
@@ -99,6 +106,8 @@ services:
       - rabbitmq
       - celery
       - backend
+    environment:
+      - OS_NAME=${OS_NAME}
 
 volumes:
   pacmanweb-react-build:
