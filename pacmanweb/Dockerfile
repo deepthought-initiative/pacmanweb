@@ -12,7 +12,7 @@ RUN if [ "$OS_NAME" = "macos" ]; then \
     fi
 
 RUN if [ "$OS_NAME" = "linux" ]; then \
-        RUN micromamba install --name base --yes --file /tmp/env_linux.lock && \
+        micromamba install --name base --yes --file /tmp/env_linux.lock && \
         micromamba clean --all --yes; \
     fi
 
