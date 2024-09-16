@@ -599,6 +599,9 @@ padding-left: 0;
   background: transparent;
   border: none;
   cursor: pointer;
+  height: 100%;
+  width: 50px;
+  background-color: transparent !important;
 }
 .password-feedback-container {
   margin-top: 8px;
@@ -614,10 +617,6 @@ padding-left: 0;
 .show-password-btn img{
   width: 20px;
   height: 20px;
-}
-
-.show-password-btn{
-  background-color: transparent !important;
 }
 
 .search-bar-wrapper{
