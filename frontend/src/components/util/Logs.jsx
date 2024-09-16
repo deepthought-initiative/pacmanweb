@@ -18,7 +18,6 @@ const Logs = ({
   preventClick,
   setShowLogs,
   mode,
-  usePrompt,
   currentCycle,
   currentTaskId,
 }) => {
@@ -40,8 +39,6 @@ const Logs = ({
       : processStatus === 200 || processStatus === 204
       ? "Process Successful!"
       : "Process Failed!";
-
-  usePrompt("A process is running. Do you really want to leave?", progressPercentage < 100);
 
   return (
     <>
