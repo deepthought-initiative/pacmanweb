@@ -3,17 +3,16 @@ import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 
-const ProposalTable = ({
-  setShowTable,
-  setShowLogs,
+const CategorizationTable = ({
+  currentTaskId,
+  currentCycle,
+  viewLogs,
   onCategorizeAnotherCycle,
   dataToDisplay,
-  downloadZIP,
-  downloadCSV,
+  mode,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
-
   const expo = (num) => {
     if (num < 0.001) {
       return Number.parseFloat(num).toExponential(3);
@@ -21,16 +20,9 @@ const ProposalTable = ({
       return Number.parseFloat(num).toFixed(3);
     }
   };
-
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
     setCurrentRow(current_id);
-  };
-
-  const viewLogs = (event) => {
-    event.preventDefault();
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   return (
@@ -81,7 +73,7 @@ const ProposalTable = ({
           <h6 className="my-3">Alternate Categories</h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th scope="col">PACMan Science Category</th>
@@ -110,11 +102,12 @@ const ProposalTable = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentTaskId={currentTaskId}
       />
     </>
   );
 };
 
-export default ProposalTable;
+export default CategorizationTable;

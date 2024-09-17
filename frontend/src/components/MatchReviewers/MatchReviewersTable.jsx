@@ -4,13 +4,13 @@ import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
 import ImgTooltip from "../util/Tooltip";
 
-const TableMatchReviewers = ({
-  setShowTable,
-  setShowLogs,
+const MatchReviewersTable = ({
   onCategorizeAnotherCycle,
   dataToDisplay,
-  downloadCSV,
-  downloadZIP,
+  currentTaskId,
+  currentCycle,
+  mode,
+  viewLogs,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
@@ -24,11 +24,6 @@ const TableMatchReviewers = ({
   const handleHighlight = (current_id) => {
     setHighlighted((prevId) => (prevId === current_id ? null : current_id));
     setCurrentRow(current_id);
-  };
-
-  const viewLogs = () => {
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   const expo = (num) => {
@@ -71,22 +66,24 @@ const TableMatchReviewers = ({
                   Object.entries(dataToDisplay["Main Table"]).map(
                     ([key, value]) => (
                       <tr
-                        onClick={() =>
-                          handleHighlight(value["fname"])
-                        }
-                        className={
-                          highlighted === value["fname"] ? "highlighted" : ""
-                        }
+                        onClick={() => handleHighlight(value.fname)}
+                        className={highlighted === value.fname ? "highlighted" : ""}
                         key={key}
                       >
                         <td className="text-break" scope="row">
-                          {value["fname"].toUpperCase()}
+                          {value && value.fname
+                            ? value.fname.toUpperCase()
+                            : ""}
                         </td>
                         <td className="text-break">
-                          {value["model_classification"]}
+                          {value ? value.model_classification : ""}
                         </td>
-                        <td className="text-break">{expo(value["prob"])}</td>
-                        <td className="text-break">{value["nrecords"]}</td>
+                        <td className="text-break">
+                          {value ? expo(value.prob) : ""}
+                        </td>
+                        <td className="text-break">
+                          {value ? value.nrecords : ""}
+                        </td>
                       </tr>
                     )
                   )}
@@ -100,7 +97,7 @@ const TableMatchReviewers = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-2 col-sm-1">Proposal Number</th>
@@ -131,7 +128,7 @@ const TableMatchReviewers = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-2 col-sm-1">Reviewer</th>
@@ -162,11 +159,12 @@ const TableMatchReviewers = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentTaskId={currentTaskId}
       />
     </>
   );
 };
 
-export default TableMatchReviewers;
+export default MatchReviewersTable;

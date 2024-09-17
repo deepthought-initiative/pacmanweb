@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-
 import Dropdown from "react-bootstrap/Dropdown";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Spinner from "react-bootstrap/Spinner";
+import { DownloadFile } from "./Api";
 
 const Logs = ({
   setShowTable,
@@ -14,18 +14,19 @@ const Logs = ({
   processStatus,
   logContainerRef,
   showTerminateProcess,
-  downloadCSV,
-  downloadZIP,
   loading,
   preventClick,
   setShowLogs,
+  mode,
+  usePrompt,
+  currentCycle,
+  currentTaskId,
 }) => {
   const handleTable = (event) => {
     event.preventDefault();
     setShowTable(true);
     setShowLogs(false);
   };
-
   const variant =
     progressPercentage < 100
       ? ""
@@ -39,6 +40,8 @@ const Logs = ({
       : processStatus === 200 || processStatus === 204
       ? "Process Successful!"
       : "Process Failed!";
+
+  usePrompt("A process is running. Do you really want to leave?", progressPercentage < 100);
 
   return (
     <>
@@ -97,10 +100,20 @@ const Logs = ({
             See Results
           </button>
           <DropdownButton id="dropdown-basic-button" title="Download Data">
-            <Dropdown.Item className="download-option" onClick={downloadCSV}>
+            <Dropdown.Item
+              className="download-option"
+              onClick={() =>
+                DownloadFile(currentTaskId, currentCycle, mode, "csv")
+              }
+            >
               Download as CSV
             </Dropdown.Item>
-            <Dropdown.Item className="download-option" onClick={downloadZIP}>
+            <Dropdown.Item
+              className="download-option"
+              onClick={() =>
+                DownloadFile(currentTaskId, currentCycle, mode, "zip")
+              }
+            >
               Download as Zip
             </Dropdown.Item>
           </DropdownButton>

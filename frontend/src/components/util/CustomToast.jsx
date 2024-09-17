@@ -1,31 +1,68 @@
-import { useState } from "react";
-import Button from "react-bootstrap/Button";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
 import Toast from "react-bootstrap/Toast";
 
-const CustomToast = () => {
-  const [show, setShow] = useState(false);
+const CustomToast = ({ variant, message, showToast, setShowToast }) => {
+  const [progress, setProgress] = useState(100);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    let timer;
+    let progressTimer;
+
+    if (showToast) {
+      setIsVisible(true);
+      setProgress(100);
+
+      timer = setTimeout(() => {
+        setIsVisible(false);
+        setTimeout(() => setShowToast(false), 700);
+      }, 3000);
+
+      progressTimer = setInterval(() => {
+        setProgress((prevProgress) => {
+          if (prevProgress <= 0) {
+            clearInterval(progressTimer);
+            return 0;
+          }
+          return prevProgress - 100 / 30;
+        });
+      }, 100);
+    } else {
+      setProgress(100);
+      setIsVisible(false);
+    }
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(progressTimer);
+    };
+  }, [showToast, setShowToast]);
+
   return (
-    <Row>
-      <Col xs={6}>
-        <Toast onClose={() => setShow(false)} show={show} delay={3000} autohide>
-          <Toast.Header>
-            <img
-              src="holder.js/20x20?text=%20"
-              className="rounded me-2"
-              alt="toast"
-            />
-            <strong className="me-auto">Bootstrap</strong>
-            <small>11 mins ago</small>
-          </Toast.Header>
-          <Toast.Body>Great</Toast.Body>
-        </Toast>
-      </Col>
-      <Col xs={6}>
-        <Button onClick={() => setShow(true)}>Show Toast</Button>
-      </Col>
-    </Row>
+    <Toast
+      bg={variant}
+      show={isVisible}
+      onClose={() => setIsVisible(false)}
+      className={`custom-toast ${isVisible ? "show" : "hide"}`}
+    >
+      <Toast.Header>
+        <strong className="me-auto">
+          {variant === "success" ? "Success" : "danger"}
+        </strong>
+      </Toast.Header>
+      <Toast.Body className={variant === "danger" ? "text-white" : undefined}>
+        {variant === "success" ? "✅ " : "⚠️ "}
+        {message}
+      </Toast.Body>
+      <div
+        className="toast-progress"
+        style={{
+          width: `${progress}%`,
+          backgroundColor: variant === "success" ? "green" : "red",
+        }}
+      />
+    </Toast>
   );
 };
 

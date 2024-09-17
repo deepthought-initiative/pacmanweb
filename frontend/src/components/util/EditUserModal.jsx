@@ -1,19 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-undef */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
-import HidePasswordIcon from "../../assets/hide.png";
-import ShowPasswordIcon from "../../assets/show.png";
 import ConfirmationModal from "./ConfirmationModal";
+import InputConfigOption from "./InputConfigOption";
+import PasswordInput from "./PasswordInput";
+import ToastContext from "../../context/ToastContext.jsx";
+import { AddUser, EditUser } from "./Api.jsx";
 
 // eslint-disable-next-line react/prop-types
-const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
-  const [processStatusCode, setProcessStatusCode] = useState();
+const EditUserModal = ({
+  show,
+  setShow,
+  mode,
+  selectedUser,
+  allUsers,
+  setAllUsers,
+}) => {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [showEditModal, setShowEditModal] = useState(true);
@@ -22,11 +28,11 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     isadmin: selectedUser?.isadmin || false,
     password: selectedUser?.password || "",
   });
-  const [usernameError, setUsernameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [usernameErrorMessage, setUsernameErrorMessage] = useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+  // Function for showing toasts
+  const { showToastMessage } = useContext(ToastContext);
 
   useEffect(() => {
     setUpdatedUser({
@@ -42,114 +48,66 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     setShowEditModal(false);
   };
 
-  const handleUsernameChange = (event) => {
-    setUpdatedUser({ ...updatedUser, username: event.target.value });
-    setUsernameError(false);
-  };
-
-  const handlePasswordChange = (event) => {
-    setUpdatedUser({ ...updatedUser, password: event.target.value });
-    setPasswordError(false);
-  };
-
   const handleAdminStatusChange = (event) => {
     setUpdatedUser({ ...updatedUser, isadmin: event.target.value === "admin" });
   };
 
-  const handleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+
 
   const hasChanged =
     updatedUser.username !== selectedUser.username ||
     updatedUser.isadmin !== selectedUser.isadmin ||
     updatedUser.password !== "";
 
-  const handleSaveChanges = async () => {
+  const handleEditUser = async () => {
+    let noWhiteSpace = true;
     if (/\s|\t|\n/.test(updatedUser.password)) {
-      setPasswordErrorMessage(
-        "Password cannot have white spaces, tabs or new line characters"
-      );
-      setPasswordError(true);
-      return;
-    } else {
-      setPasswordError(false);
+      noWhiteSpace = false;
+      setPasswordErrorMessage("No white spaces, tabs or new line characters");
     }
 
-    if (hasChanged) {
+    if (noWhiteSpace && hasChanged) {
       // Ask for confirmation before saving changes
       setConfirmationMessage(
         `Are you sure you want to update the information for this user?
-
-      Changes:
-      - Admin status: ${
-        updatedUser.isadmin !== selectedUser.isadmin
-          ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
-              updatedUser.isadmin ? "Admin" : "Normal user"
-            }`
-          : "No change"
-      }
-
-      - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
+  
+        Changes:
+        - Admin status: ${
+          updatedUser.isadmin !== selectedUser.isadmin
+            ? `${selectedUser.isadmin ? "Admin" : "Normal user"} -> ${
+                updatedUser.isadmin ? "Admin" : "Normal user"
+              }`
+            : "No change"
+        }
+  
+        - Password: ${updatedUser.password !== "" ? "Changed" : "No change"}`
       );
       setShowConfirmationModal(true);
       setShowEditModal(false);
-    } else {
-      try {
-        const formData = new FormData();
-        formData.append("username", updatedUser.username);
-        formData.append("isadmin", updatedUser.isadmin);
-        formData.append("password", updatedUser.password);
-
-        const ifExists = await fetch(
-          `/api/admin/ifexists/${selectedUser.username}`,
-          {
-            method: "GET",
-            credentials: "include",
-            headers: { Authorization: "Basic " + btoa("default:barebones") },
-          }
-        );
-        if (ifExists.ok) {
-          formData.append("overwrite", true);
-        }
-
-        const response = await fetch("/api/admin/edit_users", {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-          headers: { Authorization: "Basic " + btoa("default:barebones") },
-        });
-
-        if (!response.ok) {
-          setProcessStatusCode(400);
-        } else {
-          setProcessStatusCode(200);
-          if (mode === "edit") {
-            handleClose();
-            window.location.reload();
-          } else {
-            alert(
-              `User "${updatedUser.username}" (${
-                updatedUser.isadmin ? "Admin" : "Normal user"
-              }) added successfully.`
-            );
-            handleClose();
-          }
-        }
-      } catch (error) {
-        console.error("Error updating user:", error);
-      }
     }
   };
 
   const handleConfirmation = async () => {
     setShowConfirmationModal(false);
-    try {
-      const formData = new FormData();
-      formData.append("username", updatedUser.username);
-      formData.append("isadmin", updatedUser.isadmin);
-      formData.append("password", updatedUser.password);
-
+    const formData = new FormData();
+    formData.append("username", updatedUser.username);
+    formData.append("isadmin", updatedUser.isadmin);
+    formData.append("password", updatedUser.password);
+    if (mode === "ADD") {
+      try {
+        const addedUser = await AddUser(formData);
+        let addedUserData = addedUser.user_data;
+        addedUserData.isadmin =
+          addedUserData.isadmin === "True" || addedUserData.isadmin === "true";
+        setAllUsers((prev) => [...prev, addedUserData]);
+        showToastMessage("success", `Added user ${addedUserData.username}`);
+        handleClose();
+      } catch (error) {
+        console.error("Error adding user:", error);
+        showToastMessage("danger", "Failed to add user!");
+      }
+    }
+    if (mode === "EDIT") {
       const ifExists = await fetch(
         `/api/admin/ifexists/${selectedUser.username}`,
         {
@@ -161,61 +119,86 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
       if (ifExists.ok) {
         formData.append("overwrite", true);
       }
-
-      const response = await fetch("/api/admin/edit_users", {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-        headers: { Authorization: "Basic " + btoa("default:barebones") },
-      });
-
-      if (!response.ok) {
-        setProcessStatusCode(400);
-      } else {
-        setProcessStatusCode(200);
+      try {
+        const editedUser = await EditUser(formData)
+        const editedUserData = editedUser.user_data;
+        const newUsers = allUsers.map((user) => {
+          if (user.username === editedUserData.username) {
+            return {
+              username: editedUserData.username,
+              isadmin:
+                editedUserData.isadmin === "True" ||
+                editedUserData.isadmin === "true",
+            };
+          } else {
+            return user;
+          }
+        });
+        setAllUsers(newUsers);
+        showToastMessage("success", `Updated user ${editedUserData.username}`);
         handleClose();
-        window.location.reload();
+      } catch (error) {
+        showToastMessage("danger", "Failed to edit user!");
       }
-    } catch (error) {
-      console.error("Error updating user:", error);
     }
   };
 
-  const handleAddNewUser = () => {
-    if (updatedUser.username === "" || updatedUser.password === "") {
-      setUsernameError(updatedUser.username === "");
-      setUsernameErrorMessage(" Username is required.");
-      setPasswordError(updatedUser.password === "");
-      setPasswordErrorMessage(" Password is required.");
-      return;
-    }
-    if (/\s|\t|\n/.test(updatedUser.password)) {
-      setPasswordErrorMessage(
-        "Password cannot have white spaces, tabs or new line characters"
-      );
-      setPasswordError(true);
-      return;
+  const validateFields = () => {
+    let noError = true;
+
+    // Check for empty username
+    if (updatedUser.username.trim() === "") {
+        setUsernameErrorMessage("Username is required.");
+        noError = false;
     } else {
-      setPasswordError(false);
+        setUsernameErrorMessage("");
     }
 
+    // Check for empty password
+    if (updatedUser.password.trim() === "") {
+        setPasswordErrorMessage("Password is required.");
+        noError = false;
+    } else {
+        setPasswordErrorMessage("");
+    }
+
+    // Check for whitespace in password
+    if (/\s|\t|\n/.test(updatedUser.password)) {
+        setPasswordErrorMessage("No white spaces, tabs, or new line characters.");
+        noError = false;
+    }
+
+    // Check for whitespace in username
+    if (/\s|\t|\n/.test(updatedUser.username)) {
+        setUsernameErrorMessage("No white spaces, tabs, or new line characters.");
+        noError = false;
+    }
+
+    // Check if username already exists
     if (updatedUser.username !== "") {
-      const isUsernamePresent = allUsers.some(
-        (user) => user.username === updatedUser.username
-      );
-      if (isUsernamePresent) {
-        setUsernameError(true);
-        setUsernameErrorMessage("Username already exists");
-      } else {
-        setConfirmationMessage(
-          `Are you sure you want to add this user?
+        const isUsernamePresent = allUsers.some(
+            (user) => user.username === updatedUser.username
+        );
+        if (isUsernamePresent) {
+            setUsernameErrorMessage("Username already exists.");
+            noError = false;
+        }
+    }
+    return noError;
+};
+
+
+  const handleAddNewUser = () => {
+    const inputFieldsValidated = validateFields();
+    if (inputFieldsValidated) {
+      setConfirmationMessage(
+        `Are you sure you want to add this user?
 
           - Username: ${updatedUser.username}
           - Admin status: ${updatedUser.isadmin ? "Admin" : "Normal user"}`
-        );
-        setShowConfirmationModal(true);
-        setShowEditModal(false);
-      }
+      );
+      setShowConfirmationModal(true);
+      setShowEditModal(false);
     }
   };
 
@@ -224,78 +207,43 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
     setShowEditModal(true);
   };
 
+  const updateInputFields = useCallback(
+    (key, value) => {
+      setUpdatedUser((prev) => ({ ...prev, [key]: value }));
+    },
+    [setUpdatedUser]
+  );
+
   return (
     <>
       {showEditModal && (
         <Modal show={show} backdrop="static" onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
-              {mode === "edit"
+              {mode === "EDIT"
                 ? `Editing credentials for ${selectedUser.username}`
                 : "Create New User"}
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form>
-              {mode === "add" && (
-                <Form.Group className="mb-3" controlId="Form.Username">
-                  <Form.Label>
-                    <strong>Username</strong>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    autoFocus
-                    value={updatedUser.username}
-                    onChange={handleUsernameChange}
-                    isInvalid={usernameError}
-                  />
-                  {usernameError && (
-                    <Form.Control.Feedback type="invalid">
-                      {usernameErrorMessage}
-                    </Form.Control.Feedback>
-                  )}
-                </Form.Group>
+            <Form className="user-form">
+              {mode === "ADD" && (
+                <InputConfigOption
+                  label="Username"
+                  value={updatedUser.username}
+                  desc="Enter the username"
+                  setValue={(value) => updateInputFields("username", value)}
+                  error={usernameErrorMessage}
+                />
               )}
-              <Form.Group
-                className="mb-3 password-input-wrapper"
-                controlId="Form.NewPassword"
-              >
-                <Form.Label>
-                  <strong>
-                    {mode === "edit" ? "New Password" : "Password"}
-                  </strong>
-                </Form.Label>
-                <div className="password-input-container">
-                  <Form.Control
-                    type={showPassword ? "text" : "password"}
-                    autoFocus
-                    value={updatedUser.password}
-                    onChange={handlePasswordChange}
-                    isInvalid={passwordError}
-                    className="password-input"
-                  />
-                  <button
-                    onClick={handleShowPassword}
-                    type="button"
-                    className="show-password-btn"
-                    style={passwordError ? { right: "35px" } : {}}
-                  >
-                    <img
-                      src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
-                      alt="Show Password"
-                    />
-                  </button>
-                </div>
-                <div className="password-feedback-container">
-                  {passwordError && (
-                    <div className="password-feedback-container">
-                      <Form.Control.Feedback type="invalid">
-                        {passwordErrorMessage}
-                      </Form.Control.Feedback>
-                    </div>
-                  )}
-                </div>
-              </Form.Group>
+              <PasswordInput
+                label={mode === "EDIT" ? "New Password" : "Password"}
+                value={updatedUser.password}
+                setValue={(value) => updateInputFields("password", value)}
+                error={passwordErrorMessage}
+                desc={mode === "EDIT" ? "Enter new password" : "Enter password"}
+                disabled={false}
+              />
               {selectedUser["username"] !== "mainadmin" && (
                 <Form.Group
                   as={Row}
@@ -334,10 +282,10 @@ const EditUserModal = ({ show, setShow, mode, selectedUser, allUsers }) => {
           <Modal.Footer>
             <Button
               variant="primary"
-              onClick={mode === "edit" ? handleSaveChanges : handleAddNewUser}
+              onClick={mode === "EDIT" ? handleEditUser : handleAddNewUser}
               disabled={!hasChanged}
             >
-              {mode === "edit" ? "Save Changes" : "Create User"}
+              {mode === "EDIT" ? "Save Changes" : "Create User"}
             </Button>
           </Modal.Footer>
         </Modal>

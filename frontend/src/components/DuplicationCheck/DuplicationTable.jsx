@@ -3,20 +3,20 @@
 import { useState } from "react";
 import AlternateCategoriesTest from "../util/AlternateCategoriesText";
 import ButtonTray from "../util/ButtonTray";
+import InputConfigOption from "../util/InputConfigOption";
 
-const TableForDuplicationChecker = ({
-  setShowTable,
-  setShowLogs,
+const DuplicationTable = ({
   dataToDisplay,
   onCategorizeAnotherCycle,
-  downloadCSV,
-  lowerLimit,
-  upperLimit,
   currentCycle,
-  downloadZIP,
+  currentTaskId,
+  mode,
+  viewLogs,
 }) => {
   const [highlighted, setHighlighted] = useState();
   const [currentRow, setCurrentRow] = useState();
+  const [upperLimit, setUpperLimit] = useState();
+  const [lowerLimit, setLowerLimit] = useState();
 
   const reformatData = (originalData) => {
     const reformattedData = {};
@@ -41,11 +41,6 @@ const TableForDuplicationChecker = ({
   const handleHighlight = (row_id) => {
     setHighlighted((prevId) => (prevId === row_id ? null : row_id));
     setCurrentRow(row_id);
-  };
-
-  const viewLogs = () => {
-    setShowLogs(true);
-    setShowTable(false);
   };
 
   const applySimilarityScoreBgColor = (score) => {
@@ -96,6 +91,28 @@ const TableForDuplicationChecker = ({
 
   return (
     <>
+      <div className="all-options">
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Lower Limit for CS Score"
+              value={lowerLimit}
+              desc="Scores below this will be marked green"
+              setValue={setLowerLimit}
+            />
+          </div>
+        </div>
+        <div className="row">
+          <div className="single-option col-12">
+            <InputConfigOption
+              label="Upper Limit for CS Score"
+              value={upperLimit}
+              desc="Scores above this will be marked red"
+              setValue={setUpperLimit}
+            />
+          </div>
+        </div>
+      </div>
       <div
         id="outer-container"
         className="container-fluid border border-1 border-black mt-5"
@@ -138,7 +155,7 @@ const TableForDuplicationChecker = ({
           </h6>
           {highlighted ? (
             <div className="table-container">
-              <table className="container-fluid">
+              <table className="container-fluid secondary-table">
                 <thead>
                   <tr>
                     <th className="col-md-4 col-sm-4">Cycle Number</th>
@@ -177,11 +194,12 @@ const TableForDuplicationChecker = ({
       <ButtonTray
         onCategorizeAnotherCycle={onCategorizeAnotherCycle}
         viewLogs={viewLogs}
-        downloadCSV={downloadCSV}
-        downloadZIP={downloadZIP}
+        mode={mode}
+        currentCycle={currentCycle}
+        currentTaskId={currentTaskId}
       />
     </>
   );
 };
 
-export default TableForDuplicationChecker;
+export default DuplicationTable;

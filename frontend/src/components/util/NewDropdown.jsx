@@ -49,6 +49,7 @@ const NewDropdown = ({
       <div className="option-header">
         <label
           className={`custom-form-label ${disabled ? "label-disabled" : ""} `}
+          style={{ color: error ? "red" : "" }}
         >
           {label}
         </label>
@@ -63,8 +64,19 @@ const NewDropdown = ({
           ? inputField.length > 0
             ? inputField.join(", ")
             : " "
-          : inputField || " "}
-        <div className={`triangle ${dropdownOpen ? "reverse" : ""}`}></div>
+          : <div className="input-field-selected-value">{inputField}</div> ||
+            " "}
+        <div
+          className={`triangle ${dropdownOpen ? "reverse" : ""}`}
+          style={{ right: error ? "60px" : "" }}
+        ></div>
+        {error && (
+          <img
+            src="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e"
+            alt="Exclamation Icon"
+            className="error-sign"
+          />
+        )}
       </div>
       <div className="option-header">
         <div className="form-text text-start ms-4">{desc}</div>
@@ -76,18 +88,20 @@ const NewDropdown = ({
             <ul>
               {data.map((value) => (
                 <li
-                  key={value.cycleNumber}
-                  onClick={() => handleOptionClick(value.cycleNumber)}
+                  key={value.cycleNumber || value.label}
+                  onClick={() =>
+                    handleOptionClick(value.cycleNumber || value.label)
+                  }
                   className={
                     multiple
-                      ? inputField.includes(value.cycleNumber)
+                      ? inputField.includes(value.cycleNumber || value.label)
                         ? "selected"
                         : ""
-                      : inputField === value.cycleNumber
+                      : inputField === (value.cycleNumber || value.label)
                       ? "selected"
                       : ""
                   }
-                  style={value.style}
+                  style={value.style ? value.style : {}}
                 >
                   {value.label}
                 </li>

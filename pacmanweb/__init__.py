@@ -19,7 +19,7 @@ redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 redis_instance.hset('user_mainadmin', mapping={
     "username": "mainadmin",
     "password": generate_password_hash(Config.MAINADMIN_USER_PASSWORD),
-    "admin": "True"
+    "isadmin": "True"
 })
 
 def create_app(config_class=Config):

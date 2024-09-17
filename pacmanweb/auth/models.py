@@ -11,7 +11,7 @@ class User(UserMixin):
 
     def isadmin(self):
         data = redis_instance.hgetall(f"user_{self.username}")
-        if data[b"admin"] == b"True":
+        if data[b"isadmin"] == b"True":
             return True
         else:
             return False

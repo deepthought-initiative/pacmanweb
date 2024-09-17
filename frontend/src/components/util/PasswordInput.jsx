@@ -1,28 +1,28 @@
 /* eslint-disable react/prop-types */
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import ErrorMessage from "../util/ErrorMessage.jsx";
+import ShowPasswordIcon from "../../assets/show.png";
+import HidePasswordIcon from "../../assets/hide.png";
 
-const InputConfigOption = ({
-  label,
-  value,
-  setValue,
-  error,
-  desc,
-  disabled,
-}) => {
+const PasswordInput = ({ label, value, setValue, error, desc, disabled }) => {
   const handleOnChange = useCallback(
     (event) => {
       setValue(event.target.value);
     },
     [setValue]
   );
+  const [showPassword, setShowPassword] = useState(false);
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="dropdown-container">
       <div className="option-header">
         <label
           className={`custom-input-form-label ${
             disabled ? "label-disabled" : ""
-          } `}
+          }`}
           style={{ color: error ? "red" : "" }}
         >
           {label}
@@ -30,13 +30,14 @@ const InputConfigOption = ({
       </div>
       <div className={`input-group`}>
         <input
+          type={showPassword ? "text" : "password"}
           value={value}
           onChange={handleOnChange}
-          type="text"
-          className={`rounded-0 custom ${disabled ? "disabled" : ""} ${
+          className={`password-input custom rounded-0 ${
             error ? "required" : ""
-          }`}
+          }${disabled ? "disabled" : ""}`}
           disabled={disabled}
+          autoFocus
         />
         {error && (
           <img
@@ -45,6 +46,18 @@ const InputConfigOption = ({
             className="error-sign"
           />
         )}
+        <button
+          onClick={handleShowPassword}
+          type="button"
+          className="show-password-btn"
+          disabled={disabled}
+          style={{ right: error ? "45px" : "" }}
+        >
+          <img
+            src={showPassword ? HidePasswordIcon : ShowPasswordIcon}
+            alt="Toggle Password Visibility"
+          />
+        </button>
       </div>
       <div className="option-header">
         <div className="form-text text-start ms-4">{desc}</div>
@@ -54,4 +67,4 @@ const InputConfigOption = ({
   );
 };
 
-export default InputConfigOption;
+export default PasswordInput;

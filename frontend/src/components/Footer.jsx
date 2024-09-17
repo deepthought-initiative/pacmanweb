@@ -35,6 +35,7 @@ const Footer = () => {
           >
             Search icons created by Freepik - Flaticon
           </a>
+          <a href="https://www.flaticon.com/free-icons/alert" title="alert icons">Alert icons created by Pixel Buddha - Flaticon</a>
         </span>
       </div>
     </footer>

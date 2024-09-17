@@ -19,7 +19,10 @@ const AlertModal = ({ show, onHide, title, desc, buttonText }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <p>{desc}</p>
+        {desc.map((line, count) => {
+          count += 1;
+          return <p key={`${count}_${line}`}>{line}</p>;
+        })}
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={onHide}>{buttonText}</Button>
