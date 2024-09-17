@@ -22,11 +22,11 @@ jobs:
         token: ${{ secrets.TOKEN }}
         path: pacmanwebsecretdata
     
-    - run: ls -lah ../
+    - run: ls -lah ./
     
     - name: Copy secret data to PACMan/models
       run: |
-        cp -r ../pacmanwebsecretdata/* PACMan/models/
+        cp -r pacmanwebsecretdata/* PACMan/models/
 
     - name: Create and populate .env file
       run: |
