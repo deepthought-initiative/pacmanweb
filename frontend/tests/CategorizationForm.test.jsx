@@ -76,40 +76,40 @@ afterAll(() => {
 
 describe("CategorizationForm", () => {
   // Base props that will be used in all tests
-  // const baseProps = {
-  //   allCycles: [
-  //     {
-  //       cycleNumber: "221026",
-  //       label: "221026",
-  //       style: { backgroundColor: "" },
-  //     },
-  //   ],
-  //   modalFile: ["strolger_pacman_model_7cycles.joblib"],
-  //   showLogs: false,
-  //   showTable: false,
-  //   button_label: "Submit",
-  //   setCurrentTaskId: vi.fn(),
-  //   setShowLogs: vi.fn(),
-  //   startFetchingLogs: vi.fn(),
-  //   loading: false,
-  //   preventClick: vi.fn(),
-  //   setLoading: vi.fn(),
-  //   updateInputFields: vi.fn(),
-  //   inputFields: {
-  //     currentCycle: "",
-  //     selectedModal: "",
-  //     logLevel: "",
-  //     runName: "",
-  //     mode: "PROP",
-  //   },
-  //   logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
-  // };
+  const baseProps = {
+    allCycles: [
+      {
+        cycleNumber: "221026",
+        label: "221026",
+        style: { backgroundColor: "" },
+      },
+    ],
+    modalFile: ["strolger_pacman_model_7cycles.joblib"],
+    showLogs: false,
+    showTable: false,
+    button_label: "Submit",
+    setCurrentTaskId: vi.fn(),
+    setShowLogs: vi.fn(),
+    startFetchingLogs: vi.fn(),
+    loading: false,
+    preventClick: vi.fn(),
+    setLoading: vi.fn(),
+    updateInputFields: vi.fn(),
+    inputFields: {
+      currentCycle: "",
+      selectedModal: "",
+      logLevel: "",
+      runName: "",
+      mode: "PROP",
+    },
+    logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
+  };
 
   // Helper function to render component with custom props
-  // const renderComponent = (customProps = {}) => {
-  //   const props = { ...baseProps, ...customProps };
-  //   return render(<CategorizationForm {...props} />);
-  // };
+  const renderComponent = (customProps = {}) => {
+    const props = { ...baseProps, ...customProps };
+    return render(<CategorizationForm {...props} />);
+  };
 
   it("should render initial state correctly", () => {
     const mockProps = {
@@ -237,58 +237,4 @@ describe("CategorizationForm", () => {
       expect(screen.getAllByText("Required")).toHaveLength(3);
     });
   });
-
-  // it('should show table when "See Results" button is clicked after logs completion', async () => {
-  //   const mockProps = {
-  //     ...baseProps,
-  //     inputFields: {
-  //       ...baseProps.inputFields,
-  //       currentCycle: "221026",
-  //       selectedModal: "strolger_pacman_model_7cycles.joblib",
-  //       logLevel: "INFO",
-  //     },
-  //     setShowLogs: vi.fn(),
-  //     startFetchingLogs: vi.fn(),
-  //     setCurrentTaskId: vi.fn(),
-  //   };
-
-  //   // Mock the behavior of log completion
-  //   vi.mock(
-  //     "../src/components/ProposalCategorization/CategorizationForm.jsx",
-  //     async (importOriginal) => {
-  //       const actual = await importOriginal();
-  //       return {
-  //         ...actual,
-  //         default: vi.fn((props) => {
-  //           const ActualComponent = actual.default;
-  //           return (
-  //             <>
-  //               <ActualComponent {...props} />
-  //               {props.showLogs && <button>See Results</button>}
-  //             </>
-  //           );
-  //         }),
-  //       };
-  //     }
-  //   );
-
-  //   render(<CategorizationForm {...mockProps} />);
-
-  //   // Click the submit button
-  //   await userEvent.click(screen.getByText("Submit"));
-
-  //   // Verify that setShowLogs and startFetchingLogs were called
-  //   expect(mockProps.setShowLogs).toHaveBeenCalledWith(true);
-  //   expect(mockProps.startFetchingLogs).toHaveBeenCalled();
-
-  //   // Check if the "See Results" button appears
-  //   const seeResultsButton = screen.getByText("See Results");
-  //   expect(seeResultsButton).toBeInTheDocument();
-
-  //   // Click the "See Results" button
-  //   await userEvent.click(seeResultsButton);
-  //   await waitFor(() => {
-  //     expect(screen.getByTestId("table-container")).toBeInTheDocument();
-  //   });
-  // });
 });

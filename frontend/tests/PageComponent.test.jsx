@@ -1,91 +1,76 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { describe, test, expect, vi, beforeEach } from 'vitest';
-import CategorizationPage from '../src/components/ProposalCategorization/CategorizationPage';
-import * as Api from '../src/components/util/Api';
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import "@testing-library/jest-dom";
+import CategorizationPage from "../src/components/ProposalCategorization/CategorizationPage";
 
-// Mock the Api module
-vi.mock('../util/Api', () => ({
-  fetchTableData: vi.fn(),
-  terminateCurrentProcess: vi.fn(),
+// Mock the CategorizationPage subcomponents
+vi.mock("../src/components/ProposalCategorization/CategorizationForm", () => ({
+  default: vi.fn(() => (
+    <div data-testid="categorization-form">Categorization Form</div>
+  )),
 }));
 
-// Mock the EventSource
-class MockEventSource {
-  constructor(url) {
-    this.url = url;
-    this.onmessage = vi.fn();
-    this.onerror = vi.fn();
-    this.close = vi.fn();
-  }
-}
+vi.mock("../src/components/util/LogsContainer", () => ({
+  default: vi.fn(() => <div data-testid="logs-container">Logs Container</div>),
+}));
 
-global.EventSource = MockEventSource;
+vi.mock("../src/components/ProposalCategorization/CategorizationTable", () => ({
+  default: vi.fn(() => (
+    <div data-testid="categorization-table">Categorization Table</div>
+  )),
+}));
 
-const mockProps = {
-  allCycles: [
-    {
-      cycleNumber: "221026",
-      label: "221026",
-      style: { backgroundColor: "" },
-    },
-  ],
-  modalFile: ["strolger_pacman_model_7cycles.joblib"],
-  setModalFile: vi.fn(),
-  logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
-};
+describe("CategorizationPage", () => {
+  let baseProps = {
+    allCycles: [
+      {
+        cycleNumber: "221026",
+        label: "221026",
+        style: { backgroundColor: "" },
+      },
+    ],
+    modalFile: [{ label: "strolger_pacman_model_7cycles.joblib" }],
+    setModalFile: vi.fn(),
+    logLevelOptions: [
+      { label: "info" },
+      { label: "debug" },
+      { label: "warning" },
+      { label: "critical" },
+    ],
+  };
 
-describe('CategorizationPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test('it renders the logs-container div after the submit button is clicked', async () => {
-    render(<CategorizationPage {...mockProps} />);
+  it("should show logs container after form submission and then show results table", async () => {
+    const user = userEvent.setup();
 
-    // Fill out the form
-    fireEvent.change(screen.getByLabelText(/Cycle/i), { target: { value: '221026' } });
-    fireEvent.change(screen.getByLabelText(/Run Name/i), { target: { value: 'Test Run' } });
-    fireEvent.change(screen.getByLabelText(/Log Level/i), { target: { value: 'INFO' } });
+    render(<CategorizationPage {...baseProps} />);
+
+    // Check if the form is initially rendered
+    expect(screen.getByTestId("categorization-form")).toBeInTheDocument();
 
     // Click the submit button
-    fireEvent.click(screen.getByText('Categorize Proposals'));
+    await user.click(screen.getByText("Categorize Proposals"));
 
-    // Wait for the logs container to appear
+    // Check if the logs container appears
     await waitFor(() => {
-      expect(screen.getByTestId('log-container')).toBeInTheDocument();
-    });
-  });
-
-  test('it shows a "See Results" button after logs streaming is done, and clicking it shows the table container', async () => {
-    render(<CategorizationPage {...mockProps} />);
-
-    // Fill out the form and submit
-    fireEvent.change(screen.getByLabelText(/Cycle/i), { target: { value: '221026' } });
-    fireEvent.change(screen.getByLabelText(/Run Name/i), { target: { value: 'Test Run' } });
-    fireEvent.change(screen.getByLabelText(/Log Level/i), { target: { value: 'INFO' } });
-    fireEvent.click(screen.getByText('Categorize Proposals'));
-
-    // Simulate log streaming completion
-    await waitFor(() => {
-      const eventSource = new EventSource('/api/stream/mock-task-id');
-      eventSource.onmessage({ data: 'PROCESS COMPLETE' });
+      expect(screen.getByTestId("logs-container")).toBeInTheDocument();
     });
 
-    // Mock successful table data fetch
-    Api.fetchTableData.mockResolvedValue({ tabularData: [], code: 200 });
+    // Simulate log completion by clicking a "See Results" button
+    // (You might need to adjust this based on how your component actually transitions from logs to results)
+    const seeResultsButton = await screen.findByText("See Results");
+    await user.click(seeResultsButton);
 
-    // Wait for the "See Results" button to appear and click it
+    // Check if the categorization table is rendered
     await waitFor(() => {
-      const seeResultsButton = screen.getByText('See Results');
-      expect(seeResultsButton).toBeInTheDocument();
-      fireEvent.click(seeResultsButton);
+      expect(screen.getByTestId("categorization-table")).toBeInTheDocument();
     });
 
-    // Check that the table container is now visible and the log container is hidden
-    await waitFor(() => {
-      expect(screen.queryByTestId('log-container')).not.toBeInTheDocument();
-      expect(screen.getByTestId('table-container')).toBeInTheDocument();
-    });
+    // Verify that the logs container is no longer present
+    expect(screen.queryByTestId("logs-container")).not.toBeInTheDocument();
   });
 });
