@@ -3,8 +3,10 @@ name: Tests
 on:
   push:
     branches:
+      - main
+  pull_request_target:
+    branches:
       - '*'
-
 
 jobs:
   test:
@@ -21,7 +23,6 @@ jobs:
         repository: atharva-2001/pacmanwebsecretdata
         token: ${{ secrets.TOKEN }}
         path: pacmanwebsecretdata
-    
     
     - name: Copy secret data to PACMan/models
       run: |
