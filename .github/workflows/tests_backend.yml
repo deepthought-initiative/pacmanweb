@@ -22,7 +22,6 @@ jobs:
         token: ${{ secrets.TOKEN }}
         path: pacmanwebsecretdata
     
-    - run: ls -lah ./
     
     - name: Copy secret data to PACMan/models
       run: |

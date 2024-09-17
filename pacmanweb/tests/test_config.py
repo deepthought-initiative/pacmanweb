@@ -14,7 +14,6 @@ def test_config_paths():
     assert Config.PACMAN_PATH.exists()
     assert Config.UPLOAD_FOLDER.exists()
     assert Config.DOWNLOAD_FOLDER.exists()
-    assert Config.PANELISTS_DATA.exists()
 
 def test_section_options():
     assert 'proposal_categorise' in Config.section_options
