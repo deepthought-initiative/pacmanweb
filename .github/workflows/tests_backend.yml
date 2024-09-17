@@ -41,16 +41,16 @@ jobs:
 
     - name: Build and run Docker Compose
       run: |
-        docker-compose -f docker-compose-test.yml build test
-        docker-compose -f docker-compose-test.yml run --rm test
+        docker compose -f docker-compose-test.yml build test
+        docker compose -f docker-compose-test.yml run --rm test
 
     - name: Display logs if failure
       if: failure()
       run: |
-        docker-compose -f docker-compose-test.yml logs
+        docker compose -f docker-compose-test.yml logs
 
     - name: Clean up
       if: always()
       run: |
-        docker-compose -f docker-compose-test.yml down
+        docker compose -f docker-compose-test.yml down
         rm -rf ../pacmanwebsecretdata
