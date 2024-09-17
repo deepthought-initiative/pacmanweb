@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request_target:
+    branches:
+      - '*'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Checkout secret data repository
+      uses: actions/checkout@v4
+      with:
+        repository: atharva-2001/pacmanwebsecretdata
+        token: ${{ secrets.TOKEN }}
+        path: pacmanwebsecretdata
+    
+    - name: Copy secret data to PACMan/models
+      run: |
+        cp -r pacmanwebsecretdata/* PACMan/models/
+
+    - name: Create and populate .env file
+      run: |
+        cp .env.dev .env
+        echo "SECRET_KEY=" >> .env
+        echo "ADS_DEV_KEY=${{ secrets.ADS_DEV_KEY }}" >> .env
+        echo "ENV_NAME=base" >> .env
+        echo "OS_NAME=linux" >> .env
+        echo "MAINADMIN_USER_PASSWORD=${{ secrets.MAINADMIN_USER_PASSWORD }}" >> .env
+        echo "CELERY_RESULT_BACKEND=redis://redis:6379/0" >> .env
+        echo "CELERY_BROKER_URL=amqp://guest:guest@rabbitmq:5672" >> .env
+        echo "SUBPROCESS_COMMANDS=micromamba run -n base python run_pacman.py" >> .env
+        echo "REACT_APP_BASE_URL=http://127.0.0.1:8080" >> .env
+        echo "REACT_APP_API_URL=http://backend:8000" >> .env
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and run Docker Compose
+      run: |
+        docker compose -f docker-compose-test.yml build test
+        docker compose -f docker-compose-test.yml run --rm test
+
+    - name: Clean up
+      if: always()
+      run: |
+        docker compose -f docker-compose-test.yml down
+        rm -rf ../pacmanwebsecretdata

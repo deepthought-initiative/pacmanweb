@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7.0.11-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - pacmanweb-redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_MAXMEMORY=500mb
+      - REDIS_MAXMEMORY_POLICY=allkeys-lru
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    restart: always
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    hostname: pacmanweb-rabbit
+    volumes:
+      - pacmanweb-rabbitmq-data:/var/lib/rabbitmq
+
+  test:
+    build:
+      context: .
+      dockerfile: ./pacmanweb/Dockerfile
+      args:
+        - OS_NAME=${OS_NAME}
+    volumes:
+      - .:/app
+      - ./.env:/app/.env:ro
+      - ./PACMan:/app/PACMan:rw
+      - ./env:/app/env:ro
+    command: pytest pacmanweb/tests
+    depends_on:
+      - redis
+      - rabbitmq
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OS_NAME=${OS_NAME}
+
+volumes:
+  pacmanweb-redis-data:
+    driver: local
+  pacmanweb-rabbitmq-data:
+    driver: local
+
