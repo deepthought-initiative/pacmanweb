@@ -22,17 +22,6 @@ const CategorizationPage = ({
   };
   const [inputFields, setInputFields] = useState(defaultInputFields);
 
-  useEffect(() => {
-    if (progressPercentage === 100) {
-      if (processStatus === 200 || processStatus === 204) {
-        setToastVariant("success");
-      } else {
-        setToastVariant("danger");
-      }
-      setShowToast(true);
-    }
-  }, [progressPercentage, processStatus, setShowToast, setToastVariant]);
-
   return (
     <PageComponent
       key={allCycles.join(",")}
