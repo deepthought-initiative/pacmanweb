@@ -71,11 +71,11 @@ class RunPACMan:
                 "compare_results_real": "true",
             }
 
-        if mode == "DUP":
+        elif mode == "DUP":
             mode_options = {"duplication_checker": "true"}
             
 
-        if mode == "MATCH":
+        elif mode == "MATCH":
             mode_options = {
                 "categorize_ads_reviewers": "true",
                 "categorize_one_cycle": "true",
@@ -87,8 +87,11 @@ class RunPACMan:
             if close_collaborator_time_frame:
                 close_collaborator_time_frame = int(close_collaborator_time_frame)
 
-        if mode == "ALL":
+        elif mode == "ALL":
             mode_options = {item: "true" for item in all_mode_options}
+        
+        else:
+            raise ValueError("Invalid mode option")
 
         # get the defaults from options.yaml file
         pacman_options_file = Config.section_options
