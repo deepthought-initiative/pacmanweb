@@ -1,4 +1,3 @@
-import os
 import pytest
 from pathlib import Path
 from pacmanweb import Config
@@ -15,8 +14,8 @@ def setup_test_environment(tmp_path_factory):
     
     source_models = Path(Config.PACMAN_PATH) / "models"
     dest_models = test_dir / "models"
-
     copy_tree(str(source_models), str(dest_models))
+
     source_runs = Path(__file__).parent / "data"
     dest_runs = test_dir / "runs"
     copy_tree(str(source_runs), str(dest_runs))

@@ -1,4 +1,3 @@
-import pytest
 from pacmanweb.config import Config
 
 def test_config_initialization():
