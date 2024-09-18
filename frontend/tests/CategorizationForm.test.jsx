@@ -112,39 +112,7 @@ describe("CategorizationForm", () => {
   };
 
   it("should render initial state correctly", () => {
-    const mockProps = {
-      allCycles: [
-        {
-          cycleNumber: "221026",
-          label: "221026",
-          style: {
-            backgroundColor: "",
-          },
-        },
-      ],
-      modalFile: [],
-      showLogs: false,
-      showTable: false,
-      button_label: "Submit",
-      setCurrentTaskId: vi.fn(),
-      setShowLogs: vi.fn(),
-      startFetchingLogs: vi.fn(),
-      loading: false,
-      preventClick: vi.fn(),
-      setLoading: vi.fn(),
-      updateInputFields: vi.fn(),
-      inputFields: {
-        currentCycle: "",
-        selectedModal: "",
-        logLevel: "",
-        runName: "",
-        mode: "PROP",
-      },
-      logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
-    };
-
-    render(<CategorizationForm {...mockProps} />);
-
+    renderComponent()
     expect(screen.getByText("Start a new process")).toBeInTheDocument();
     expect(screen.getByText("Selected Current Cycle")).toBeInTheDocument();
     expect(screen.getByText("Other Options")).toBeInTheDocument();
@@ -185,7 +153,7 @@ describe("CategorizationForm", () => {
       logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
     };
 
-    render(<CategorizationForm {...mockProps} />);
+    renderComponent(mockProps)
 
     const submitButton = screen.getByText("Submit");
     await userEvent.click(submitButton);
@@ -197,39 +165,7 @@ describe("CategorizationForm", () => {
   });
 
   it("should show validation errors when form is submitted without required fields", async () => {
-    const mockProps = {
-      allCycles: [
-        {
-          cycleNumber: "221026",
-          label: "221026",
-          style: {
-            backgroundColor: "",
-          },
-        },
-      ],
-      modalFile: ["strolger_pacman_model_7cycles.joblib"],
-      showLogs: false,
-      showTable: false,
-      button_label: "Submit",
-      setCurrentTaskId: vi.fn(),
-      setShowLogs: vi.fn(),
-      startFetchingLogs: vi.fn(),
-      loading: false,
-      preventClick: vi.fn(),
-      setLoading: vi.fn(),
-      updateInputFields: vi.fn(),
-      inputFields: {
-        currentCycle: "",
-        selectedModal: "",
-        logLevel: "",
-        runName: "",
-        mode: "PROP",
-      },
-      logLevelOptions: ["INFO", "DEBUG", "WARNING", "ERROR"],
-    };
-
-    render(<CategorizationForm {...mockProps} />);
-
+    renderComponent()
     const submitButton = screen.getByText("Submit");
     await userEvent.click(submitButton);
 
