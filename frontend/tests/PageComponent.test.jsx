@@ -1,18 +1,33 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import "@testing-library/jest-dom";
 import CategorizationPage from "../src/components/ProposalCategorization/CategorizationPage";
+import { ToastProvider } from "../src/context/ToastContext";
 
-// Mock the CategorizationPage subcomponents
+// Mock the subcomponents and API calls
 vi.mock("../src/components/ProposalCategorization/CategorizationForm", () => ({
-  default: vi.fn(() => (
-    <div data-testid="categorization-form">Categorization Form</div>
+  default: vi.fn(({ setCurrentTaskId, setShowLogs, startFetchingLogs }) => (
+    <div data-testid="categorization-form">
+      <button onClick={() => {
+        setCurrentTaskId("4c9cd774-6180-4df9-930c-96cf664d0793");
+        setShowLogs(true);
+        startFetchingLogs("4c9cd774-6180-4df9-930c-96cf664d0793");
+      }}>
+        Categorize Proposals
+      </button>
+    </div>
   )),
 }));
 
-vi.mock("../src/components/util/LogsContainer", () => ({
-  default: vi.fn(() => <div data-testid="logs-container">Logs Container</div>),
+vi.mock("../src/components/util/Logs", () => ({
+  default: vi.fn(({ setShowTable, dataToDisplay }) => (
+    <div data-testid="logs-container">
+      Logs Container
+      {dataToDisplay.length > 0 && (
+        <button onClick={() => setShowTable(true)}>See Results</button>
+      )}
+    </div>
+  )),
 }));
 
 vi.mock("../src/components/ProposalCategorization/CategorizationTable", () => ({
@@ -21,33 +36,37 @@ vi.mock("../src/components/ProposalCategorization/CategorizationTable", () => ({
   )),
 }));
 
+vi.mock("./Api.jsx", () => ({
+  fetchTableData: vi.fn(() => Promise.resolve({ tabularData: [{ id: 1 }], code: 200 })),
+  terminateCurrentProcess: vi.fn(),
+}));
+
 describe("CategorizationPage", () => {
-  let baseProps = {
-    allCycles: [
-      {
-        cycleNumber: "221026",
-        label: "221026",
-        style: { backgroundColor: "" },
-      },
-    ],
-    modalFile: [{ label: "strolger_pacman_model_7cycles.joblib" }],
-    setModalFile: vi.fn(),
-    logLevelOptions: [
-      { label: "info" },
-      { label: "debug" },
-      { label: "warning" },
-      { label: "critical" },
-    ],
-  };
+  let baseProps;
 
   beforeEach(() => {
+    baseProps = {
+      allCycles: [{ cycleNumber: "221026", label: "221026", style: { backgroundColor: "" } }],
+      modalFile: [{ label: "strolger_pacman_model_7cycles.joblib" }],
+      setModalFile: vi.fn(),
+      logLevelOptions: [
+        { label: "info" },
+        { label: "debug" },
+        { label: "warning" },
+        { label: "critical" },
+      ],
+    };
     vi.clearAllMocks();
   });
 
   it("should show logs container after form submission and then show results table", async () => {
     const user = userEvent.setup();
 
-    render(<CategorizationPage {...baseProps} />);
+    render(
+      <ToastProvider>
+        <CategorizationPage {...baseProps} />
+      </ToastProvider>
+    );
 
     // Check if the form is initially rendered
     expect(screen.getByTestId("categorization-form")).toBeInTheDocument();
@@ -60,10 +79,13 @@ describe("CategorizationPage", () => {
       expect(screen.getByTestId("logs-container")).toBeInTheDocument();
     });
 
-    // Simulate log completion by clicking a "See Results" button
-    // (You might need to adjust this based on how your component actually transitions from logs to results)
-    const seeResultsButton = await screen.findByText("See Results");
-    await user.click(seeResultsButton);
+    // Simulate log completion and data fetching
+    await waitFor(() => {
+      expect(screen.getByText("See Results")).toBeInTheDocument();
+    });
+
+    // Click the "See Results" button
+    await user.click(screen.getByText("See Results"));
 
     // Check if the categorization table is rendered
     await waitFor(() => {
