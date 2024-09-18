@@ -49,6 +49,8 @@ services:
       - OS_NAME=${OS_NAME}
 
 volumes:
+  pacmanweb-react-build:
+    driver: local
   pacmanweb-redis-data:
     driver: local
   pacmanweb-rabbitmq-data:
