@@ -147,6 +147,7 @@ def run_pacman():
 
 
 @api_bp.route("/prev_runs/<result_id>", methods=["GET"])
+@login_required
 def pacman_run_result(result_id):
     task_status = AsyncResult(result_id, app=celery_app)
     result = task_status.result if task_status.ready() else None
