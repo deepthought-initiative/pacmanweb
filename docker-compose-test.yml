@@ -1,6 +1,12 @@
-version: '3.9'
-
 services:
+  frontend-test:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      volumes:
+        - pacmanweb-react-build:/frontend/dist
+      command: npm test -- --run
+
   redis:
     image: redis:7.0.11-alpine
     ports:
@@ -23,7 +29,7 @@ services:
     volumes:
       - pacmanweb-rabbitmq-data:/var/lib/rabbitmq
 
-  test:
+  backend-test:
     build:
       context: .
       dockerfile: ./pacmanweb/Dockerfile
@@ -43,6 +49,8 @@ services:
       - OS_NAME=${OS_NAME}
 
 volumes:
+  pacmanweb-react-build:
+    driver: local
   pacmanweb-redis-data:
     driver: local
   pacmanweb-rabbitmq-data:
