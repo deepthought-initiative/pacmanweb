@@ -1,3 +1,4 @@
+"""Flask views for dealing with login/logout and orchestration of celery processes."""
 import base64
 import pathlib
 import time
@@ -32,6 +33,14 @@ redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 @api_bp.route("/login", methods=["GET", "POST"])
 def login():
     # TODO: are we doing this twice?
+    """
+    Handle user login.
+
+    Returns
+    -------
+    dict
+        JSON response with user information or error message.
+    """
     user = None
     auth_header = request.headers.get("Authorization")
     if auth_header:
@@ -95,6 +104,14 @@ def get_available_cycles():
 @api_bp.route("/run_pacman", methods=["GET", "POST"])
 @login_required
 def run_pacman():
+    """
+    Start a PACMan run.
+
+    Returns
+    -------
+    dict
+        JSON response with task information or error message.
+    """
     options = request.args.to_dict(flat=True)
     panelist_names = options.pop('panelist_names', None)
     panelist_names_mode = options.pop('panelist_names_mode', None)
