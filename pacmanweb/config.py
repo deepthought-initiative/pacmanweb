@@ -1,3 +1,4 @@
+"""Loads environment variables from .env file."""
 import os
 import pathlib
 import yaml

@@ -9,7 +9,6 @@ on:
     # If your git repository has the Jupyter Book within some-subfolder next to
     # unrelated files, you can make this run only if a file within that specific
     # folder has been modified.
-    #
     paths:
     - docs/**
 
@@ -20,22 +19,46 @@ jobs:
     permissions:
       pages: write
       id-token: write
+
     steps:
     - uses: actions/checkout@v4
 
     - uses: mamba-org/setup-micromamba@v1
       with:
-        environment-name: docs_env
-        create-args: >-
-          python
-          jupyter-book
+        environment-file: env/linux/env.lock
+        environment-name: pacmanweb
+    
+    - run: |
+        micromamba install jupyter-book
+        pip install -e .
+      shell: micromamba-shell {0}
+  
+    - name: Install redis
+      run: sudo apt-get install -y redis-tools redis-server
+
+    - name: Verify that redis is up
+      run: redis-cli ping
+  
+    - name: Create and populate .env file
+      run: |
+        cp .env.dev .env
+        echo "SECRET_KEY=" >> .env
+        echo "ADS_DEV_KEY=${{ secrets.ADS_DEV_KEY }}" >> .env
+        echo "ENV_NAME=pacmanweb" >> .env
+        echo "OS_NAME=linux" >> .env
+        echo "MAINADMIN_USER_PASSWORD=${{ secrets.MAINADMIN_USER_PASSWORD }}" >> .env
+        echo "CELERY_RESULT_BACKEND=redis://" >> .env
+        echo "CELERY_BROKER_URL=pyamqp://" >> .env
+        echo "SUBPROCESS_COMMANDS=micromamba run -n base python run_pacman.py" >> .env
+        echo "REACT_APP_BASE_URL=http://127.0.0.1:8080" >> .env
+        echo "REACT_APP_API_URL=http://backend:8000" >> .env
 
     # Build the book
     - name: Build the book
       shell: micromamba-shell {0}
       run: |
         jupyter-book build --all docs
-
+  
     # Upload the book's HTML as an artifact
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v2

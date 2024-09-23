@@ -1,3 +1,4 @@
+"""Run PACMan using Celery."""
 import json
 import os
 import subprocess

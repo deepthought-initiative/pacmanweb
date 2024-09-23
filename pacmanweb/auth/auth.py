@@ -1,5 +1,2 @@
-
-
-
 from .models import *
 

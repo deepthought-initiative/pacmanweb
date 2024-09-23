@@ -1,16 +1,21 @@
 format: jb-book
 root: intro
 parts:
-- caption: Usage and Features
+- caption: Installation Guide
+  chapters:
+    - file: deployment/prerequisites
+    - file: deployment/deployment
+    - file: deployment/troubleshooting
+- caption: Introduction and Features
   chapters:
     - file: usage/pages
     - file: usage/user_management
-- caption: Deployment
+- caption: API Documentation
   chapters:
-    - file: deployment/deployment
-    # - file: deployment/production
-    # - file: deployment/local
-- caption: Code
+    - file: code/api
+    - file: api
+- caption: Developer Workflow
   chapters:
-    - file: code/api_run
-    - file: code/testing_building_docs
+    - file: code/docs
+    - file: code/testing
+    

@@ -1,5 +1,5 @@
+"""Flask Views for user management."""
 from functools import wraps
-
 from flask import Blueprint, request
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash

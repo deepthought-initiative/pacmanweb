@@ -1,6 +1,6 @@
+"""User verification and authentication."""
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash
-
 import redis
 from pacmanweb import Config
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)

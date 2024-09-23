@@ -1,3 +1,4 @@
+"""Setup Flask application and Celery"""
 import base64
 import redis
 from celery import Celery
@@ -23,6 +24,19 @@ redis_instance.hset('user_mainadmin', mapping={
 })
 
 def create_app(config_class=Config):
+    """
+    Create and configure the Flask application.
+
+    Parameters
+    ----------
+    config_class : object, optional
+        Configuration class for the app.
+
+    Returns
+    -------
+    Flask
+        Configured Flask application.
+    """
     # instance_path?
     app = Flask(__name__)
     app.config.from_object(config_class())

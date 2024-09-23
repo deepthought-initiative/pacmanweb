@@ -1,3 +1,4 @@
+"""Flask Views for PACMan Outputs."""
 import json
 import re
 import zipfile
