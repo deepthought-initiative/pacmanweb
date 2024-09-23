@@ -28,6 +28,10 @@ html:
   use_issues_button: true
   use_repository_button: true
 
+
 sphinx:
+  extra_extensions:
+    - 'sphinx.ext.autodoc'
   config:
     html_extra_path: ['screenshots']
+    autodoc_member_order: 'bysource'

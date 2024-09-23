@@ -74,10 +74,8 @@ Terminates an ongoing PACMan process.
 
 **cURL Example:**
 ```bash
-curl -X POST "https://pacmanweb.live/api/terminate/2b87bfe7-eff2-43c2-a0ad-33ad93d3952a" \
-     -u "username:password" \
-     -H "Content-Type: application/json" \
-     -d '{"mode": "ALL"}'
+curl -X POST "https://pacmanweb.live/api/terminate/720c5c7a-4226-47a8-9fe6-6d2d7297f7c6?mode=PROP" \
+     -u "username:password"
 ```
 
 **Response:**
