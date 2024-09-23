@@ -1,5 +1,8 @@
 API documentation
 =================
 
-.. automodule:: pacmanweb
-    :members:
+.. autosummary::
+   :toctree: _autosummary
+   :recursive:
+
+   pacmanweb
