@@ -15,13 +15,59 @@ outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
 
 def make_records(dataframe):
+    """
+    Convert a pandas DataFrame to a dictionary format.
+
+    Parameters
+    ----------
+    dataframe : pd.DataFrame
+        The input DataFrame to be converted.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the DataFrame, with rows as numbered keys
+        and column names in a separate 'columns' key.
+    """
     data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
     data["columns"] = list(dataframe.columns)
     return data
 
 
 class PropCat:
+    """
+    Handle proposal categorization data processing and output generation.
+
+    This class processes model results and recategorization data for proposals,
+    and provides methods to retrieve and format this data.
+
+    Attributes
+    ----------
+    prop_response : dict
+        Stores error messages if any issues occur during initialization.
+    model_file_fpath : pathlib.Path
+        Path to the model results file.
+    recat_fpath : pathlib.Path
+        Path to the recategorization file.
+    cycle_number : str
+        The cycle number being processed.
+    celery_task_id : str
+        The ID of the Celery task associated with this processing.
+    """
+
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
+        """
+        Initialize the PropCat object.
+
+        Parameters
+        ----------
+        output_dir : pathlib.Path
+            Directory containing the output files.
+        cycle_number : str
+            The cycle number being processed.
+        celery_task_id : str
+            The ID of the Celery task associated with this processing.
+        """
         model_file_readable, recat_file_readable = True, True
         self.prop_response = {}
         try:
@@ -45,6 +91,14 @@ class PropCat:
         self.celery_task_id = celery_task_id
 
     def parse_model_results(self, model_file_fpath):
+        """
+        Parse the model results file.
+
+        Parameters
+        ----------
+        model_file_fpath : pathlib.Path
+            Path to the model results file.
+        """
         with open(model_file_fpath) as f:
             model_results = f.read()
         model_results = pd.read_csv(StringIO(model_results))
@@ -63,6 +117,14 @@ class PropCat:
         self.model_results = model_results
 
     def parse_recategorization(self, filepath):
+        """
+        Parse the recategorization file.
+
+        Parameters
+        ----------
+        filepath : pathlib.Path
+            Path to the recategorization file.
+        """
         data = pd.read_csv(filepath)
         # data is simple string_io parsed dataframe
         columns_to_clean = ["pacman_cat", "orig_cat"]
@@ -85,9 +147,15 @@ class PropCat:
         self.prop_table = prop_table
 
     def parse_hand_class(self):
+        """
+        Placeholder for parsing hand classification data.
+        """
         return
 
     def calculate_alternate_categories(self):
+        """
+        Calculate alternate categories for each proposal.
+        """
         basic_table = self.prop_table
         model_table = self.model_results.T
         alternate_cat_dict = {}
@@ -105,6 +173,21 @@ class PropCat:
         self.alternate_cat_dict = alternate_cat_dict
 
     def get_prop_table(self, start_row=None, end_row=None):
+        """
+        Retrieve the processed proposal table.
+
+        Parameters
+        ----------
+        start_row : int, optional
+            Starting row for slicing the table.
+        end_row : int, optional
+            Ending row for slicing the table.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the proposal table (or error message) and HTTP status code.
+        """
         if self.prop_response != {}:
             # an error
             return self.prop_response, 500
@@ -118,6 +201,14 @@ class PropCat:
         return prop_response, 200
 
     def generate_prop_response_csv(self):
+        """
+        Generate a CSV file with the proposal categorization data.
+
+        Returns
+        -------
+        tuple
+            A tuple containing an error message (if any) and HTTP status code.
+        """
         if self.prop_response != {}:
             return self.prop_response, 500
 
@@ -141,7 +232,37 @@ class PropCat:
 
 
 class DupCat:
+    """
+    Handle duplicate proposal data processing and output generation.
+
+    This class processes duplication data for proposals and provides methods
+    to retrieve and format this data.
+
+    Attributes
+    ----------
+    dup_fpath : pathlib.Path
+        Path to the duplications file.
+    response : dict
+        Stores error messages if any issues occur during initialization.
+    response_code : int
+        HTTP status code for the response.
+    celery_task_id : str
+        The ID of the Celery task associated with this processing.
+    """
+
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
+        """
+        Initialize the DupCat object.
+
+        Parameters
+        ----------
+        output_dir : pathlib.Path
+            Directory containing the output files.
+        cycle_number : str
+            The cycle number being processed.
+        celery_task_id : str
+            The ID of the Celery task associated with this processing.
+        """
         self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.response = {}
         self.response_code = 200
@@ -161,6 +282,19 @@ class DupCat:
         self.celery_task_id = celery_task_id
 
     def parse_duplicates(self, dup_fpath):
+        """
+        Parse the duplications file.
+
+        Parameters
+        ----------
+        dup_fpath : pathlib.Path
+            Path to the duplications file.
+
+        Returns
+        -------
+        pd.DataFrame
+            Processed duplication data.
+        """
         data = pd.read_csv(
             dup_fpath,
             header=None,
@@ -185,6 +319,19 @@ class DupCat:
         return data
 
     def get_for_cycle(self, cycle=None):
+        """
+        Retrieve duplication data for a specific cycle.
+
+        Parameters
+        ----------
+        cycle : str, optional
+            The cycle to retrieve data for.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the duplication data (or error message) and HTTP status code.
+        """
         if self.response != {}:
             return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
@@ -194,6 +341,19 @@ class DupCat:
         return cycle_data, 200
 
     def generate_dup_response_csv(self, cycle=None):
+        """
+        Generate a CSV file with the duplication data.
+
+        Parameters
+        ----------
+        cycle : str, optional
+            The cycle to generate data for.
+
+        Returns
+        -------
+        tuple
+            A tuple containing an error message (if any) and HTTP status code.
+        """
         if self.response != {}:
             return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
@@ -204,13 +364,48 @@ class DupCat:
 
 
 class MatchRev:
+    """
+    Handle reviewer matching data processing and output generation.
+
+    This class processes reviewer matching data and provides methods to retrieve
+    and format this data.
+
+    Attributes
+    ----------
+    output_dir : pathlib.Path
+        Directory containing the output files.
+    cycle_number : str
+        The cycle number being processed.
+    celery_task_id : str
+        The ID of the Celery task associated with this processing.
+    """
 
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
+        """
+        Initialize the MatchRev object.
+
+        Parameters
+        ----------
+        output_dir : pathlib.Path
+            Directory containing the output files.
+        cycle_number : str
+            The cycle number being processed.
+        celery_task_id : str
+            The ID of the Celery task associated with this processing.
+        """
         self.output_dir = output_dir / "store"
         self.cycle_number = cycle_number
         self.celery_task_id = celery_task_id
 
     def read_nrecords(self):
+        """
+        Read the number of records for each panelist.
+
+        Returns
+        -------
+        dict
+            A dictionary mapping panelist names to their number of records.
+        """
         fname_suffix = "panelists.pkl"
         data = pd.read_pickle(
             self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
@@ -219,6 +414,14 @@ class MatchRev:
         return nrecords_dict
 
     def read_matches(self):
+        """
+        Read the proposal-panelist matches.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the matching data, or an error message.
+        """
         fname_suffix = "panelists_match_check.pkl"
         try:
             data = pd.read_pickle(
@@ -232,6 +435,14 @@ class MatchRev:
         return data
 
     def read_conflicts(self):
+        """
+        Read the conflicts data.
+
+        Returns
+        -------
+        dict
+            A dictionary containing the conflicts data, or an error message.
+        """
         fname_suffix = "panelists_conflicts.pkl"
         try:
             data = pd.read_pickle(
@@ -239,227 +450,3 @@ class MatchRev:
             )
         except:
             data = {"value": f"{fname_suffix} file not accessible for this cycle."}
-        return data
-
-    def read_panelists(self):
-        fname_suffix = "panelists.txt"
-        try:
-            data = pd.read_csv(
-                self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
-            )
-        except:
-            data = {"value": f"{fname_suffix} file not accessible for this cycle."}
-            return data
-        data["prob"] = data.apply(
-            lambda row: row[row["model_classification"].replace(" ", "_") + "_prob"],
-            axis=1,
-        )
-        return data
-
-    def make_main_table(self):
-        data = self.read_panelists()
-        if isinstance(data, dict):
-            return {"value": "panelist file not accessible for this cycle."}
-        data = data.drop(
-            columns=[item for item in data.columns if item.endswith("_prob")]
-            + ["encoded_model_classification"]
-        )
-        data["nrecords"] = data["fname"].map(self.read_nrecords())
-        return data.T.to_dict()
-
-    def complete_response(self):
-        return {
-            "Main Table": self.make_main_table(),
-            "Proposal Assignments": self.read_matches(),
-            "Conflicts": self.read_conflicts(),
-        }, 200
-
-    def get_complete_data_as_csv(self):
-        main_table = pd.DataFrame(self.make_main_table()).T
-        matches = pd.DataFrame(self.read_matches())
-        conflicts = pd.DataFrame(self.read_conflicts())
-        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
-        destination_dir.mkdir(parents=True, exist_ok=True)
-        matches.index.name = "Proposal Number"
-        melted_matches = pd.melt(
-            matches.reset_index(), id_vars="Proposal Number", value_name="CS Score"
-        )
-        main_and_matches_df = pd.merge(
-            main_table,
-            melted_matches,
-            left_on="fname",
-            right_on="variable",
-            how="outer",
-        )
-        conflicts.index.name = "Conflicts"
-        melted_conflicts = pd.melt(
-            conflicts.reset_index(),
-            id_vars="Conflicts",
-            value_name="#records",
-        )
-        main_and_conflicts_df = pd.merge(
-            main_table,
-            melted_conflicts,
-            left_on="fname",
-            right_on="variable",
-            how="outer",
-        )
-        # Remove the 'variable' column
-        main_and_matches_df.drop(columns=["variable"], inplace=True)
-        main_and_conflicts_df.drop(columns=["variable"], inplace=True)
-        destination_dir = Config.DOWNLOAD_FOLDER / self.celery_task_id
-        csv_matches_output = main_and_matches_df.to_csv(
-            destination_dir / f"{self.celery_task_id}_matches_rev.csv"
-        )
-        csv_conflicts_output = main_and_conflicts_df.to_csv(
-            destination_dir / f"{self.celery_task_id}_conflicts_rev.csv"
-        )
-        return csv_matches_output, csv_conflicts_output
-
-
-def data_handler(celery_task_id, cycle_number, mode):
-    output_dir = Config.PACMAN_PATH / "runs" / celery_task_id
-    if mode == "PROP":
-        prop_cat = PropCat(
-            output_dir=output_dir,
-            cycle_number=cycle_number,
-            celery_task_id=celery_task_id,
-        )
-        return prop_cat.get_prop_table()
-    if mode == "DUP":
-        dup_cat = DupCat(
-            output_dir=output_dir,
-            cycle_number=cycle_number,
-            celery_task_id=celery_task_id,
-        )
-        return dup_cat.get_for_cycle(cycle=cycle_number)
-    if mode == "MATCH":
-        match = MatchRev(
-            output_dir=output_dir,
-            cycle_number=cycle_number,
-            celery_task_id=celery_task_id,
-        )
-        return match.complete_response()
-
-
-@outputs_bp.route("/proposal_cat_output/<result_id>", methods=["GET"])
-@login_required
-def proposal_cat_output(result_id):
-    options = request.args.to_dict(flat=True)
-    if "cycle_number" not in options.keys():
-        return {
-            "value": "Please provide a cycle number to get the proposal categorisation output."
-        }, 500
-    response = data_handler(
-        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="PROP"
-    )
-
-    return json.dumps(response)
-
-
-@outputs_bp.route("/download/csv/<result_id>", methods=["GET"])
-@login_required
-def download_data_as_csv(result_id):
-    options = request.args.to_dict(flat=True)
-    mode = options["mode"]
-    if "cycle_number" not in options.keys():
-        return {
-            "value": "Please provide a cycle number to get the proposal categorisation output."
-        }, 500
-    output_dir = Config.PACMAN_PATH / "runs" / result_id
-    if mode == "PROP":
-        prop_cat = PropCat(
-            output_dir=output_dir,
-            cycle_number=options["cycle_number"],
-            celery_task_id=result_id,
-        )
-        prop_cat.get_prop_table()
-        prop_cat.generate_prop_response_csv()
-        return send_file(
-            Config.DOWNLOAD_FOLDER / f"{result_id}_prop_cat.csv",
-            mimetype="text/csv",
-            download_name=f"{result_id}_prop_cat.csv",
-            as_attachment=True,
-        )
-    if mode == "DUP":
-        dup_cat = DupCat(
-            output_dir=output_dir,
-            cycle_number=options["cycle_number"],
-            celery_task_id=result_id,
-        )
-        dup_cat.generate_dup_response_csv(options["cycle_number"])
-        return send_file(
-            Config.DOWNLOAD_FOLDER / f"{result_id}_dup.csv",
-            mimetype="text/csv",
-            download_name=f"{result_id}_dup.csv",
-            as_attachment=True,
-        )
-    if mode == "MATCH":
-        match = MatchRev(
-            output_dir=output_dir,
-            cycle_number=options["cycle_number"],
-            celery_task_id=result_id,
-        )
-        match.get_complete_data_as_csv()
-        local_match_rev_csv_path = Config.DOWNLOAD_FOLDER / result_id
-        zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
-        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-            for item in local_match_rev_csv_path.glob("**/*"):
-                if item.is_file():
-                    relative_path = item.relative_to(local_match_rev_csv_path)
-                    zipf.write(item, arcname=str(relative_path))
-
-        return send_file(
-            zip_path,
-            mimetype="application/zip",
-            download_name=f"{result_id}_rev.zip",
-            as_attachment=True,
-        )
-
-
-@outputs_bp.route("/download/zip/<result_id>", methods=["GET"])
-@login_required
-def download_data_as_zip(result_id):
-    zip_path = Config.PACMAN_PATH / "runs" / result_id
-    if not zip_path.is_dir():
-        return "Directory not found"
-
-    local_zip_path = Config.DOWNLOAD_FOLDER / f"{result_id}.zip"
-
-    with zipfile.ZipFile(local_zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
-        for item in zip_path.glob("**/*"):
-            if item.is_file():
-                relative_path = item.relative_to(zip_path)
-                zipf.write(item, arcname=str(relative_path))
-
-    return send_file(
-        local_zip_path,
-        mimetype="application/zip",
-        download_name=f"{result_id}.zip",
-        as_attachment=True,
-    )
-
-
-@outputs_bp.route("/duplicates_output/<result_id>", methods=["GET"])
-@login_required
-def duplicates_output(result_id):
-    options = request.args.to_dict(flat=True)
-    if "cycle_number" not in options.keys():
-        return {
-            "value": "Please provide a cycle number to get the duplicates output."
-        }, 500
-    response = data_handler(
-        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="DUP"
-    )
-
-    return json.dumps(response)
-
-
-@outputs_bp.route("/match_reviewers_output/<result_id>", methods=["GET"])
-@login_required
-def match_reviewers_output(result_id):
-    options = request.args.to_dict(flat=True)
-    response = data_handler(
-        celery_task_id=result_id, cycle_number=options["cycle_number"], mode="MATCH"
-    )
-    return json.dumps(response)
