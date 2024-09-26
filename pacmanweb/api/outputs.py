@@ -15,59 +15,13 @@ outputs_bp = Blueprint("outputs", __name__, url_prefix="/outputs")
 
 
 def make_records(dataframe):
-    """
-    Convert a pandas DataFrame to a dictionary format.
-
-    Parameters
-    ----------
-    dataframe : pd.DataFrame
-        The input DataFrame to be converted.
-
-    Returns
-    -------
-    dict
-        A dictionary representation of the DataFrame, with rows as numbered keys
-        and column names in a separate 'columns' key.
-    """
     data = {index: list(item) for index, item in enumerate(dataframe.to_numpy())}
     data["columns"] = list(dataframe.columns)
     return data
 
 
 class PropCat:
-    """
-    Handle proposal categorization data processing and output generation.
-
-    This class processes model results and recategorization data for proposals,
-    and provides methods to retrieve and format this data.
-
-    Attributes
-    ----------
-    prop_response : dict
-        Stores error messages if any issues occur during initialization.
-    model_file_fpath : pathlib.Path
-        Path to the model results file.
-    recat_fpath : pathlib.Path
-        Path to the recategorization file.
-    cycle_number : str
-        The cycle number being processed.
-    celery_task_id : str
-        The ID of the Celery task associated with this processing.
-    """
-
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
-        """
-        Initialize the PropCat object.
-
-        Parameters
-        ----------
-        output_dir : pathlib.Path
-            Directory containing the output files.
-        cycle_number : str
-            The cycle number being processed.
-        celery_task_id : str
-            The ID of the Celery task associated with this processing.
-        """
         model_file_readable, recat_file_readable = True, True
         self.prop_response = {}
         try:
@@ -91,14 +45,6 @@ class PropCat:
         self.celery_task_id = celery_task_id
 
     def parse_model_results(self, model_file_fpath):
-        """
-        Parse the model results file.
-
-        Parameters
-        ----------
-        model_file_fpath : pathlib.Path
-            Path to the model results file.
-        """
         with open(model_file_fpath) as f:
             model_results = f.read()
         model_results = pd.read_csv(StringIO(model_results))
@@ -117,14 +63,6 @@ class PropCat:
         self.model_results = model_results
 
     def parse_recategorization(self, filepath):
-        """
-        Parse the recategorization file.
-
-        Parameters
-        ----------
-        filepath : pathlib.Path
-            Path to the recategorization file.
-        """
         data = pd.read_csv(filepath)
         # data is simple string_io parsed dataframe
         columns_to_clean = ["pacman_cat", "orig_cat"]
@@ -147,15 +85,9 @@ class PropCat:
         self.prop_table = prop_table
 
     def parse_hand_class(self):
-        """
-        Placeholder for parsing hand classification data.
-        """
         return
 
     def calculate_alternate_categories(self):
-        """
-        Calculate alternate categories for each proposal.
-        """
         basic_table = self.prop_table
         model_table = self.model_results.T
         alternate_cat_dict = {}
@@ -173,21 +105,6 @@ class PropCat:
         self.alternate_cat_dict = alternate_cat_dict
 
     def get_prop_table(self, start_row=None, end_row=None):
-        """
-        Retrieve the processed proposal table.
-
-        Parameters
-        ----------
-        start_row : int, optional
-            Starting row for slicing the table.
-        end_row : int, optional
-            Ending row for slicing the table.
-
-        Returns
-        -------
-        tuple
-            A tuple containing the proposal table (or error message) and HTTP status code.
-        """
         if self.prop_response != {}:
             # an error
             return self.prop_response, 500
@@ -201,14 +118,6 @@ class PropCat:
         return prop_response, 200
 
     def generate_prop_response_csv(self):
-        """
-        Generate a CSV file with the proposal categorization data.
-
-        Returns
-        -------
-        tuple
-            A tuple containing an error message (if any) and HTTP status code.
-        """
         if self.prop_response != {}:
             return self.prop_response, 500
 
@@ -232,37 +141,7 @@ class PropCat:
 
 
 class DupCat:
-    """
-    Handle duplicate proposal data processing and output generation.
-
-    This class processes duplication data for proposals and provides methods
-    to retrieve and format this data.
-
-    Attributes
-    ----------
-    dup_fpath : pathlib.Path
-        Path to the duplications file.
-    response : dict
-        Stores error messages if any issues occur during initialization.
-    response_code : int
-        HTTP status code for the response.
-    celery_task_id : str
-        The ID of the Celery task associated with this processing.
-    """
-
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
-        """
-        Initialize the DupCat object.
-
-        Parameters
-        ----------
-        output_dir : pathlib.Path
-            Directory containing the output files.
-        cycle_number : str
-            The cycle number being processed.
-        celery_task_id : str
-            The ID of the Celery task associated with this processing.
-        """
         self.dup_fpath = output_dir / "store" / f"{cycle_number}_duplications.txt"
         self.response = {}
         self.response_code = 200
@@ -282,19 +161,6 @@ class DupCat:
         self.celery_task_id = celery_task_id
 
     def parse_duplicates(self, dup_fpath):
-        """
-        Parse the duplications file.
-
-        Parameters
-        ----------
-        dup_fpath : pathlib.Path
-            Path to the duplications file.
-
-        Returns
-        -------
-        pd.DataFrame
-            Processed duplication data.
-        """
         data = pd.read_csv(
             dup_fpath,
             header=None,
@@ -319,19 +185,6 @@ class DupCat:
         return data
 
     def get_for_cycle(self, cycle=None):
-        """
-        Retrieve duplication data for a specific cycle.
-
-        Parameters
-        ----------
-        cycle : str, optional
-            The cycle to retrieve data for.
-
-        Returns
-        -------
-        tuple
-            A tuple containing the duplication data (or error message) and HTTP status code.
-        """
         if self.response != {}:
             return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
@@ -341,19 +194,6 @@ class DupCat:
         return cycle_data, 200
 
     def generate_dup_response_csv(self, cycle=None):
-        """
-        Generate a CSV file with the duplication data.
-
-        Parameters
-        ----------
-        cycle : str, optional
-            The cycle to generate data for.
-
-        Returns
-        -------
-        tuple
-            A tuple containing an error message (if any) and HTTP status code.
-        """
         if self.response != {}:
             return self.response, self.response_code
         self.data = self.parse_duplicates(self.dup_fpath)
@@ -364,48 +204,13 @@ class DupCat:
 
 
 class MatchRev:
-    """
-    Handle reviewer matching data processing and output generation.
-
-    This class processes reviewer matching data and provides methods to retrieve
-    and format this data.
-
-    Attributes
-    ----------
-    output_dir : pathlib.Path
-        Directory containing the output files.
-    cycle_number : str
-        The cycle number being processed.
-    celery_task_id : str
-        The ID of the Celery task associated with this processing.
-    """
 
     def __init__(self, output_dir, cycle_number, celery_task_id) -> None:
-        """
-        Initialize the MatchRev object.
-
-        Parameters
-        ----------
-        output_dir : pathlib.Path
-            Directory containing the output files.
-        cycle_number : str
-            The cycle number being processed.
-        celery_task_id : str
-            The ID of the Celery task associated with this processing.
-        """
         self.output_dir = output_dir / "store"
         self.cycle_number = cycle_number
         self.celery_task_id = celery_task_id
 
     def read_nrecords(self):
-        """
-        Read the number of records for each panelist.
-
-        Returns
-        -------
-        dict
-            A dictionary mapping panelist names to their number of records.
-        """
         fname_suffix = "panelists.pkl"
         data = pd.read_pickle(
             self.output_dir / f"{str(self.cycle_number)}_{fname_suffix}"
@@ -414,14 +219,6 @@ class MatchRev:
         return nrecords_dict
 
     def read_matches(self):
-        """
-        Read the proposal-panelist matches.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the matching data, or an error message.
-        """
         fname_suffix = "panelists_match_check.pkl"
         try:
             data = pd.read_pickle(
@@ -435,14 +232,6 @@ class MatchRev:
         return data
 
     def read_conflicts(self):
-        """
-        Read the conflicts data.
-
-        Returns
-        -------
-        dict
-            A dictionary containing the conflicts data, or an error message.
-        """
         fname_suffix = "panelists_conflicts.pkl"
         try:
             data = pd.read_pickle(
