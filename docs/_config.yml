@@ -33,7 +33,11 @@ sphinx:
   extra_extensions:
     - 'sphinx.ext.autodoc'
     - 'sphinx.ext.autosummary'
+    # - 'sphinx.ext.viewcode'
+    - 'autoapi.extension'
   config:
     html_extra_path: ['screenshots']
     autodoc_member_order: 'bysource'
     autosummary_generate: True
+    autoapi_dirs: ['../pacmanweb']
+    autoapi_options: [ 'members', 'undoc-members', 'private-members', 'show-inheritance', 'show-module-summary', 'special-members',  ]
