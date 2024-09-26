@@ -11,6 +11,26 @@ redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 def admin_only(f):
+    """
+    Decorator to restrict access to admin users only.
+
+    This decorator checks if the current user is authenticated and has admin privileges.
+    If not, it returns an unauthorized error.
+
+    Parameters
+    ----------
+    f : function
+        The function to be decorated.
+
+    Returns
+    -------
+    function
+        The decorated function that includes an admin check.
+
+    Notes
+    -----
+    This decorator should be used in conjunction with @login_required.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Check if the current user is authenticated and is an admin
@@ -23,6 +43,25 @@ def admin_only(f):
 
 @admin_bp.route("/ifexists/<username>", methods=["GET"])
 def exists(username):
+    """
+    Check if a user exists and their admin status.
+
+    Parameters
+    ----------
+    username : str
+        The username to check.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a dictionary with the user's status and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    200 : User exists (with additional info on admin status)
+    404 : User not found
+    """
     if username is None or f'user_{username}'.encode('utf-8') not in redis_instance.keys('*'):
         return {'value': 'User not found'}, 404
     else:
@@ -36,6 +75,23 @@ def exists(username):
 @login_required
 @admin_only
 def edit_user():
+    """
+    Edit an existing user's information.
+
+    This function allows an admin to modify a user's password and/or admin status.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a dictionary with the operation result and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    200 : User updated successfully
+    401 : Unauthorized (user exists but overwrite not specified)
+    404 : User not found
+    """
     username = request.form["username"]
     
     if f'user_{username}'.encode('utf-8') not in redis_instance.keys('*'):
@@ -79,6 +135,23 @@ def edit_user():
 @login_required
 @admin_only
 def add_user():
+    """
+    Add a new user to the system.
+
+    This function allows an admin to create a new user with a password and admin status.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a dictionary with the operation result and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    201 : User created successfully
+    400 : Missing required fields
+    409 : User already exists
+    """
     username = request.form["username"]
 
     if f'user_{username}'.encode('utf-8') in redis_instance.keys('*'):
@@ -115,6 +188,22 @@ def add_user():
 @login_required
 @admin_only
 def delete_user():
+    """
+    Delete an existing user from the system.
+
+    This function allows an admin to remove a user account.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a dictionary with the operation result and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    200 : User deleted successfully
+    401 : User not found
+    """
     username = request.form["username"]
     if f'user_{username}'.encode('utf-8') in redis_instance.keys('*'):
           # Retrieve existing user data
@@ -130,6 +219,16 @@ def delete_user():
 @login_required
 @admin_only
 def return_user_data():
+    """
+    Retrieve a list of all users in the system.
+
+    This function returns a list of dictionaries containing username and admin status for each user.
+
+    Returns
+    -------
+    list
+        A list of dictionaries, each containing 'username' and 'isadmin' keys for a user.
+    """
     result = []
     for key in redis_instance.keys("user_*"):
         user_data = redis_instance.hgetall(key)

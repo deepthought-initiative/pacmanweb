@@ -29,17 +29,39 @@ ALLOWED_EXTENSIONS = {"zip"}
 api_bp = Blueprint("api", __name__, url_prefix="/api")
 redis_instance = redis.from_url(Config.CELERY_RESULT_BACKEND)
 
-
-@api_bp.route("/login", methods=["GET", "POST"])
-def login():
-    # TODO: are we doing this twice?
+def allowed_file(filename):
     """
-    Handle user login.
+    Check if the given filename has an allowed extension.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the file to check.
+
+    Returns
+    -------
+    bool
+        True if the file has an allowed extension, False otherwise.
+    """
+    result = (
+        "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+    return result
+
+@api_bp.route("/login", methods=["POST"])
+def login():
+    """
+    Handle user login via a POST request.
+
+    This function authenticates users using either Basic Authentication from the 
+    Authorization header or form-based authentication. If successful, it logs in 
+    the user and returns their information.
 
     Returns
     -------
     dict
-        JSON response with user information or error message.
+        JSON response containing user information (username and admin status) if 
+        login is successful, or an error message if unauthorized.
     """
     user = None
     auth_header = request.headers.get("Authorization")
@@ -64,13 +86,22 @@ def login():
         next = request.args.get("next")
         return jsonify({"username": username, "isadmin": user.isadmin()})
 
-
-@api_bp.route("/signup")
-def signup():
-    return "Signup"
-
 @api_bp.route("/logged_in", methods=["GET"])
 def main_route():
+    """
+    Check if a user is currently logged in.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a dictionary with the login status and an HTTP status code.
+        
+    Notes
+    -----
+    Status Codes:
+    200 : User is logged in
+    404 : User is not logged in
+    """
     if current_user.is_authenticated:
          return {"value": "True"}, 200
     else:
@@ -79,6 +110,20 @@ def main_route():
 @api_bp.route("/get_current_user", methods=["GET"])
 @login_required
 def get_current_user():
+    """
+    Retrieve information about the currently logged-in user.
+
+    Returns
+    -------
+    tuple
+        A tuple containing a JSON response with user information and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    200 : User information retrieved successfully
+    401 : User is not authenticated
+    """
     if current_user.is_authenticated:
         response = {
             "username": current_user.username,
@@ -91,6 +136,13 @@ def get_current_user():
 
 @api_bp.route("/logout", methods=["POST"])
 def logout():
+    """
+    Log out the current user.
+
+    Returns
+    -------
+    str
+    """
     logout_user()
     return "Logout"
 
@@ -98,6 +150,13 @@ def logout():
 @api_bp.route("/get_cycles", methods=["GET"])
 @login_required
 def get_available_cycles():
+    """
+    Retrieve available valid/invalid PACMan cycles.
+
+    Returns
+    -------
+    dict
+    """
     return VerifyPACManDir().generate_response()
 
 
@@ -105,24 +164,30 @@ def get_available_cycles():
 @login_required
 def run_pacman():
     """
-    Start a PACMan run.
+    Start a PACMan run with specified options.
 
     Returns
     -------
-    dict
-        JSON response with task information or error message.
+    tuple
+        A tuple containing a dictionary with task id and an HTTP status code.
+
+    Notes
+    -----
+    Status Codes:
+    200 : Task started successfully
+    429 : Task already running
+    400 : Invalid options
     """
     options = request.args.to_dict(flat=True)
     panelist_names = options.pop('panelist_names', None)
-    panelist_names_mode = options.pop('panelist_names_mode', None)
     if not options.get("mode", None):
-        return {"output": "Mode is required."}
+        return {"output": "Mode is required."}, 400
     if options.get("past_cycles", None):
         options["past_cycles"] = options["past_cycles"].split(",")
     if options.get("mode", None) == "DUP" and options.get("past_cycles", None) is None:
         return {
             "output": "DUP mode needs past cycles with the same cycle included.",
-        }
+        }, 400
     # mode is always append for now
     if panelist_names:
         new_names = panelist_names.split(",")
@@ -166,6 +231,19 @@ def run_pacman():
 @api_bp.route("/prev_runs/<result_id>", methods=["GET"])
 @login_required
 def pacman_run_result(result_id):
+    """
+    Retrieve the result of a previous PACMan run.
+
+    Parameters
+    ----------
+    result_id : str
+        The ID of the task result to retrieve.
+
+    Returns
+    -------
+    dict
+        A dictionary containing the task status, success flag, and logs.
+    """
     task_status = AsyncResult(result_id, app=celery_app)
     result = task_status.result if task_status.ready() else None
     if task_status.ready():
@@ -183,6 +261,19 @@ def pacman_run_result(result_id):
 @api_bp.route("/stream/<result_id>", methods=["GET"])
 @login_required
 def stream_task(result_id):
+    """
+    Stream the output of a running PACMan task.
+
+    Parameters
+    ----------
+    result_id : str
+        The ID of the task to stream.
+
+    Returns
+    -------
+    Response
+        A Flask Response object that streams the task output as server-sent events.
+    """
     def generate():
         while True:
             stream_content = redis_instance.xread(
@@ -217,6 +308,19 @@ def stream_task(result_id):
 @api_bp.route("/terminate/<result_id>", methods=["POST"])
 @login_required
 def stop_task(result_id):
+    """
+    Terminate a running PACMan task.
+
+    Parameters
+    ----------
+    result_id : str
+        The ID of the task to terminate.
+
+    Returns
+    -------
+    str
+        A string indicating that the task has been terminated.
+    """
     options = request.args.to_dict(flat=True)
     mode = options.get("mode", None)
     if mode is None:
@@ -228,17 +332,22 @@ def stop_task(result_id):
     return f"Task {result_id} terminated"
 
 
-def allowed_file(filename):
-    result = (
-        "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
-    )
-    print(result)
-    return result
 
 
 @api_bp.route("/upload", methods=["POST"])
 @login_required
 def upload_zip():
+    """
+    Handle the upload of a zip file.
+
+    This function checks if the uploaded file is valid, saves it,
+    and moves its contents to the appropriate location.
+
+    Returns
+    -------
+    dict
+        A dictionary containing a response message indicating the result of the upload.
+    """
     if "file" not in request.files:
         flash("No file part")
         return {"response": "no file part"}

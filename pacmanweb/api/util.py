@@ -8,6 +8,16 @@ from pacmanweb import Config
 
 
 def clean_previous_runs():
+    """
+    Clean up previous PACMan runs.
+
+    This function removes all directories in the runs folder except for
+    'discard', 'input_proposal_data', 'input_panelist_data', and 'logs'.
+
+    Notes
+    -----
+    This function directly modifies the file system and should be used with caution.
+    """
     pacman_path = Config.PACMAN_PATH
     runs_dir = pacman_path / "runs"
     valid_names = ["discard", "input_proposal_data", "input_panelist_data", "logs"]
@@ -17,6 +27,40 @@ def clean_previous_runs():
 
 
 class VerifyPACManDir:
+    """
+    Verify the structure and contents of the PACMan directory.
+
+    This class checks the presence and validity of proposal cycles, panelist data,
+    and model files in the PACMan directory structure.
+
+    Attributes
+    ----------
+    pacman_path : pathlib.Path
+        Path to the PACMan directory.
+    runs_dir : pathlib.Path
+        Path to the 'runs' subdirectory.
+    proposal_directory : pathlib.Path
+        Path to the 'input_proposal_data' subdirectory.
+    panelist_directory : pathlib.Path
+        Path to the 'input_panelist_data' subdirectory.
+    models_dir : pathlib.Path
+        Path to the 'models' subdirectory.
+    result : defaultdict
+        Dictionary to store verification results.
+
+    Methods
+    -------
+    verify_directory(directory, key, file_extension=None)
+        Verify the contents of a specific directory.
+    verify_proposals_dir()
+        Verify the structure and contents of the proposals directory.
+    verify_panelist_dir()
+        Verify the structure and contents of the panelist directory.
+    verify_model_dir()
+        Verify the structure and contents of the models directory.
+    generate_response()
+        Generate dict containing cycle structure and available PACMan files.
+    """
     def __init__(self, alt_pacman_path=None):
         self.pacman_path = (
             alt_pacman_path if alt_pacman_path is not None else Config.PACMAN_PATH
@@ -30,6 +74,18 @@ class VerifyPACManDir:
         self.result["proposal_cycles_valid"] = set()
 
     def verify_directory(self, directory, key, file_extension=None):
+        """
+        Verify the contents of a specific directory.
+
+        Parameters
+        ----------
+        directory : pathlib.Path
+            The directory to verify.
+        key : str
+            The key to use in the result dictionary.
+        file_extension : str, optional
+            The expected file extension for valid files.
+        """
         if directory.is_dir():
             for item in directory.iterdir():
                 if key == "proposal_cycles":
@@ -59,6 +115,9 @@ class VerifyPACManDir:
             self.result[f"{key}_extra_files"] = []
 
     def verify_proposals_dir(self):
+        """
+        Verify the structure and contents of the proposals directory.
+        """
         self.verify_directory(
             self.proposal_directory, "proposal_cycles", file_extension=None
         )
@@ -75,14 +134,27 @@ class VerifyPACManDir:
         )
 
     def verify_panelist_dir(self):
+        """
+        Verify the structure and contents of the panelist directory.
+        """
         self.verify_directory(
             self.panelist_directory, "panelist_cycles", file_extension="panelists.csv"
         )
 
     def verify_model_dir(self):
+        """
+        Verify the structure and contents of the models directory.
+        """
         self.verify_directory(self.models_dir, "models", file_extension=".joblib")
 
     def generate_response(self):
+        """
+        Generate dict containing cycle structure and available PACMan files.
+
+        Returns
+        -------
+        dict
+        """
         self.verify_model_dir()
         self.verify_panelist_dir()
         self.verify_proposals_dir()
@@ -90,6 +162,21 @@ class VerifyPACManDir:
 
 
 class MoveUploadedFiles:
+    """
+    Handle the extraction and organization of uploaded zip files.
+
+    This class extracts the contents of an uploaded zip file and moves
+    the relevant files to their appropriate locations in the PACMan directory structure.
+
+    Methods
+    -------
+    move_proposals(proposal_dir)
+        Move proposal files to the appropriate directory.
+    move_panelists_and_models(dir_=None, file=None)
+        Move panelist and model files to their respective directories.
+    move_items()
+        Orchestrate the movement of all extracted files to their correct locations.
+    """
     def __init__(self, filename) -> None:
         self.fname = Config.UPLOAD_FOLDER / filename
         self.extract_directory = Config.UPLOAD_FOLDER / f"extracted_{self.fname.stem}"
@@ -103,6 +190,14 @@ class MoveUploadedFiles:
         self.valid_model_fname_suffix = {".joblib", ".npy"}
 
     def move_proposals(self, proposal_dir):
+        """
+        Move proposal files to the appropriate directory.
+
+        Parameters
+        ----------
+        proposal_dir : pathlib.Path
+            Directory containing proposal files to be moved.
+        """
         for item in proposal_dir.iterdir():
             # this assumes item is a folder with the cycle name
             # containing all the proposal files of that cycle
@@ -119,6 +214,16 @@ class MoveUploadedFiles:
                     shutil.move(str(subitem), str(dest_fpath / subitem.name))
 
     def move_panelists_and_models(self, dir_=None, file=None):
+        """
+        Move panelist and model files to their respective directories.
+
+        Parameters
+        ----------
+        dir_ : pathlib.Path, optional
+            Directory containing files to be moved.
+        file : pathlib.Path, optional
+            Specific file to be moved.
+        """
         if file and any(
             file.name.endswith(suffix) for suffix in self.valid_model_fname_suffix
         ):
@@ -132,6 +237,9 @@ class MoveUploadedFiles:
                 self.move_panelists_and_models(file=item)
 
     def move_items(self):
+        """
+        Orchestrate the movement of all extracted files to their correct locations.
+        """
         contents = os.listdir(self.extract_directory)
         try:
             subdir = next(
