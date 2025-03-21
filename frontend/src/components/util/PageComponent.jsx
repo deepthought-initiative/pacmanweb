@@ -7,6 +7,7 @@ import Logs from "./Logs.jsx";
 import { UNSAFE_NavigationContext as NavigationContext } from "react-router-dom";
 import { fetchTableData, terminateCurrentProcess } from "./Api.jsx";
 import ToastContext from "../../context/ToastContext.jsx";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const PageComponent = ({
   allCycles,
@@ -30,6 +31,9 @@ const PageComponent = ({
   const [processStatus, setProcessStatus] = useState();
   const logContainerRef = useRef(null);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // Function for showing toasts
   const { showToastMessage } = useContext(ToastContext);
@@ -157,55 +161,66 @@ const PageComponent = ({
     [setInputFields]
   );
 
-  function useConfirmExit(confirmExit, when = true) {
-    const { navigator } = useContext(NavigationContext);
-
+  function useCustomBlocker(progressPercentage, message) {
     useEffect(() => {
-      if (!when) {
-        return;
-      }
-
-      const push = navigator.push;
-
-      navigator.push = (...args) => {
-        const result = confirmExit();
-        if (result !== false) {
-          push(...args);
+      if (progressPercentage <= 0 || progressPercentage >= 100) return;
+  
+      const handlePopState = async(event) => {
+        event.preventDefault();
+        const stay = window.confirm(message);
+        if (stay) {
+          // If user chooses to stay, do nothing
+          window.history.pushState(null, "", location.pathname); // This keeps them on the current page
+        } else {
+          // If they choose to leave, you can handle any cleanup here
+          await terminateAllProcesses();
+          navigate(-1);
         }
       };
-
+  
+      window.addEventListener("popstate", handlePopState);
+  
       return () => {
-        navigator.push = push;
+        window.removeEventListener("popstate", handlePopState);
       };
-    }, [navigator, confirmExit, when]);
-  }
-
-  function usePrompt(message, when = true) {
+    }, [progressPercentage, message]);
+  
     useEffect(() => {
-      const handleBeforeUnload = async (event) => {
-        event.preventDefault();
-        event.returnValue = message;
-        await terminateAllProcesses();
-        return "";
-      };
-      if (when) {
+      if (progressPercentage > 0 && progressPercentage < 100) {
+        let isLeaving = false;
+  
+        const handleBeforeUnload = (event) => {
+          event.preventDefault();
+          event.returnValue = message;
+        };
+  
+        const handleUnload = async () => {
+          if (isLeaving) {
+            await terminateAllProcesses();
+          }
+        };
+  
+        const handleConfirmLeave = () => {
+          isLeaving = true;
+        };
+  
         window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("unload", handleUnload);
+        window.addEventListener("beforeunload", handleConfirmLeave);
+  
+        return () => {
+          window.removeEventListener("beforeunload", handleBeforeUnload);
+          window.removeEventListener("unload", handleUnload);
+          window.removeEventListener("beforeunload", handleConfirmLeave);
+        };
       }
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-      };
-    }, [message, when]);
-
-    const confirmExit = useCallback(() => {
-      const confirm = window.confirm(message);
-      if (confirm) {
-        terminateAllProcesses();
-      }
-      return confirm;
-    }, [message]);
-    useConfirmExit(confirmExit, when);
+    }, [progressPercentage, message]);
   }
   
+  useCustomBlocker(progressPercentage, 
+    "A process is running. Do you really want to leave?"
+  );
+ 
   return (
     <>
       {renderFormComponent({
@@ -238,7 +253,6 @@ const PageComponent = ({
       ) : showLogs ? (
         <Logs
           currentTaskId={currentTaskId}
-          usePrompt={usePrompt}
           currentCycle={inputFields["currentCycle"]}
           setShowTable={setShowTable}
           terminateAllProcesses={terminateAllProcesses}

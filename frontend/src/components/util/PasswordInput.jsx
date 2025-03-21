@@ -28,7 +28,7 @@ const PasswordInput = ({ label, value, setValue, error, desc, disabled }) => {
           {label}
         </label>
       </div>
-      <div className={`input-group`}>
+      <div className="input-group" style={{ position: 'relative' }}>
         <input
           type={showPassword ? "text" : "password"}
           value={value}
@@ -38,6 +38,7 @@ const PasswordInput = ({ label, value, setValue, error, desc, disabled }) => {
           }${disabled ? "disabled" : ""}`}
           disabled={disabled}
           autoFocus
+          style={{ paddingRight: '40px' }} // Adjust padding to make space for the button
         />
         {error && (
           <img
@@ -51,7 +52,10 @@ const PasswordInput = ({ label, value, setValue, error, desc, disabled }) => {
           type="button"
           className="show-password-btn"
           disabled={disabled}
-          style={{ right: error ? "45px" : "" }}
+          style={{
+            position: 'absolute',
+            right: '1px',
+          }}
         >
           <img
             src={showPassword ? HidePasswordIcon : ShowPasswordIcon}

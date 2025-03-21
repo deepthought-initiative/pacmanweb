@@ -56,14 +56,23 @@ const MatchReviewersForm = ({
       updateInputFieldsErrors("selectedModal", "Required");
       noError = false;
     }
+
     if (!inputFields.numberOfTopReviewers) {
       updateInputFieldsErrors("numberOfTopReviewers", "Required");
       noError = false;
+    } else if (isNaN(inputFields.numberOfTopReviewers) || inputFields.numberOfTopReviewers < 0) {
+      updateInputFieldsErrors("numberOfTopReviewers", "Must be a valid positive number.");
+      noError = false;
     }
+
     if (!inputFields.closeCollaboratorTimeFrame) {
       updateInputFieldsErrors("closeCollaboratorTimeFrame", "Required");
       noError = false;
+    }  else if (isNaN(inputFields.closeCollaboratorTimeFrame) || inputFields.closeCollaboratorTimeFrame < 0) {
+      updateInputFieldsErrors("closeCollaboratorTimeFrame", "Must be a valid positive number.");
+      noError = false;
     }
+
     if (textAreaError) {
       setTextAreaError("Required");
       noError = false;
